@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}
+    Đăng nhập
+{% endblock %}
+
+{% block content %}
+<body class="text-center">
+    <div class="container">
+        <form method="POST" class="form-signin" style="color:white">
+            {{ form.hidden_tag() }}
+            <br>
+            <h1 class="h3 mb-3 font-weight-normal">
+                Đăng nhập
+            </h1>
+            <br>
+            {{ form.username.label() }}
+            {{ form.username(class="form-control", placeholder="Tên đăng nhập") }}
+
+            {{ form.password.label() }}
+            {{ form.password(class="form-control", placeholder="Mật khẩu") }}
+            <br>
+            {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+        </form>
+        <a href="{{url_for('register')}}">Không có tài khoản? Đăng ký tại đây</a>
+    </div>
+</body>
+{% endblock %}

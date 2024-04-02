@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/bot_fight.css">
+    <link rel="stylesheet" href="../static/css/animation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="ranking">
+        </div>
+        <div class="side_bar-left">
+            <ul class="rank_board_list">
+                <div class="rank_board_header">Top 5</div>
+                {% for i in rank_board %}
+                    <li class="warrior" data-name={{i[0]}} data-elo={{i[1]}}>
+                        <div class="warrior_rank">
+                            <i class="fa-solid fa-crown crown"></i>
+                            <div class="rank">1</div>
+                        </div>
+                        <div class="warrior-avatar"><p>{{i[0][0].upper()}}</p></div>
+                        <div class="warrior-info">
+                            <div class="warrior-info--name">{{i[0]}}</div>
+                            <div class="warrior-info--elo">{{i[1]}}</div>
+                        </div>
+                    </li>        
+                {% endfor %}
+            </ul>
+            <div style="display: none;" class="info">
+                <div class="info_header">Result</div>
+                <div class="info_status">You Win</div>
+                <div class="info_elo-fluc">
+                    <div class="info_elo-fluc--pre">{{current_user.elo}}</div>
+                    <div class="info_elo-fluc--arrow"><i class="fa-solid fa-arrow-down-long"></i></div>
+                    <div class="info_elo-fluc--new"></div>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="enemy">
+                <div class="enemy_ava">X</div>
+                <div class="enemy_info">
+                    <div class="enemy-name">No enemy</div>
+                    <div class="enemy-elo"></div>
+                </div>
+            </div>
+            <div class="fight_screen">
+                <div class="fight_screen-standby">
+                    <i class="fa-solid fa-face-laugh-beam"></i>
+                    CHỌN ĐỐI THỦ ĐỂ ĐẤU
+                </div>
+                <div style="display: none;" class="fight_screen-loading">
+                    <img class="fight_screen-loading--img sword" src="{{url_for('static', filename='img/sword.png')}}" alt="">
+                    <div><img class="fight_screen-loading--img roll" src="{{url_for('static', filename='img/roll.png')}}" alt=""></div>
+                </div>
+                <video style="display: none;" class="fight_screen-video" controls>
+                    <source type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="user">
+                <div class="user_ava">{{current_user.username[0].upper()}}</div>
+                <div class="user_info">
+                    <div class="user-name">{{current_user.username}}</div>
+                    <div class="user-elo">{{current_user.elo}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="side_bar">
+            <div class="side_bar-header">
+                <img src="https://static.vecteezy.com/system/resources/thumbnails/003/682/252/small/pink-blue-v-alphabet-letter-logo-icon-design-with-swoosh-for-business-and-company-vector.jpg" class="user-avatar"></img>
+                <div class="user-info">
+                    <div class="user-info--name">{{current_user.username}}</div>
+                    <div class="user-info--elo">{{current_user.elo}}</div>
+                </div>
+            </div>
+            <div class="side_bar-content">Đối thủ đề xuất</div>
+            <ul class="side_bar-player-list">
+                <!-- <li class="player">
+                    <div class="player-avatar"></div>
+                    <img src="https://static.vecteezy.com/system/resources/thumbnails/003/682/252/small/pink-blue-v-alphabet-letter-logo-icon-design-with-swoosh-for-business-and-company-vector.jpg" class="player-avatar"></img>
+                    <div class="player-info">
+                        <div class="player-info--name">mtlv23</div>
+                        <div class="player-info--elo">1000</div>
+                    </div>
+                </li> -->
+                {% for i in users %}
+                    <li class="player" data-name={{i[0]}} data-elo={{i[1]}}>
+                        <div class="player-avatar"><p>{{i[0][0].upper()}}</p></div>
+                        <div class="player-info">
+                        <div class="player-info--name">{{i[0]}}</div>
+                        <div class="player-info--elo">{{i[1]}}</div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="fight_btn">chọn đối thủ để đấu</div>
+        </div>
+    </div>
+
+    <script src="../static/script/fight_bot.js"></script>
+</body>
+</html>

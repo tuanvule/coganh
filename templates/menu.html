@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}
+    Cờ gánh
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="../static/css/animation.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  a {
+    cursor: pointer;
+  }
+  .notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0;
+    transform: translate(-50%,-50%);
+    width: 400px;
+    height: 450px;
+    background-color: #343A40;
+    border-radius: 10px;
+    animation: zoomIn .4s ease-in-out;
+  }
+  .notification_header {
+    font-size: 100px;
+    margin: 20px;
+    color: rgb(255, 33, 33);
+  }
+  .notification_content {
+    font-size: 16px;
+    padding: 0 60px;
+  }
+  .notification_directional {
+    margin-top: 100px;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .notification_directional div {
+    padding: 10px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .notification_directional div:hover {
+    filter: brightness(90%);
+  }
+  .notification_directional .notification_directional--back {
+    background-color: #ccc;
+    color: #000;
+  }
+  .notification_directional .notification_directional--create_bot {
+    background-color: #007BFF;
+  }
+</style>
+<body class="text-center">
+  <div class="notification" style="display:none;">
+    <div class="notification_header"><i class="fa-solid fa-face-frown"></i></div>
+    <div class="notification_content">oops, có lẽ bạn chưa có bot hoặc bot của bạn đang bị lỗi. hãy kiểm tra lại bot của bạn nhé</div>
+    <div class="notification_directional">
+      <div class="notification_directional--back">quay lại</div>
+      <div class="notification_directional--create_bot"><a style="color: #fff; text-decoration: none;" href="{{ url_for('create_bot') }}">tạo bot</a></div>
+    </div>
+  </div>
+  <br>
+  <a href="{{ url_for('create_bot') }}">Tạo bot</a>
+  <a style="margin: 0 30px;" class="fight_bot">đấu bot</a>
+  <a href="{{ url_for('play_chess_page') }}">chơi cờ</a>
+  <div class="LoginTheme">
+    Logged in as : <strong > {{ current_user.username }} </strong> | <a href='{{ url_for("login") }}'>Đăng xuất</a>
+  </div class='LogginTheme'>
+</body>
+<script>
+  const fightBotDir = document.querySelector(".fight_bot")
+  const notification = document.querySelector(".notification")
+  const backBtn = document.querySelector(".notification_directional--back")
+  const fightBotBtn = document.querySelector(".fight_bot")
+  let fightable = '{{current_user.fightable}}'
+  console.log(fightable)
+
+  window.addEventListener("pageshow", function ( event ) {
+    var historyTraversal = event.persisted || ( typeof window.performance != "undefined" && window.performance.navigation.type === 2 );
+    if ( historyTraversal ) {
+      console.log("reload()")
+      window.location.reload();
+
+    }
+});
+  fightBotBtn.onclick = () => {
+    if(fightable === "False") {
+      notification.style.display = "block"
+    } else {
+      window.location.href = "{{ url_for('bot_fight_page') }}"
+    }
+  }
+  backBtn.onclick = () => notification.style.display = "none"
+</script>
+{% endblock %}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/create_bot.css">
+</head>
+<body>
+
+    <div class="cover" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, .05); z-index: 1000;"></div>
+
+    <!-- <div class="instruction" style="max-width: 500px; position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); background: #fff; z-index: 9999; color: #121212; padding: 10px 20px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .8);">
+        <p style="font-size: 20px">nếu bạn là người mới thì chúng tôi khuyến kích bạn xem hướng dẫn trước khi bắt đầu</p>
+        <div style="display: flex; justify-content: right; margin-top: 20px;">
+            <div class="btn reject-btn" style="user-select: none; cursor: pointer; padding: 5px 10px; margin: 0 10px; transition: .05s linear;">bỏ qua</div>
+            <div class="btn accept-btn" style="user-select: none; cursor: pointer; padding: 5px 10px; margin: 0 10px; background-color: #121212; color: #fff; transition: .05s linear">xem</div>
+        </div>
+    </div> -->
+
+    <div class="guide"></div>
+
+    <div class="container">
+        <div class="container_element bot_display">
+            <div class="bot_display-video--background">
+                <video class="bot_display-video--result" controls>
+                    <source src="{{ url_for('static', filename='upload_video/result.mp4') }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="utility">
+                <div class="utility_nav">
+                    <div class="utility_nav-block">
+                        <div class="utility_nav-block--item rule">RULE</div>
+                        <div class="utility_nav-block--item terminal">TERMINAL</div>
+                        <div class="utility_nav-block--item result">RESULT</div>
+                        <div class="animation">
+                            <div class="children"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="utility_block">
+                    <div class="utility_block-element rule">
+                        <div class="input">
+                            <div class="type">input</div> 
+                            <div class="content">
+                                Player.your_pos: vị trí tất cả quân cờ của bản thân (x, y) <br>
+                                Player.opp_pos: vị trí tất cả quân cờ của đối thủ (x, y) <br>
+                                Player.your_side: màu cờ của bản thân (-1:🔴 / 1:🔵) <br>
+                                Player.board: bàn cờ (-1:🔴 / 1:🔵 / 0:∅) <br>
+                                <hr>
+                                <br>
+                                -điều kiện:
+                                <hr>
+                                <br>
+                                0 ≤ x, y ≤ 4 <hr>
+                                Player.your_side in (-1, 1) <hr>
+                                {i for i in Player.board} == {0, 1, -1}
+                            </div>
+                        </div>
+                        <div class="output">
+                            <div class="type">output</div> 
+                            <div class="content">
+                                selected_pos: vị trí của quân cờ được chọn
+                                new_pos: vị trí sau khi di chuyển của quân cờ đó
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: none;" class="utility_block-element terminal">>>></div>
+                    <div style="display: none;" class="utility_block-element result">
+                        <div class="status">Winner</div>
+                        <div class="info">
+                            <div class="info_move-count">moves: 100</div>
+                            <div class="player">you: <hr> <div style="width: 40px; height: 40px; border-radius: 50%; background-color: blue;"></div></div>
+                            <div class="enemy">bot: <hr> <div style="width: 40px; height: 40px; border-radius: 50%; background-color: red;"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container_element coding_module">
+            <div class="coding_module-nav">
+                <a href="{{ url_for('menu') }}" class="coding_module-nav--backBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                <div class="coding_module-nav--saveBtn btn" data-saved="false">save</div>
+                <div class="coding_module-nav--runBtn loader" style="display: none; animation: none;"><div class="coding_module-nav--loading"></div></div>
+                <div class="coding_module-nav--runBtn btn">run</div>
+            </div>
+            <div class="a" style="height: 100%; position: relative;">
+                <div id="coding_module-coding_block"></div>
+                <div class="guide_box--nav" style="z-index: 2000; display: none;">
+                    <div class="left">&#11164;</div>
+                    <div class="right">&#11166;</div>
+                </div>
+                <!-- <div class="guide_box">
+                    <div class="guide_box--content">hellohellohellohellellohellohellohelloellohellohellohellohellohellohelloello</div>
+                    <div class="guide_box--arrow"></div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.min.js"></script>
+    <script src="../static/script/create_bot.js"></script>
+</body>
+</html>

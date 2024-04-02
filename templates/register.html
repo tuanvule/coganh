@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}
+    Đăng ký
+{% endblock %}
+
+{% block content %}
+<body class="text-center">
+    <div class="container">
+        <form method="POST" class="form-register" style="color:white">
+            {{ form.hidden_tag() }}
+            <br>
+            <h1 class="h3 mb-3 font-weight-normal">
+                Tạo tài khoản
+            </h1>
+            <br>
+            {{ form.username.label() }}
+            {{ form.username(class="form-control", placeholder="Tên đăng nhập") }}
+
+            {{ form.password.label() }}
+            {{ form.password(class="form-control", placeholder="Mật khẩu") }}
+
+            {{ form.conf_pass.label() }}
+            {{ form.conf_pass(class="form-control", placeholder="Xác nhận mật khẩu") }}
+            <br>
+            {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+        </form>
+        <a href="{{url_for('login')}}">Đã có tài khoản? Đăng nhập tại đây</a>
+    </div>
+</body>
+{% endblock %}
