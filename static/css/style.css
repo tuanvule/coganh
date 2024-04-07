@@ -35,3 +35,45 @@
 .disappear {
     animation: disappear .2s linear forwards;
 }
+
+form {
+    width: fit-content;
+    margin-top: 40px;
+}
+
+.form-register {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-signin {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-control {
+    width: 400px;
+    background-color: #000;
+    border: 1px solid #0074F1;
+    padding: 20px 20px;
+    color: #fff;
+    margin-bottom: 10px;
+    /* border-radius: 99999px; */
+}
+
+.form-control:focus {
+    background-color: #000;
+}
+
+input[type=submit].login_btn {
+    /* width: fit-content; */
+    padding: 8px 80px;
+    margin-bottom: 20px;
+
+}
+
+label {
+    margin: 10px auto 10px 2px;
+}

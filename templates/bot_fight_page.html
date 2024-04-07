@@ -14,6 +14,7 @@
         <div class="ranking">
         </div>
         <div class="side_bar-left">
+            <a href="{{ url_for('menu') }}" class="menu_btn">Menu</a>
             <ul class="rank_board_list">
                 <div class="rank_board_header">Top 5</div>
                 {% for i in rank_board %}
@@ -30,8 +31,8 @@
                     </li>        
                 {% endfor %}
             </ul>
+            <div class="info_header">Kết quả ván đấu</div>
             <div style="display: none;" class="info">
-                <div class="info_header">Result</div>
                 <div class="info_status">You Win</div>
                 <div class="info_elo-fluc">
                     <div class="info_elo-fluc--pre">{{current_user.elo}}</div>

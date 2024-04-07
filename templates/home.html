@@ -4,9 +4,48 @@
 {% endblock %}
 
 {% block content %}
+<style>
+    .content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* margin-top: 40px; */
+    }
+    .title {
+        font-size: 25x;
+        margin: 40px;
+    }
+    .title1 {
+        font-size: 20px;
+        width: 40%;
+    }
+
+    .menu_btn {
+        display: block;
+        text-decoration: none;
+        color: #fff;
+        font-size: 20px;
+        padding: 10px 60px;
+        margin: 20px;
+        border: 1px solid #007BFF;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+        transition: all .2s linear;
+    }
+
+    .menu_btn:hover {
+        background-color: #007BFF;
+        text-decoration: none;
+        color: #fff;
+    }
+</style>
 <body class="text-center">
-    Giới thiệu gì đó!!!
-    <br>
-    <a href="{{ url_for('menu') }}">Menu</a>
+    <div class="content">
+        <h1 class="title">Xin chào</h1>
+        <h1 class="title1">rất cảm ơn bạn khi đã thử trải nghiệm sản phẩm này của nhóm chúng mình. Dự án này được bọn mình làm ra với mục đích là để các bạn có 1 công cụ để áp dụng những gì đã học về ngôn ngữ Python để tự tạo cho mình 1 con bot. Chúng mình mong bạn sẽ học được thêm điều gì mới từ sản phẩm này</h1>
+        <br>
+        <a class="menu_btn" href="{{ url_for('menu') }}">Menu</a>
+    </div>
 </body>
 {% endblock %}

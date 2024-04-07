@@ -82,14 +82,9 @@ for(let i = 0; i < grid.length; i++) {
     }
 }
 
-// window.addEventListener('beforeunload', function (e) {
-//     // Check if any of the input fields are filled
-//     let isGo = alert("nếu ra khỏi đây bạn sẽ mất hế")
-//     if () {
-//         e.preventDefault();
-//         e.returnValue = '';
-//     }
-// });
+window.addEventListener('beforeunload', (event) => {
+    event.returnValue = `Những thay đổi trên bàn cờ chưa được lưu. Bạn muốn đi khỏi đây?`;
+});
 
 const boxes = $$(".box")
 const chessEnemy = $$(".chess.enemy")

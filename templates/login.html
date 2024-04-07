@@ -4,8 +4,9 @@
 {% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="../static/css/style.css">
 <body class="text-center">
-    <div class="container">
+    <div class="container" style="display:  flex; flex-direction: column; align-items: center;">
         <form method="POST" class="form-signin" style="color:white">
             {{ form.hidden_tag() }}
             <br>
@@ -14,12 +15,12 @@
             </h1>
             <br>
             {{ form.username.label() }}
-            {{ form.username(class="form-control", placeholder="Tên đăng nhập") }}
+            {{ form.username(class="form-control", placeholder="Tên đăng nhập", style="color: #fff;") }}
 
             {{ form.password.label() }}
-            {{ form.password(class="form-control", placeholder="Mật khẩu") }}
+            {{ form.password(class="form-control", placeholder="Mật khẩu", style="color: #fff;") }}
             <br>
-            {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+            {{ form.submit(class="btn btn-lg btn-block btn-primary login_btn") }}
         </form>
         <a href="{{url_for('register')}}">Không có tài khoản? Đăng ký tại đây</a>
     </div>

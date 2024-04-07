@@ -58,8 +58,10 @@ runBtn.onclick = () => {
     terminal.style.backgroundColor = "#252525"
     terminalBtn.style.color = "#fff"
     ruleBtn.style.color = "#ccc"
-    animationChild.style.right = "0";
-    animationChild.style.width = terminalBtn.clientWidth + "px";
+    resultBtn.style.color = "#ccc"
+    changeAnimation(terminalBtn, `${((terminalBtn.clientWidth - 10) / animation.clientWidth * 100)}%`, terminalBtn.clientWidth + "px", "terminal")
+    // animationChild.style.right = "0";
+    // animationChild.style.width = terminalBtn.clientWidth + "px";
     terminal.innerHTML = `>>> loading...`
     video.innerHTML = `<source type="video/mp4">
     // Your browser does not support the video tag.`
@@ -74,6 +76,7 @@ runBtn.onclick = () => {
     .then(data => {
         if(data.code === 200) {
             gameResult = data
+            terminal.innerHTML = ">>> success"
             // console.log(data)
         } else {
             const a = data.err.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
@@ -89,7 +92,7 @@ runBtn.onclick = () => {
         // Your browser does not support the video tag.`
         video.load()
         if(gameResult) {
-            changeAnimation(result, "0", result.clientWidth + "px", "result")
+            changeAnimation(resultBtn, "0", resultBtn.clientWidth + "px", "result")
             toggleMode("result")
         }
     })

@@ -55,14 +55,14 @@ class User(db.Model, UserMixin):
 
 
 class LoginForm(FlaskForm):
-    username = StringField("Tên đăng nhập:", validators=[DataRequired(), Length(min=4, max=20)])
+    username = StringField("Tên đăng nhập", validators=[DataRequired(), Length(min=4, max=20)])
     password =  PasswordField("Mật khẩu", validators=[DataRequired(), Length(min=4, max=20)])
     submit = SubmitField("Đăng Nhập")
 
 
 class RegisterForm(FlaskForm):
-    username = StringField('Tên đăng nhập:', validators=[DataRequired(), Length(min=4, max=20)])
-    password =  PasswordField('Mật khẩu:',  validators=[DataRequired(), Length(min=4, max=20)])
+    username = StringField('Tên đăng nhập', validators=[DataRequired(), Length(min=4, max=20)])
+    password =  PasswordField('Mật khẩu',  validators=[DataRequired(), Length(min=4, max=20)])
     conf_pass =  PasswordField('Xác nhận mật khẩu:', validators=[DataRequired(), EqualTo("password", message='Mật khẩu xác nhận không trùng khớp')])
     submit = SubmitField(label='Tạo tài khoản')
 
