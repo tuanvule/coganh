@@ -44,7 +44,7 @@ def vay(opp_pos, board):
 def main(player):
     global move, board_pointF
     move = {"selected_pos": None, "new_pos": None}
-    with open("trainAI\source_code\pos_point.txt") as f:
+    with open("https:\\coganh.onrender.com\trainAI\source_code\pos_point.txt") as f:
         max_pointF = int(f.readline()[:-1])
         board_pointF = eval(f.read())
     for i in range(5):
