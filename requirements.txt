@@ -24,5 +24,4 @@ imageio-ffmpeg==0.4.9
 importlib-metadata==7.0.0
 moviepy==1.0.3
 opencv-python==4.9.0.80
-SQLAlchemy==2.0.23
 
