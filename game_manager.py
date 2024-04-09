@@ -221,6 +221,8 @@ def generate_image(positions, move_counter, move, remove, current_turn):
 def renderVD():
     # biến đổi tập ảnh thành video
     frame = cv2.imread("static\\upload_img\\chessboard0.png")
+    absolute_path = os.path.dirname(__file__)
+    relative_path = "static\\upload_video\\video.mp4"
     video = cv2.VideoWriter("static\\upload_video\\video.mp4", 0, 1, frame.shape[:2])
     for i in range(len(os.listdir("static\\upload_img\\"))):
         video.write(cv2.imread(f"static\\upload_img\\chessboard{i}.png"))
