@@ -145,6 +145,15 @@ def upload_code():
             "err": err,
         }
         return json.dumps(data) # Giá trị Trackback Error
+    
+@app.route('/save_code', methods=['POST'])
+@login_required
+def save_code():
+    name = current_user.username
+    code = request.get_json()
+    with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
+        f.write(code)
+    return json.dumps("succeed")
 
 @app.route('/create_bot')
 @login_required
