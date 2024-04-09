@@ -10,6 +10,7 @@ import traceback
 # ROW = y
 # COLUMN = x
 # ==> board[y][x] == board[ROW][COLUMN]
+absolute_path = os.path.dirname(__file__)
 
 class Player:
     def __init__(self, your_pos=None, opp_pos=None, your_side=None, board=None):
@@ -118,7 +119,8 @@ def vay(opp_pos):
 
 # System
 def activation(option, session_name):
-    UserBot = __import__("static.botfiles.botfile_"+session_name, fromlist=[None])
+    relative_path = "static.botfiles.botfile_"+session_name
+    UserBot = __import__(os.path.join(absolute_path, relative_path), fromlist=[None])
     reload(UserBot)
     Bot2 = __import__(option, fromlist=[None])
     reload(Bot2)
@@ -221,7 +223,8 @@ def generate_image(positions, move_counter, move, remove, current_turn):
 def renderVD():
     # biến đổi tập ảnh thành video
     frame = cv2.imread("static\\upload_img\\chessboard0.png")
-    video = cv2.VideoWriter("static\\upload_video\\video.mp4", 0, 1, frame.shape[:2])
+    relative_path = "static\\upload_video\\video.mp4"
+    video = cv2.VideoWriter(os.path.join(absolute_path, relative_path), 0, 1, frame.shape[:2])
     for i in range(len(os.listdir("static\\upload_img\\"))):
         video.write(cv2.imread(f"static\\upload_img\\chessboard{i}.png"))
     video.release()

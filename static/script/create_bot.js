@@ -65,6 +65,7 @@ runBtn.onclick = () => {
     terminal.innerHTML = `>>> loading...`
     video.innerHTML = `<source type="video/mp4">
     // Your browser does not support the video tag.`
+    video.load()
     fetch("/upload_code", {
         method: "POST",
         headers: {
@@ -88,9 +89,11 @@ runBtn.onclick = () => {
         loader.style.display = "none"
         runBtn.style.display = "block"
         terminal.style.backgroundColor = "#000"
-        video.innerHTML = `<source src="/static/upload_video/result.mp4" type="video/mp4">
-        // Your browser does not support the video tag.`
-        video.load()
+        setTimeout(() => {
+            video.innerHTML = `<source src="/static/upload_video/result.mp4" type="video/mp4">
+            // Your browser does not support the video tag.`
+            video.load()
+        },1000)
         if(gameResult) {
             changeAnimation(resultBtn, "0", resultBtn.clientWidth + "px", "result")
             toggleMode("result")
