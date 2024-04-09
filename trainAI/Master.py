@@ -1,3 +1,5 @@
+import os
+
 def is_valid_move(current_pos, new_pos, board):
 
     if 0 <= new_pos[0] <= 4 and 0 <= new_pos[1] <= 4 and board[new_pos[1]][new_pos[0]] == 0:
@@ -44,7 +46,8 @@ def vay(opp_pos, board):
 def main(player):
     global move, board_pointF
     move = {"selected_pos": None, "new_pos": None}
-    with open("trainAI\pos_point.txt") as f:
+    dirname = os.path.dirname(__file__)
+    with open(os.path.join(dirname, "pos_point.txt")) as f:
         max_pointF = int(f.readline()[:-1])
         board_pointF = eval(f.read())
     for i in range(5):
