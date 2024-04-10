@@ -221,11 +221,12 @@ def generate_image(positions, move_counter, move, remove, current_turn):
     image.save(os.getcwd()+f"/static/upload_img/chessboard{move_counter}.png", "PNG")
 def renderVD():
     # biến đổi tập ảnh thành video
-    frame = cv2.imread("static/upload_img/chessboard0.png")
+    relative_path_chessboard_0 = "static/upload_img/chessboard0.png"
     relative_path_video = "static/upload_video/video.mp4"
     relative_path_audio = "static/audio.mp3"
     relative_path_result = "static/upload_video/result.mp4"
     relative_path_upload_img = "static/upload_img/"
+    frame = cv2.imread(os.path.join(absolute_path, relative_path_chessboard_0))
 
     video = cv2.VideoWriter(os.path.join(absolute_path, relative_path_video), 0, 1, frame.shape[:2])
     for i in range(len(os.listdir(os.path.join(absolute_path, relative_path_upload_img)))):
