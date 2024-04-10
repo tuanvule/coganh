@@ -47,7 +47,7 @@ def main(player):
     global move, board_pointF
     move = {"selected_pos": None, "new_pos": None}
     dirname = os.path.dirname(__file__)
-    with open(os.path.join(dirname, "source_code\pos_point.txt")) as f:
+    with open(os.path.join(dirname, "source_code/pos_point.txt")) as f:
         max_pointF = int(f.readline()[:-1])
         board_pointF = eval(f.read())
     for i in range(5):
