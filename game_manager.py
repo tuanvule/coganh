@@ -120,11 +120,10 @@ def vay(opp_pos):
 # System
 def activation(option, session_name):
     # relative_path = "static.botfiles.botfile_"+session_name
-    UserBot = __import__("opt.render.project.src.static.botfiles.botfile_"+session_name, fromlist=[None])
+    UserBot = __import__("static.botfiles.botfile_"+session_name, fromlist=[None])
     reload(UserBot)
     Bot2 = __import__(option, fromlist=[None])
     reload(Bot2)
-    
     try: return run_game(UserBot, Bot2)
     except Exception: raise Exception(traceback.format_exc())
 def run_game(UserBot, Bot2): # Main
