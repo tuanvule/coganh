@@ -187,7 +187,7 @@ def run_game(UserBot, Bot2): # Main
 
     renderVD()
     for file in os.listdir("static\\upload_img\\"):
-        os.remove("static\\upload_img\\"+file)
+        if file != "a": os.remove("static\\upload_img\\"+file)
 
     return winner, move_counter-1
 
