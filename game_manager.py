@@ -221,18 +221,23 @@ def generate_image(positions, move_counter, move, remove, current_turn):
     image.save(os.getcwd()+f"/static/upload_img/chessboard{move_counter}.png", "PNG")
 def renderVD():
     # biến đổi tập ảnh thành video
-    frame = cv2.imread("static\\upload_img\\chessboard0.png")
-    relative_path = "static/upload_video/video.mp4"
-    video = cv2.VideoWriter(os.path.join(absolute_path, relative_path), 0, 1, frame.shape[:2])
-    for i in range(len(os.listdir("static\\upload_img\\"))):
-        video.write(cv2.imread(f"static\\upload_img\\chessboard{i}.png"))
+    frame = cv2.imread("static/upload_img/chessboard0.png")
+    relative_path_video = "static/upload_video/video.mp4"
+    relative_path_audio = "static/audio.mp3"
+    relative_path_result = "static/upload_video/result.mp4"
+    relative_path_upload_img = "static/upload_img/"
+
+    video = cv2.VideoWriter(os.path.join(absolute_path, relative_path_video), 0, 1, frame.shape[:2])
+    for i in range(len(os.listdir(os.path.join(absolute_path, relative_path_upload_img)))):
+        relative_path_chessboard = f"static/upload_img/chessboard{i}.png"
+        video.write(cv2.imread(os.path.join(absolute_path, relative_path_chessboard)))
     video.release()
 
     # chèn nhạc vô video
-    my_clip = mpe.VideoFileClip("static\\upload_video\\video.mp4")
-    audio_background = mpe.AudioFileClip('static\\audio.mp3').set_duration(my_clip.duration)
+    my_clip = mpe.VideoFileClip(os.path.join(absolute_path, relative_path_video))
+    audio_background = mpe.AudioFileClip(os.path.join(absolute_path, relative_path_audio)).set_duration(my_clip.duration)
     my_clip = my_clip.set_audio(audio_background)
-    my_clip.write_videofile("static\\upload_video\\result.mp4")
+    my_clip.write_videofile(os.path.join(absolute_path, relative_path_result))
     my_clip.close()
 
 if __name__ == '__main__':
