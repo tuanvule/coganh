@@ -90,7 +90,7 @@ runBtn.onclick = () => {
         runBtn.style.display = "block"
         terminal.style.backgroundColor = "#000"
         setTimeout(() => {
-            video.innerHTML = `<source src="/static/upload_video/result.mp4" type="video/mp4">
+            video.innerHTML = `<source src="/static/upload_video/video.mp4" type="video/mp4">
             // Your browser does not support the video tag.`
             video.load()
         },1000)
