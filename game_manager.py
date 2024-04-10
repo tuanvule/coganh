@@ -186,8 +186,10 @@ def run_game(UserBot, Bot2): # Main
         move_counter += 1
 
     renderVD()
-    for file in os.listdir("static\\upload_img\\"):
-        if file != "a": os.remove("static\\upload_img\\"+file)
+    relative_path_upload_img = "static/upload_img/"
+    for file in os.listdir(os.path.join(absolute_path,relative_path_upload_img)):
+        relative_path_chessboard = relative_path_upload_img + file
+        if file != "a": os.remove(os.path.join(absolute_path,relative_path_chessboard))
 
     return winner, move_counter-1
 
