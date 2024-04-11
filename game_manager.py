@@ -253,7 +253,7 @@ def renderVD():
 
     print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
     print(os.listdir(os.path.join(absolute_path, "static")))
-    print(os.listdir(absolute_path))
+    print(absolute_path)
 
     # chèn nhạc vô video
     # my_clip = mpe.VideoFileClip(os.path.join(absolute_path, relative_path_video))
