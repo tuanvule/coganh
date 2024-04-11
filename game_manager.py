@@ -236,6 +236,8 @@ def renderVD():
         video.write(cv2.imread(os.path.join(absolute_path, relative_path_chessboard)))
     video.release()
 
+    print(os.path.join(absolute_path, relative_path_video))
+
     # chèn nhạc vô video
     # my_clip = mpe.VideoFileClip(os.path.join(absolute_path, relative_path_video))
     # audio_background = mpe.AudioFileClip(os.path.join(absolute_path, relative_path_audio)).set_duration(my_clip.duration)
