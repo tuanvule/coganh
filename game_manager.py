@@ -249,7 +249,7 @@ def renderVD():
         
     video.release()
 
-    print(os.listdir(os.path.join(absolute_path, "static/upload_img")))   
+    print(os.listdir(os.path.join(absolute_path, "static/upload_video")))   
 
     # print(os.path.join(absolute_path, relative_path_video))
 
