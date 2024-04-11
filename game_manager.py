@@ -251,7 +251,7 @@ def renderVD():
     video.release()
     # print(os.listdir(os.path.join(absolute_path, ".venv")))
 
-        print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
+    print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
     print(os.listdir(os.path.join(absolute_path, "static")))
     print(os.listdir(absolute_path))
 
