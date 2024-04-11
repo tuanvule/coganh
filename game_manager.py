@@ -245,11 +245,12 @@ def renderVD():
     video = cv2.VideoWriter(os.path.join(absolute_path, relative_path_video), 0, 1, frame.shape[:2])
     for i in range(len(os.listdir(os.path.join(absolute_path, relative_path_upload_img)))):
         relative_path_chessboard = f"static/upload_img/chessboard{i}.png"
+        print(relative_path_chessboard)
         video.write(cv2.imread(os.path.join(absolute_path, relative_path_chessboard)))
         
     video.release()
 
-    print(os.listdir(os.path.join(absolute_path, "static/upload_video")))   
+    print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
 
     # print(os.path.join(absolute_path, relative_path_video))
 
