@@ -242,7 +242,7 @@ def renderVD():
     relative_path_upload_img = "static/upload_img/"
     frame = cv2.imread(os.path.join(absolute_path, relative_path_chessboard_0))
 
-    print(os.listdir(os.path.join(absolute_path, relative_path_video)))
+    print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
 
     video = cv2.VideoWriter(os.path.join(absolute_path, relative_path_video), cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 1, frame.shape[:2])
     for i in range(len(os.listdir(os.path.join(absolute_path, relative_path_upload_img)))):
@@ -251,7 +251,7 @@ def renderVD():
     video.release()
     # print(os.listdir(os.path.join(absolute_path, ".venv")))
 
-    print(os.listdir(os.path.join(absolute_path, relative_path_video)))
+    print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
 
     # chèn nhạc vô video
     # my_clip = mpe.VideoFileClip(os.path.join(absolute_path, relative_path_video))
