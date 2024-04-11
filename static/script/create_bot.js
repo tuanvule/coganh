@@ -50,6 +50,7 @@ saveBtn.onclick = () => {
 }
 
 runBtn.onclick = () => {
+    const source = $("source")
     const code = editor.getValue()
     loader.style.display = "block"
     runBtn.style.display = "none"
@@ -63,7 +64,7 @@ runBtn.onclick = () => {
     // animationChild.style.right = "0";
     // animationChild.style.width = terminalBtn.clientWidth + "px";
     terminal.innerHTML = `>>> loading...`
-    video.innerHTML = `<source type="video/mp4">
+    video.innerHTML = `<source data-href="${source.dataset.href}" type="video/mp4">
     // Your browser does not support the video tag.`
     video.load()
     fetch("/upload_code", {
@@ -90,7 +91,7 @@ runBtn.onclick = () => {
         runBtn.style.display = "block"
         terminal.style.backgroundColor = "#000"
         setTimeout(() => {
-            video.innerHTML = `<source src="/static/upload_video/video.mp4" type="video/mp4">
+            video.innerHTML = `<source src="${source.dataset.href}" type="video/mp4">
             // Your browser does not support the video tag.`
             video.load()
         },1000)
