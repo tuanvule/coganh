@@ -7,6 +7,18 @@ import moviepy.editor as mpe
 from importlib import reload
 import traceback
 
+# import firebase_admin
+# from firebase_admin import credentials
+# from firebase_admin import firestore
+
+# cred = credentials.Certificate("firebase-adminsdk-354yy@coganh-6ab73.iam.gserviceaccount.com")
+# firebase_admin.initialize_app(cred, {
+#     'databaseUTL': 'https://coganh-6ab73-default-rtdb.asia-southeast1.firebasedatabase.app/'
+# })
+
+# fdb = firestore.client()
+
+
 # ROW = y
 # COLUMN = x
 # ==> board[y][x] == board[ROW][COLUMN]
@@ -230,10 +242,11 @@ def renderVD():
     relative_path_upload_img = "static/upload_img/"
     frame = cv2.imread(os.path.join(absolute_path, relative_path_chessboard_0))
 
-    video = cv2.VideoWriter(os.path.join(absolute_path, relative_path_video), 0, 1, frame.shape[:2])
+    video = cv2.VideoWriter("video.mp4", 0, 1, frame.shape[:2])
     for i in range(len(os.listdir(os.path.join(absolute_path, relative_path_upload_img)))):
         relative_path_chessboard = f"static/upload_img/chessboard{i}.png"
         video.write(cv2.imread(os.path.join(absolute_path, relative_path_chessboard)))
+        
     video.release()
 
     print(os.path.join(absolute_path, relative_path_video))
