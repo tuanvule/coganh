@@ -247,13 +247,13 @@ def renderVD():
         relative_path_chessboard = f"static/upload_img/chessboard{i}.png"
         print(relative_path_chessboard)
         video.write(cv2.imread(os.path.join(absolute_path, relative_path_chessboard)))
-        
-    video.release()
+    # video.release()
+
     print(frame)
     print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
     print(os.listdir(os.path.join(absolute_path, "static")))
     print(os.listdir(absolute_path))
-    print(os.listdir(os.path.join(absolute_path, ".venv")))
+    # print(os.listdir(os.path.join(absolute_path, ".venv")))
 
     # print(os.path.join(absolute_path, relative_path_video))
 
