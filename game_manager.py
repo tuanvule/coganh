@@ -188,7 +188,7 @@ def run_game(UserBot, Bot2): # Main
                 winner = "win"
             else:
                 winner = "lost"
-        elif (len(positions[1]) + len(positions[-1]) <= 2) or move_counter == 50:
+        elif (len(positions[1]) + len(positions[-1]) <= 2) or move_counter == 500:
             if player1.your_side == 1:
                 winner = "draw"
             else:

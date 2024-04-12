@@ -139,25 +139,36 @@ fightBtn.onclick = () => {
             enemy.style.backgroundColor = "red"
             info_elo_fluc_new.style.color = "#007BFF"
             newValue = parseInt(userElo.innerHTML) + Math.abs(parseInt(userElo.innerHTML) - parseInt(enemyElo.innerHTML)) * 0.2
+            if(userElo > enemyElo) {
+                let pre = userElo.innerHTML
+                userElo.innerHTML = parseInt(enemyElo.innerHTML) + 10
+                enemyElo.innerHTML = pre
+            }
         } else if(stt.status === "lost") {
             info_status.style.backgroundColor = "red"
             user.style.backgroundColor = "red"
             enemy.style.backgroundColor = "#007BFF"
             info_elo_fluc_new.style.color = "red"
-            newValue = parseInt(userElo.innerHTML) - Math.abs((parseInt(enemyElo.innerHTML) - parseInt(enemyElo.innerHTML)) * 0.2)
+            if(userElo > enemyElo) {
+                let pre = enemyElo.innerHTML
+                enemyElo.innerHTML = parseInt(userElo.innerHTML) + 10
+                userElo.innerHTML = pre
+            } else {
+                userElo.innerHTML = parseInt(userElo.innerHTML) - 10 
+            }
         } else {
             info_status.style.backgroundColor = "#333"
             user.style.backgroundColor = "#333"
             enemy.style.backgroundColor = "#333"
             info_elo_fluc_new.style.color = "#fff"
-            newValue = parseInt(userElo.innerHTML)
         }
+        newValue = parseInt(userElo.innerHTML)
     })
     .catch(err => console.log(err))
     .finally(() => {
         const source = $("source")
         loading.style.display = "none"
-        video.innerHTML = `<source src="${source.dataset.href}" type="video/mp4">
+        video.innerHTML = `<source data-href="${source.dataset.href}" src="${source.dataset.href}" type="video/mp4">
         // Your browser does not support the video tag.`
         video.load()
         video.style.display = "block"
