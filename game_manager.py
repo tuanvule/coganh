@@ -188,7 +188,7 @@ def run_game(UserBot, Bot2): # Main
                 winner = "win"
             else:
                 winner = "lost"
-        elif (len(positions[1]) + len(positions[-1]) <= 2) or move_counter == 200:
+        elif (len(positions[1]) + len(positions[-1]) <= 2) or move_counter == 100:
             if player1.your_side == 1:
                 winner = "draw"
             else:
@@ -241,11 +241,13 @@ def renderVD():
     relative_path_result = "static/upload_video/result.mp4"
     relative_path_upload_img = "static/upload_img/"
 
+    print("----------------------deo load dc---------------------------")
+
     clips = []
     
     for i in range(1,len(os.listdir(os.path.join(absolute_path, relative_path_upload_img)))-1):
         relative_path_chessboard = f"static/upload_img/chessboard{i}.png"
-        clips.append(mpe.ImageClip(os.path.join(absolute_path, relative_path_chessboard)).set_duration(2))
+        clips.append(mpe.ImageClip(os.path.join(absolute_path, relative_path_chessboard)).set_duration(1))
     
 
     # for m in base_dir:
@@ -267,11 +269,8 @@ def renderVD():
     # print(os.listdir(os.path.join(absolute_path, ".venv")))
 
     # chèn nhạc vô video
-    my_clip = mpe.VideoFileClip(os.path.join(absolute_path, relative_path_video))
-    audio_background = mpe.AudioFileClip(os.path.join(absolute_path, relative_path_audio)).set_duration(my_clip.duration)
-    my_clip = my_clip.set_audio(audio_background)
-    my_clip.write_videofile(os.path.join(absolute_path, relative_path_result))
-    my_clip.close()
+
+    print("----------------------load dc---------------------------")
 
 if __name__ == '__main__':
     import trainAI.Master as Master, CGEngine

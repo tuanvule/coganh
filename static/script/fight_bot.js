@@ -110,12 +110,13 @@ const userElo = $(".user-elo")
 
 fightBtn.onclick = () => {
     if(!selectedPlayer) return;
+    const source = $("source")
     video.style.display = "none";
     standBy.style.display = "none";
     loading.style.display = "block";
     user.style.backgroundColor = "#121212"
     enemy.style.backgroundColor = "#121212"
-    video.innerHTML = `<source type="video/mp4">
+    video.innerHTML = `<source data-href="${source.dataset.href}" src="${source.dataset.href}" type="video/mp4">
     // Your browser does not support the video tag.`
     fetch("/fighting", {
         method: "POST",
@@ -154,8 +155,9 @@ fightBtn.onclick = () => {
     })
     .catch(err => console.log(err))
     .finally(() => {
+        const source = $("source")
         loading.style.display = "none"
-        video.innerHTML = `<source src="/static/upload_video/result.mp4" type="video/mp4">
+        video.innerHTML = `<source src="${source.dataset.href}" type="video/mp4">
         // Your browser does not support the video tag.`
         video.load()
         video.style.display = "block"
