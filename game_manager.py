@@ -276,11 +276,11 @@ def renderVD():
     print(absolute_path)
 
     # chèn nhạc vô video
-    # my_clip = mpe.VideoFileClip(os.path.join(absolute_path, relative_path_video))
-    # audio_background = mpe.AudioFileClip(os.path.join(absolute_path, relative_path_audio)).set_duration(my_clip.duration)
-    # my_clip = my_clip.set_audio(audio_background)
-    # my_clip.write_videofile(os.path.join(absolute_path, relative_path_result))
-    # my_clip.close()
+    my_clip = mpe.VideoFileClip(os.path.join(absolute_path, relative_path_video))
+    audio_background = mpe.AudioFileClip(os.path.join(absolute_path, relative_path_audio)).set_duration(my_clip.duration)
+    my_clip = my_clip.set_audio(audio_background)
+    my_clip.write_videofile(os.path.join(absolute_path, relative_path_result))
+    my_clip.close()
 
 if __name__ == '__main__':
     import trainAI.Master as Master, CGEngine
