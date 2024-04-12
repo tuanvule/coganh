@@ -240,18 +240,40 @@ def renderVD():
     relative_path_audio = "static/audio.mp3"
     relative_path_result = "static/upload_video/result.mp4"
     relative_path_upload_img = "static/upload_img/"
-    frame = cv2.imread(os.path.join(absolute_path, relative_path_chessboard_0))
 
-    video = cv2.VideoWriter(os.path.join(absolute_path, relative_path_video), 0, 1, frame.shape[:2])
-    for i in range(len(os.listdir(os.path.join(absolute_path, relative_path_upload_img)))):
+    print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
+
+    base_dir = os.listdir(os.path.join(absolute_path, relative_path_upload_img))
+    print(base_dir)
+
+    clips = []
+    
+    for i in range(1,len(os.listdir(os.path.join(absolute_path, relative_path_upload_img)))-1):
         relative_path_chessboard = f"static/upload_img/chessboard{i}.png"
-        video.write(cv2.imread(os.path.join(absolute_path, relative_path_chessboard)))
-        
-    video.release()
+        clips.append(mpe.ImageClip(os.path.join(absolute_path, relative_path_chessboard)).set_duration(2))
+    
 
-    print(os.listdir(os.path.join(absolute_path, "static/upload_video")))   
+    # for m in base_dir:
+    #     if m.find("upload_img/chessboard"):
+    #         print(m)
+    #         clips.append(mpe.ImageClip(m).set_duration(2))
+            
 
-    # print(os.path.join(absolute_path, relative_path_video))
+    concat_clip = mpe.concatenate_videoclips(clips, method="compose")
+    concat_clip.write_videofile(os.path.join(absolute_path, relative_path_video), 1)
+
+    # frame = cv2.imread(os.path.join(absolute_path, relative_path_chessboard_0))
+    # video = cv2.VideoWriter(os.path.join(absolute_path, relative_path_video), cv2.VideoWriter_fourcc(*'mp4v'), 1, frame.shape[:2])
+    # for i in range(len(os.listdir(os.path.join(absolute_path, relative_path_upload_img)))):
+    #     relative_path_chessboard = f"static/upload_img/chessboard{i}.png"
+    #     video.write(cv2.imread(os.path.join(absolute_path, relative_path_chessboard)))
+    # # video.release()
+    # video.close()
+    # print(os.listdir(os.path.join(absolute_path, ".venv")))
+
+    print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
+    print(os.listdir(os.path.join(absolute_path, "static")))
+    print(absolute_path)
 
     # chèn nhạc vô video
     # my_clip = mpe.VideoFileClip(os.path.join(absolute_path, relative_path_video))

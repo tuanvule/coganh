@@ -87,6 +87,7 @@ runBtn.onclick = () => {
     })
     .catch(err => terminal.innerHTML = `>>> ${err}`)
     .finally(() => {
+        const source = $("source")
         loader.style.display = "none"
         runBtn.style.display = "block"
         terminal.style.backgroundColor = "#000"
