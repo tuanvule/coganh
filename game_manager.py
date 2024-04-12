@@ -241,11 +241,6 @@ def renderVD():
     relative_path_result = "static/upload_video/result.mp4"
     relative_path_upload_img = "static/upload_img/"
 
-    print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
-
-    base_dir = os.listdir(os.path.join(absolute_path, relative_path_upload_img))
-    print(base_dir)
-
     clips = []
     
     for i in range(1,len(os.listdir(os.path.join(absolute_path, relative_path_upload_img)))-1):
@@ -270,10 +265,6 @@ def renderVD():
     # # video.release()
     # video.close()
     # print(os.listdir(os.path.join(absolute_path, ".venv")))
-
-    print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
-    print(os.listdir(os.path.join(absolute_path, "static")))
-    print(absolute_path)
 
     # chèn nhạc vô video
     my_clip = mpe.VideoFileClip(os.path.join(absolute_path, relative_path_video))
