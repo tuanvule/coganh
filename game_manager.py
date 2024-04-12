@@ -247,18 +247,12 @@ def renderVD():
     
     for i in range(1,len(os.listdir(os.path.join(absolute_path, relative_path_upload_img)))-1):
         relative_path_chessboard = f"static/upload_img/chessboard{i}.png"
-        clips.append(mpe.ImageClip(os.path.join(absolute_path, relative_path_chessboard)).set_duration(1))
-    
-
-    # for m in base_dir:
-    #     if m.find("upload_img/chessboard"):
-    #         print(m)
-    #         clips.append(mpe.ImageClip(m).set_duration(2))
-            
+        clips.append(mpe.ImageClip(os.path.join(absolute_path, relative_path_chessboard)).set_duration(1))    
 
     concat_clip = mpe.concatenate_videoclips(clips, method="compose")
     concat_clip.write_videofile(os.path.join(absolute_path, relative_path_video), 1)
 
+    # chèn nhạc vô video
     # frame = cv2.imread(os.path.join(absolute_path, relative_path_chessboard_0))
     # video = cv2.VideoWriter(os.path.join(absolute_path, relative_path_video), cv2.VideoWriter_fourcc(*'mp4v'), 1, frame.shape[:2])
     # for i in range(len(os.listdir(os.path.join(absolute_path, relative_path_upload_img)))):
@@ -268,7 +262,6 @@ def renderVD():
     # video.close()
     # print(os.listdir(os.path.join(absolute_path, ".venv")))
 
-    # chèn nhạc vô video
 
     print("----------------------load dc---------------------------")
 
