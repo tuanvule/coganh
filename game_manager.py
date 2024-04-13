@@ -53,10 +53,9 @@ def __init__():
     player2.your_pos = player1.opp_pos = positions[player2.your_side]
 
     point = []
-
-    frame = cv2.imread("static\\img\\chessboard.png")
+    frame = cv2.imread(os.path.join(absolute_path,"static/img/chessboard.png"))
     frame_cop = frame.copy()
-    video = cv2.VideoWriter("static\\upload_video\\video.mp4", 0, 1, (600, 600))
+    video = cv2.VideoWriter(os.path.join(absolute_path, "static/upload_video/video.mp4"), 0, 1, (600, 600))
     for x, y in positions[1]:
         cv2.circle(frame_cop, (100*x+100,100*y+100), 22, (255,0,0), -1)
     for x, y in positions[-1]:
