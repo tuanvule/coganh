@@ -31,8 +31,8 @@ class Player:
         self.your_side = your_side
         self.board = board
 
-def __init__():
-    global game_state, positions, point, player1, player2, frame, video
+def declare():
+    global game_state, positions, static_image, point, player1, player2
 
     player1 = Player()
     player2 = Player()
@@ -52,15 +52,30 @@ def __init__():
     player1.your_pos = player2.opp_pos = positions[player1.your_side]
     player2.your_pos = player1.opp_pos = positions[player2.your_side]
 
+    # Initialization board
+    static_image = Image.new("RGB", (600, 600), "WHITE")
+    draw = ImageDraw.Draw(static_image)
+
+    draw.line((100, 100, 500, 100), fill="black", width=3)
+    draw.line((100, 200, 500, 200), fill="black", width=3)
+    draw.line((100, 300, 500, 300), fill="black", width=3)
+    draw.line((100, 400, 500, 400), fill="black", width=3)
+    draw.line((100, 500, 500, 500), fill="black", width=3)
+    draw.line((100, 100, 100, 500), fill="black", width=3)
+
+    draw.line((200, 100, 200, 500), fill="black", width=3)
+    draw.line((300, 100, 300, 500), fill="black", width=3)
+    draw.line((400, 100, 400, 500), fill="black", width=3)
+    draw.line((500, 100, 500, 500), fill="black", width=3)
+    draw.line((100, 100, 500, 500), fill="black", width=3)
+    draw.line((100, 500, 500, 100), fill="black", width=3)
+
+    draw.line((100, 300, 300, 100), fill="black", width=3)
+    draw.line((300, 100, 500, 300), fill="black", width=3)
+    draw.line((500, 300, 300, 500), fill="black", width=3)
+    draw.line((300, 500, 100, 300), fill="black", width=3)
+
     point = []
-    frame = cv2.imread(os.path.join(absolute_path,"static/img/chessboard.png"))
-    frame_cop = frame.copy()
-    video = cv2.VideoWriter(os.path.join(absolute_path, "static/upload_video/video.mp4"), 0, 1, (600, 600))
-    for x, y in positions[1]:
-        cv2.circle(frame_cop, (100*x+100,100*y+100), 22, (255,0,0), -1)
-    for x, y in positions[-1]:
-        cv2.circle(frame_cop, (100*x+100,100*y+100), 22, (0,0,255), -1)
-    video.write(frame_cop)
 
 # Board manipulation
 def Raise_exception(move, current_side, board):
@@ -126,11 +141,13 @@ def activation(option, session_name):
     except Exception: raise Exception(traceback.format_exc())
 def run_game(UserBot, Bot2): # Main
 
-    __init__()
+    declare()
     winner = False
     move_counter = 1
+    clips = []
+    relative_path_video = "static/upload_video/video.mp4"
 
-    # init_img(positions)
+    init_img(positions)
 
     while not winner:
 
@@ -157,7 +174,11 @@ def run_game(UserBot, Bot2): # Main
         remove += vay(opp_pos)
         if remove: point[:] += [move_selected_pos]*len(remove)
 
-        renderVD(positions, move, remove)
+        generate_image(positions, move_counter, move, remove, current_turn)
+        relative_path_chessboard = f"static/upload_img/chessboard.png"
+        clips.append(mpe.ImageClip(os.path.join(absolute_path, relative_path_chessboard)).set_duration(1))   
+        os.remove(os.path.join(absolute_path, relative_path_chessboard))
+        # renderVD(positions, move, remove)
 
         if not positions[1]:
             if player1.your_side == 1:
@@ -178,7 +199,11 @@ def run_game(UserBot, Bot2): # Main
         game_state["current_turn"] *= -1
         move_counter += 1
 
-    video.release()
+    # video.release()
+
+    concat_clip = mpe.concatenate_videoclips(clips, method="compose")
+    concat_clip.write_videofile(os.path.join(absolute_path, relative_path_video), 1)
+
     # chèn nhạc vô video
     # my_clip = mpe.VideoFileClip("static\\upload_video\\video.mp4")
     # audio_background = mpe.AudioFileClip('static\\audio.mp3').set_duration(my_clip.duration)
@@ -188,7 +213,7 @@ def run_game(UserBot, Bot2): # Main
 
     return winner, move_counter-1
 
-# def init_img(positions):
+def init_img(positions):
     image = static_image.copy()
     draw = ImageDraw.Draw(image)
 
@@ -198,7 +223,7 @@ def run_game(UserBot, Bot2): # Main
         draw.ellipse((x*100+80, y*100+80, x*100+120, y*100+120), fill="red", outline="red")
         
     image.save(os.getcwd()+"/static/upload_img/chessboard0.png", "PNG")
-# def generate_image(positions, move_counter, move, remove, current_turn):
+def generate_image(positions, move_counter, move, remove, current_turn):
     image = static_image.copy()
     draw = ImageDraw.Draw(image)
 
@@ -215,23 +240,23 @@ def run_game(UserBot, Bot2): # Main
     draw.ellipse((new_x*100+80, new_y*100+80, new_x*100+120, new_y*100+120), fill=(None, "blue", "red")[current_turn], outline="green", width=5)
     draw.ellipse((old_x*100+80, old_y*100+80, old_x*100+120, old_y*100+120), fill=None, outline="green", width=5)
 
-    image.save(os.getcwd()+f"/static/upload_img/chessboard{move_counter}.png", "PNG")
-def renderVD(positions, move, remove):
+    image.save(os.getcwd()+f"/static/upload_img/chessboard.png", "PNG")
+# def renderVD(positions, move, remove):
 
-    frame_cop = frame.copy()
-    for x, y in remove:
-        cv2.circle(frame_cop, (100*x+100,100*y+100), 22, (0,201,255), 3)
-    for x, y in positions[1]:
-        cv2.circle(frame_cop, (100*x+100,100*y+100), 22, (255,0,0), -1)
-    for x, y in positions[-1]:
-        cv2.circle(frame_cop, (100*x+100,100*y+100), 22, (0,0,255), -1)
-    new_x = move["new_pos"][0]
-    new_y = move["new_pos"][1]
-    old_x = move["selected_pos"][0]
-    old_y = move["selected_pos"][1]
-    cv2.circle(frame_cop, (100*new_x+100,100*new_y+100), 22, (0,128,0), 3)
-    cv2.circle(frame_cop, (100*old_x+100,100*old_y+100), 22, (0,128,0), 3)
-    video.write(frame_cop)
+    # frame_cop = frame.copy()
+    # for x, y in remove:
+    #     cv2.circle(frame_cop, (100*x+100,100*y+100), 22, (0,201,255), 3)
+    # for x, y in positions[1]:
+    #     cv2.circle(frame_cop, (100*x+100,100*y+100), 22, (255,0,0), -1)
+    # for x, y in positions[-1]:
+    #     cv2.circle(frame_cop, (100*x+100,100*y+100), 22, (0,0,255), -1)
+    # new_x = move["new_pos"][0]
+    # new_y = move["new_pos"][1]
+    # old_x = move["selected_pos"][0]
+    # old_y = move["selected_pos"][1]
+    # cv2.circle(frame_cop, (100*new_x+100,100*new_y+100), 22, (0,128,0), 3)
+    # cv2.circle(frame_cop, (100*old_x+100,100*old_y+100), 22, (0,128,0), 3)
+    # video.write(frame_cop)
 
     # biến đổi tập ảnh thành video
     # relative_path_chessboard_0 = "static/upload_img/chessboard0.png"
