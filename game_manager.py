@@ -263,7 +263,7 @@ def renderVD(positions, move, remove):
     # video.close()
     # print(os.listdir(os.path.join(absolute_path, ".venv")))
 
-
+    print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
     print("----------------------load dc---------------------------")
 
 if __name__ == '__main__':
