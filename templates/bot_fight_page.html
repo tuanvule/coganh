@@ -58,7 +58,7 @@
                     <img class="fight_screen-loading--img sword" src="{{url_for('static', filename='img/sword.png')}}" alt="">
                     <div><img class="fight_screen-loading--img roll" src="{{url_for('static', filename='img/roll.png')}}" alt=""></div>
                 </div>
-                <video style="display: none;" class="fight_screen-video" controls>
+                <video data-isreload="false" style="display: none;" class="fight_screen-video" controls>
                     <source data-href="{{ url_for('static', filename='upload_video/video.mp4') }}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>

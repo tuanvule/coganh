@@ -144,6 +144,7 @@ fightBtn.onclick = () => {
                 userElo.innerHTML = parseInt(enemyElo.innerHTML) + 10
                 enemyElo.innerHTML = pre
             }
+            newValue = parseInt(userElo.innerHTML)
         } else if(stt.status === "lost") {
             info_status.style.backgroundColor = "red"
             user.style.backgroundColor = "red"
@@ -156,26 +157,32 @@ fightBtn.onclick = () => {
             } else {
                 userElo.innerHTML = parseInt(userElo.innerHTML) - 10 
             }
+            newValue = parseInt(userElo.innerHTML)
         } else {
             info_status.style.backgroundColor = "#333"
             user.style.backgroundColor = "#333"
             enemy.style.backgroundColor = "#333"
             info_elo_fluc_new.style.color = "#fff"
+            newValue = parseInt(userElo.innerHTML)
         }
-        newValue = parseInt(userElo.innerHTML)
     })
     .catch(err => console.log(err))
     .finally(() => {
         const source = $("source")
-        loading.style.display = "none"
-        video.innerHTML = `<source data-href="${source.dataset.href}" src="${source.dataset.href}" type="video/mp4">
-        // Your browser does not support the video tag.`
-        video.load()
-        video.style.display = "block"
-        setTimeout(() => info.style.display = "block", 1000)
+        console.dir(video)
+        // const fightScreen = $(".fight_screen")
+        setTimeout(() => {
+            // fightScreen.innerHTML += 
+            loading.style.display = "none"
+            video.innerHTML = `<source data-href="${source.dataset.href}" src="${source.dataset.href}" type="video/mp4">
+            // Your browser does not support the video tag.`
+            video.style.display = "block"
+            console.log("dcm")
+            video.load()
+            setTimeout(() => info.style.display = "block", 1000)
+        }, 15000)
     })
 }
-
 
 arrow.onanimationend = () => {
     // console.log(newValue)
