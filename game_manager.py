@@ -174,6 +174,7 @@ def run_game(UserBot, Bot2): # Main
         remove += vay(opp_pos)
         if remove: point[:] += [move_selected_pos]*len(remove)
 
+        print("------------------", move_counter, "--------------------------")
         generate_image(positions, move_counter, move, remove, current_turn)
         relative_path_chessboard = f"static/upload_img/chessboard.png"
         clips.append(mpe.ImageClip(os.path.join(absolute_path, relative_path_chessboard)).set_duration(1))   
@@ -288,8 +289,8 @@ def generate_image(positions, move_counter, move, remove, current_turn):
     # video.close()
     # print(os.listdir(os.path.join(absolute_path, ".venv")))
 
-    print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
-    print("----------------------load dc---------------------------")
+    # print(os.listdir(os.path.join(absolute_path, "static/upload_video")))
+    # print("----------------------load dc---------------------------")
 
 if __name__ == '__main__':
     import trainAI.Master as Master, CGEngine
