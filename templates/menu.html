@@ -108,7 +108,6 @@
   const backBtn = document.querySelector(".notification_directional--back")
   const fightBotBtn = document.querySelector(".fight_bot")
   let fightable = '{{current_user.fightable}}'
-  console.log(fightable)
 
   window.addEventListener("pageshow", function ( event ) {
     var historyTraversal = event.persisted || ( typeof window.performance != "undefined" && window.performance.navigation.type === 2 );

@@ -28,7 +28,7 @@
                             <div class="warrior-info--name">{{i[0]}}</div>
                             <div class="warrior-info--elo">{{i[1]}}</div>
                         </div>
-                    </li>        
+                    </li>
                 {% endfor %}
             </ul>
             <div class="info_header">Kết quả ván đấu</div>
@@ -58,8 +58,8 @@
                     <img class="fight_screen-loading--img sword" src="{{url_for('static', filename='img/sword.png')}}" alt="">
                     <div><img class="fight_screen-loading--img roll" src="{{url_for('static', filename='img/roll.png')}}" alt=""></div>
                 </div>
-                <video data-isreload="false" style="display: none;" class="fight_screen-video" controls>
-                    <source data-href="{{ url_for('static', filename='upload_video/video.mp4') }}" type="video/mp4">
+                <video data-isreload="false" style="display: none;" class="fight_screen-video" controls cache="no-store">
+                    <source type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </div>

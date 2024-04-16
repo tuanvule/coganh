@@ -1,11 +1,13 @@
 from random import choice
 import os
+import glob
 from PIL import Image, ImageDraw
 from copy import deepcopy
 import cv2
 import moviepy.editor as mpe
 from importlib import reload
 import traceback
+import datetime
 
 # import firebase_admin
 # from firebase_admin import credentials
@@ -146,6 +148,7 @@ def run_game(UserBot, Bot2): # Main
     move_counter = 1
     clips = []
     relative_path_video = "static/upload_video/video.mp4"
+    relative_path_result = "static/upload_video/result"
 
     init_img(positions)
 
@@ -177,20 +180,20 @@ def run_game(UserBot, Bot2): # Main
         print("------------------", move_counter, "--------------------------")
         generate_image(positions, move_counter, move, remove, current_turn)
         relative_path_chessboard = f"static/upload_img/chessboard.png"
-        clips.append(mpe.ImageClip(os.path.join(absolute_path, relative_path_chessboard)).set_duration(1))   
+        clips.append(mpe.ImageClip(os.path.join(absolute_path, relative_path_chessboard)).set_duration(1))
         os.remove(os.path.join(absolute_path, relative_path_chessboard))
         # renderVD(positions, move, remove)
 
         if not positions[1]:
             if player1.your_side == 1:
-                winner = "loose"
+                winner = "lost"
             else:
                 winner = "win"
         elif not positions[-1]:
             if player1.your_side == 1:
                 winner = "win"
             else:
-                winner = "loose"
+                winner = "lost"
         elif (len(positions[1]) + len(positions[-1]) <= 2) or move_counter == 500:
             if player1.your_side == 1:
                 winner = "draw"
@@ -202,17 +205,26 @@ def run_game(UserBot, Bot2): # Main
 
     # video.release()
 
+    current_time = datetime.datetime.now().microsecond
+    new_url = relative_path_result + str(current_time) + ".mp4"
+    url = os.path.join(absolute_path, new_url)
+
+    # print(old_video)
+    old_video = glob.glob(os.path.join(absolute_path, "static/upload_video/result*.mp4"))
+    for vid in old_video:
+        os.remove(vid)
+        
     concat_clip = mpe.concatenate_videoclips(clips, method="compose")
     concat_clip.write_videofile(os.path.join(absolute_path, relative_path_video), 1)
 
     # chèn nhạc vô video
-    # my_clip = mpe.VideoFileClip("static\\upload_video\\video.mp4")
-    # audio_background = mpe.AudioFileClip('static\\audio.mp3').set_duration(my_clip.duration)
-    # my_clip = my_clip.set_audio(audio_background)
-    # my_clip.write_videofile("static\\upload_video\\result.mp4")
-    # my_clip.close()
+    my_clip = mpe.VideoFileClip(os.path.join(absolute_path, relative_path_video))
+    audio_background = mpe.AudioFileClip(os.path.join(absolute_path, "static/audio.mp3")).set_duration(my_clip.duration)
+    my_clip = my_clip.set_audio(audio_background)
+    my_clip.write_videofile(url)
+    my_clip.close()
 
-    return winner, move_counter-1
+    return winner, move_counter-1, new_url
 
 def init_img(positions):
     image = static_image.copy()
