@@ -130,8 +130,8 @@ def menu():
         login_user(user)
         return render_template('menu.html', current_user=current_user)
     else:
-        user = User.query.where(User.username == current_user.username).first()
-        logout_user(user)
+        if current_user:
+            logout_user()
         return redirect(url_for('login'))
         
 
