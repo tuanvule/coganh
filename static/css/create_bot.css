@@ -84,7 +84,7 @@ body {
 
 .container_element {
     height: 100%;
-    flex: 1;
+    width: 50%;
     display: flex;
 }
 
@@ -125,6 +125,7 @@ body {
     position: relative;
     width: fit-content;
     margin-left: 2px;
+    overflow-y: scroll;
 }
 
 .utility_nav-block--item {
@@ -191,7 +192,8 @@ body {
     height: 100%;
     margin-top: 5px;
     padding: 5px;
-    overflow-y: scroll;
+    overflow: scroll;
+    /* max-width: 100%; */
 }
 
 .output {

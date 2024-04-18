@@ -117,6 +117,7 @@ def register():
 @login_required
 def logout():
     logout_user()
+    session.clear()
     flash("Bạn đã đăng xuất!!!", category='info')
     return redirect(url_for('home_page'))
 

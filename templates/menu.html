@@ -95,7 +95,7 @@
 
   <div class="content">
     <a class="btn" href="{{ url_for('create_bot') }}">Tạo bot</a>
-    <a class="btn fight_bot" style="margin: 0 30px;">đấu bot</a>
+    <a class="btn bot_bot" style="margin: 0 30px;">đấu bot</a>
     <a class="btn" href="{{ url_for('human_bot') }}">chơi cờ</a>
   </div>
   <div class="LoginTheme">
@@ -103,10 +103,10 @@
   </div class='LogginTheme'>
 </body>
 <script>
-  const fightBotDir = document.querySelector(".fight_bot")
+  const fightBotDir = document.querySelector(".bot_bot")
   const notification = document.querySelector(".notification")
   const backBtn = document.querySelector(".notification_directional--back")
-  const fightBotBtn = document.querySelector(".fight_bot")
+  const fightBotBtn = document.querySelector(".bot_bot")
   let fightable = '{{current_user.fightable}}'
 
   window.addEventListener("pageshow", function ( event ) {
