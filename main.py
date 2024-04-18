@@ -81,9 +81,12 @@ def home_page():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        print("\n---------------onlogin------------------\n")
         user = User.query.filter_by(username=form.username.data).first()
         if user:
+            print("\n---------------checkuser------------------\n")
             if bcrypt.check_password_hash(user.password, form.password.data):
+                print("\n---------------co user------------------\n")
                 login_user(user)
                 flash("Đăng nhập thành công", category='success')
                 return redirect(url_for('menu'))
@@ -96,13 +99,18 @@ def login():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
+        print("\n---------------onregister------------------\n")
         hashed_password = bcrypt.generate_password_hash(form.password.data)
         new_user = User(username=form.username.data, password=hashed_password, elo=0, fightable=False)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))
     for err_msg in form.errors.values(): #If there are errors from the validations
+        print("\n---------------err------------------\n", err_msg[0])
         flash(err_msg[0], category="danger")
+
+    print("\n--------------deobt------------------\n")
+
     return render_template('register.html', form=form)
 
 
@@ -234,7 +242,7 @@ def update_rank_board():
 
     return users
 
-if __name__ == '__main__':
-    open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
-    Timer(1, open_browser).start()
-    app.run(port=5000, debug=True, use_reloader=False)
+# if __name__ == '__main__':
+#     open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
+#     Timer(1, open_browser).start()
+#     app.run(port=5000, debug=True, use_reloader=False)
