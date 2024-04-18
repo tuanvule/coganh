@@ -89,11 +89,10 @@ def login():
             if bcrypt.check_password_hash(user.password, form.password.data):
                 secret_key = generate_secret_key(form.username.data)
                 session['secret_key'] = secret_key
+                session['username'] = form.username.data
                 # print(session['secret_key'])
                 login_user(user)
                 flash("Đăng nhập thành công", category='success')
-                # session.pop('username', None)
-                # session.pop('password', None)
                 return redirect(url_for('menu'))
             else: flash("Mật khẩu không hợp lệ! Vui lòng thử lại", category='danger')
         else: flash("Tên đăng nhập không hợp lệ! Vui lòng thử lại", category='danger')
@@ -129,6 +128,8 @@ def logout():
 def menu():
     if 'secret_key' in session:
         print(session['secret_key'])
+        user = User.query.where(User.username == session['username']).first()
+        login_user(user)
         return render_template('menu.html', current_user=current_user)
     else:
         return redirect(url_for('login'))
