@@ -11,6 +11,7 @@ import trainAI.Master
 import webbrowser
 from threading import Timer
 import json
+import secrets
 
 class Player:
     def __init__(self, dict: dict):
@@ -19,7 +20,7 @@ class Player:
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['SECRET_KEY'] = 'pkH{XQup/)QikTx'
+app.config['SECRET_KEY'] = secrets.token_hex(16)
 app.config['WTF_CSRF_ENABLED'] = False
 app.app_context().push()
 
