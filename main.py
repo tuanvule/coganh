@@ -110,8 +110,6 @@ def register():
     for err_msg in form.errors.values(): #If there are errors from the validations
         flash(err_msg[0], category="danger")
 
-    print("\n--------------deobt------------------\n")
-
     return render_template('register.html', form=form)
 
 
@@ -132,6 +130,8 @@ def menu():
         login_user(user)
         return render_template('menu.html', current_user=current_user)
     else:
+        user = User.query.where(User.username == current_user.username).first()
+        logout_user(user)
         return redirect(url_for('login'))
         
 
