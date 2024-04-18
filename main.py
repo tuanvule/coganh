@@ -20,6 +20,7 @@ class Player:
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'pkH{XQup/)QikTx'
+app.config['WTF_CSRF_ENABLED'] = False
 app.app_context().push()
 
 #Flask Alchemy initialization
