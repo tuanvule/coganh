@@ -1,4 +1,4 @@
-from flask import Flask, flash, request, redirect, url_for, render_template, jsonify
+from flask import Flask, flash, request, redirect, url_for, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -35,10 +35,10 @@ login_manager.login_view='login'
 login_manager.login_message_category = "info"
 login_manager.login_message = "Xin hãy đăng nhập để truy cập"
 
-
-# user = User.query.filter_by(username='tlv23').first()
-# user.elo = '100000'
-# db.session.commit()
+def generate_secret_key(user_name):
+    # Tạo secret key dựa trên ID của người dùng và secret key mặc định
+    secret_key = f"{app.config['SECRET_KEY']}_{user_name}"
+    return secret_key
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -82,12 +82,11 @@ def home_page():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        print("\n---------------onlogin------------------\n")
         user = User.query.filter_by(username=form.username.data).first()
         if user:
-            print("\n---------------checkuser------------------\n")
             if bcrypt.check_password_hash(user.password, form.password.data):
-                print("\n---------------co user------------------\n")
+                secret_key = generate_secret_key(form.username.data)
+                session['secret_key'] = secret_key
                 login_user(user)
                 flash("Đăng nhập thành công", category='success')
                 return redirect(url_for('menu'))
@@ -100,14 +99,12 @@ def login():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        print("\n---------------onregister------------------\n")
         hashed_password = bcrypt.generate_password_hash(form.password.data)
         new_user = User(username=form.username.data, password=hashed_password, elo=0, fightable=False)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))
     for err_msg in form.errors.values(): #If there are errors from the validations
-        print("\n---------------err------------------\n", err_msg[0])
         flash(err_msg[0], category="danger")
 
     print("\n--------------deobt------------------\n")
