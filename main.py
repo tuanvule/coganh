@@ -234,7 +234,7 @@ def update_rank_board():
 
     return users
 
-# if __name__ == '__main__':
-#     open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
-#     Timer(1, open_browser).start()
-#     app.run(port=5000, debug=True, use_reloader=False)
+if __name__ == '__main__':
+    open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
+    Timer(1, open_browser).start()
+    app.run(port=5000, debug=True, use_reloader=False)
