@@ -30,7 +30,8 @@ db = SQLAlchemy(app)
 app.config['MAX_CONTENT_LENGTH'] = 16_000_00  #Max file size
 app.config['UPLOAD_FOLDER'] = "static/botfiles"
 
-login_manager = LoginManager(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
 login_manager.login_view='login'
 login_manager.login_message_category = "info"
 login_manager.login_message = "Xin hãy đăng nhập để truy cập"
@@ -87,13 +88,15 @@ def login():
             if bcrypt.check_password_hash(user.password, form.password.data):
                 secret_key = generate_secret_key(form.username.data)
                 session['secret_key'] = secret_key
+                # print(session['secret_key'])
                 login_user(user)
                 flash("Đăng nhập thành công", category='success')
+                # session.pop('username', None)
+                # session.pop('password', None)
                 return redirect(url_for('menu'))
             else: flash("Mật khẩu không hợp lệ! Vui lòng thử lại", category='danger')
         else: flash("Tên đăng nhập không hợp lệ! Vui lòng thử lại", category='danger')
     return render_template('login.html', form=form)
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -123,7 +126,12 @@ def logout():
 @app.route('/menu')
 @login_required
 def menu():
-    return render_template('menu.html', current_user=current_user)
+    if 'secret_key' in session:
+        print(session['secret_key'])
+        return render_template('menu.html', current_user=current_user)
+    else:
+        return redirect(url_for('login'))
+        
 
 @app.route('/upload_code', methods=['POST'])
 @login_required
