@@ -96,7 +96,7 @@
   <div class="content">
     <a class="btn" href="{{ url_for('create_bot') }}">Tạo bot</a>
     <a class="btn fight_bot" style="margin: 0 30px;">đấu bot</a>
-    <a class="btn" href="{{ url_for('play_chess_page') }}">chơi cờ</a>
+    <a class="btn" href="{{ url_for('human_bot') }}">chơi cờ</a>
   </div>
   <div class="LoginTheme">
     Logged in as : <strong > {{ current_user.username }} </strong> | <a href='{{ url_for("login") }}'>Đăng xuất</a>
@@ -121,7 +121,7 @@
     if(fightable === "False") {
       notification.style.display = "block"
     } else {
-      window.location.href = "{{ url_for('bot_fight_page') }}"
+      window.location.href = "{{ url_for('bot_bot') }}"
     }
   }
   backBtn.onclick = () => notification.style.display = "none"

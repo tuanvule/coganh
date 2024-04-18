@@ -175,21 +175,21 @@ def get_users():
     users = [(i.username, i.elo) for i in User.query.filter(User.username != current_user.username).order_by(User.elo.desc()).limit(10).all()]
     return users
 
-@app.route('/bot_fight_page')
+@app.route('/bot_bot')
 @login_required
-def bot_fight_page():
+def bot_bot():
     # users = User.query.order_by(User.elo.desc()).limit(10).all()
     # rank_board = User.query.order_by(User.elo.desc()).limit(5).all()
-    # return render_template('bot_fight_page.html', users = users, rank_board = rank_board)
+    # return render_template('bot_bot.html', users = users, rank_board = rank_board)
     users = [(i.username, i.elo) for i in User.query.filter(User.username != current_user.username).order_by(User.elo.desc()).limit(10).all()]
     rank_board = [(i.username, i.elo) for i in User.query.order_by(User.elo.desc()).limit(5).all()]
-    return render_template('bot_fight_page.html', users = users, rank_board = rank_board)
+    return render_template('bot_bot.html', users = users, rank_board = rank_board)
 
-@app.route('/play_chess_page')
+@app.route('/human_bot')
 @login_required
-def play_chess_page():
+def human_bot():
     users = [(i.username, i.elo) for i in User.query.all()]
-    return render_template('play_chess_page.html', users = users)
+    return render_template('human_bot.html', users = users)
 
 @app.route('/get_pos_of_playing_chess', methods=['POST'])
 @login_required
@@ -234,7 +234,7 @@ def update_rank_board():
 
     return users
 
-if __name__ == '__main__':
-    open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
-    Timer(1, open_browser).start()
-    app.run(port=5000, debug=True, use_reloader=False)
+# if __name__ == '__main__':
+#     open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
+#     Timer(1, open_browser).start()
+#     app.run(port=5000, debug=True, use_reloader=False)

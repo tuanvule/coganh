@@ -8,6 +8,7 @@
 <body class="text-center">
     <div class="container" style="display: flex; flex-direction: column; align-items: center;">
         <form method="POST" class="form-register" style="color:white">
+            {{ form.csrf_token }}
             {{ form.hidden_tag() }}
             <br>
             <h1 class="h3 mb-3 font-weight-normal">
