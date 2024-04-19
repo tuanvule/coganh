@@ -61,10 +61,8 @@ runBtn.onclick = () => {
     ruleBtn.style.color = "#ccc"
     resultBtn.style.color = "#ccc"
     changeAnimation(terminalBtn, `${((terminalBtn.clientWidth - 10) / animation.clientWidth * 100)}%`, terminalBtn.clientWidth + "px", "terminal")
-    // animationChild.style.right = "0";
-    // animationChild.style.width = terminalBtn.clientWidth + "px";
     terminal.innerHTML = `>>> loading...`
-    video.load()
+    gameResult = null
     fetch("/upload_code", {
         method: "POST",
         headers: {
@@ -74,6 +72,7 @@ runBtn.onclick = () => {
     })
     .then(res => res.json())
     .then(data => {
+        console.log(data)
         if(data.code === 200) {
             gameResult = data
             terminal.innerHTML = ">>> success"
@@ -89,7 +88,7 @@ runBtn.onclick = () => {
         loader.style.display = "none"
         runBtn.style.display = "block"
         terminal.style.backgroundColor = "#000"
-        if(gameResult.code === 200) {
+        if(gameResult?.code === 200) {
             source.src = gameResult.new_url
             video.style.display = "inline"
             video.load()
@@ -285,17 +284,18 @@ const guides = [
 const utility_nav_block = $(".utility_nav-block")
 
 function toggleMode(mode) {
+    uniBlock.forEach(ele => ele.style.display = "none")
     switch (mode) {
         case "terminal":           
-            uniBlock.forEach(ele => ele.style.display = "none")
             terminal.style.display = "block"
             break;
         case "rule":
-            uniBlock.forEach(ele => ele.style.display = "none")
+            // uniBlock.forEach(ele => ele.style.display = "none")
             rule.style.display = "flex"
+            break;
         case "result": 
             if(gameResult) {
-                uniBlock.forEach(ele => ele.style.display = "none")
+                // uniBlock.forEach(ele => ele.style.display = "none")
                 console.log(gameResult)
                 const {max_move_win, status} = gameResult
                 const moveCount = $(".info_move-count")
@@ -305,6 +305,7 @@ function toggleMode(mode) {
                 moveCount.innerHTML = `moves: ${max_move_win}`
                 result.style.display = "flex"
             }
+            break;
         default:
             break;
     }

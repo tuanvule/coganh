@@ -77,6 +77,12 @@ class RegisterForm(FlaskForm):
 
 @app.route('/')
 def home_page():
+    if 'secret_key' in session:
+        user = User.query.where(User.username == session['username']).first()
+        login_user(user)
+    else:
+        if current_user:
+            logout_user()
     return render_template('home.html')
 
 

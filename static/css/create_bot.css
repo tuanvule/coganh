@@ -193,6 +193,7 @@ body {
     margin-top: 5px;
     padding: 5px;
     overflow: scroll;
+    display: none;
     /* max-width: 100%; */
 }
 
@@ -212,7 +213,7 @@ body {
 }
 
 .utility_block-element.result {
-    display: flex;
+    display: none;
     height: 100%;
 }
 
