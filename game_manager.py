@@ -58,7 +58,7 @@ def declare():
 
     point = []
 
-    frame = Image.open(absolute_path + "\\static\\img\\chessboard.png")
+    frame = Image.open(absolute_path + "static/img/chessboard.png")
     frame_cop = frame.copy()
     draw = ImageDraw.Draw(frame_cop)
 
@@ -175,7 +175,7 @@ def run_game(UserBot, Bot2): # Main
         move_counter += 1
 
     current_time = datetime.datetime.now().microsecond
-    new_url = f"/static/upload_video/result_{current_user.username}_{current_time}.mp4"
+    new_url = f"s/static/upload_video/result_{current_user.username}_{current_time}.mp4"
     url = absolute_path + new_url
 
     old_video = glob.glob(os.path.join(absolute_path, f"static/upload_video/result_{current_user.username}_*.mp4"))
