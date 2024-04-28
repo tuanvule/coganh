@@ -1,5 +1,6 @@
 from random import choice
 import os
+import requests
 import glob
 from PIL import Image, ImageDraw
 from copy import deepcopy
@@ -10,23 +11,15 @@ import traceback
 import datetime
 import numpy as np
 from flask_login import current_user
-
-# import firebase_admin
-# from firebase_admin import credentials
-# from firebase_admin import firestore
-
-# cred = credentials.Certificate("firebase-adminsdk-354yy@coganh-6ab73.iam.gserviceaccount.com")
-# firebase_admin.initialize_app(cred, {
-#     'databaseUTL': 'https://coganh-6ab73-default-rtdb.asia-southeast1.firebasedatabase.app/'
-# })
-
-# fdb = firestore.client()
-
+from fdb.firestore_config import fdb
+from fdb.uti.upload import upload_video_to_storage
 
 # ROW = y
 # COLUMN = x
 # ==> board[y][x] == board[ROW][COLUMN]
 absolute_path = os.getcwd()
+
+boards = []
 
 class Player:
     def __init__(self, your_pos=None, opp_pos=None, your_side=None, board=None):
@@ -136,8 +129,11 @@ def run_game(UserBot, Bot2): # Main
     declare()
     winner = False
     move_counter = 1
+    body = []
 
     while not winner:
+
+        boards.append(game_state["board"])
 
         current_turn = game_state["current_turn"]
         if player1.your_side == current_turn:
@@ -162,13 +158,20 @@ def run_game(UserBot, Bot2): # Main
         remove += vay(opp_pos)
         if remove: point[:] += [move_selected_pos]*len(remove)
 
-        generate_image(positions, move, remove)
+        print("-------------", move_counter, "------------")
 
+        # generate_image(positions, move, remove)
+
+        nPos = deepcopy(positions)
+
+        body.append([nPos, move, remove])
+
+        # print(positions, '\n\n\n\n\n')
         if not positions[1]:
             winner = "lost"
         elif not positions[-1]:
             winner = "win"
-        elif (len(positions[1]) + len(positions[-1]) <= 2) or move_counter == 500:
+        elif (len(positions[1]) + len(positions[-1]) <= 2) or move_counter == 400:
             winner = "draw"
 
         game_state["current_turn"] *= -1
@@ -178,18 +181,36 @@ def run_game(UserBot, Bot2): # Main
     new_url = f"/static/upload_video/result_{current_user.username}_{current_time}.mp4"
     url = absolute_path + new_url
 
-    old_video = glob.glob(os.path.join(absolute_path, f"/static/upload_video/result_{current_user.username}_*.mp4"))
-    print(old_video)
-    for vid in old_video:
-        os.remove(vid)
+    # old_video = glob.glob(os.path.join(absolute_path, f"static/upload_video/result_{current_user.username}_*.mp4"))
+    # print(old_video)
+    # for vid in old_video:
+    #     os.remove(vid)
 
-    concat_video = mpe.concatenate_videoclips(video, method="compose")
+    # concat_video = mpe.concatenate_videoclips(video, method="compose")
 
     # chèn nhạc vô video
-    audio_background = mpe.AudioFileClip(absolute_path + '/static/audio.mp3').set_duration(concat_video.duration)
-    my_clip = concat_video.set_audio(audio_background)
-    my_clip.write_videofile(url, 1)
-    my_clip.close()
+    # audio_background = mpe.AudioFileClip(absolute_path + '/static/audio.mp3').set_duration(concat_video.duration)
+    # my_clip = concat_video.set_audio(audio_background)
+    # my_clip.write_videofile(url, 1)
+    # my_clip.close()
+
+    # furl = upload_video_to_storage(url, "videos/video.mp4")
+
+    # print("------------", furl, "------------------")
+
+    # print(boards)
+
+    # for [positions, move, remove] in body:
+    #     print(positions)
+    #     print(move)
+    #     print(remove)
+    #     print('\n\n\n\n')
+        # generate_image(positions,move,remove)
+    # print(body)
+    res = requests.post("http://tlv23.pythonanywhere.com//generate_video", json=body)
+    print(res.text)
+    new_url = res.text
+    # ur = res.json()
 
     return winner, move_counter-1, new_url
 

@@ -265,6 +265,7 @@ body {
 
 .fight_screen-video {
     height: 100%;
+    max-width: 98%;
     margin: auto;
 }
 
@@ -347,7 +348,9 @@ body {
 .fight_btn {
     padding: 10px 30px;
     margin: 10px 10px;
-    text-align: center;
+    /* text-align: center; */
+    display: flex;
+    justify-content: center;
     background-color: #191B26;
     border-radius: 5px;
     cursor: pointer;
@@ -357,4 +360,13 @@ body {
 
 .fight_btn:hover {
     filter: brightness(90%);
+}
+
+.loading_btn {
+    border: 4px solid #f3f3f3; 
+    border-top: 4px solid #000; 
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    animation: spin 2s linear infinite;
 }

@@ -6,6 +6,9 @@ let players = $$(".player")
 const newPoint = $(".info_elo-fluc--new")
 const arrow = $(".info_elo-fluc--arrow")
 const fightBtn = $(".fight_btn")
+let fightBtnStatus = {
+    onLoading: false,
+}
 let selectedPlayer
 let newValue = 0
 
@@ -33,29 +36,23 @@ function resetSuggestion() {
     })
 }
 
+const rankColor = [
+    "#54DDFE",
+    "#FD80FF",
+    "yellow",
+    "silver",
+    "brown",
+]
+
 function createTopList() {
     let warrior = $$(".warrior")
     // warrior.forEach((e,i) => {if(i > 2) {e.querySelector(".crown").style.display = "none"}})
 
-    const t1C = warrior[0].querySelector(".crown")
-    t1C.style.color = "#54DDFE"
-    warrior[0].querySelector(".rank").innerHTML = 1
-
-    const t2C = warrior[1].querySelector(".crown")
-    t2C.style.color = "#FD80FF"
-    warrior[1].querySelector(".rank").innerHTML = 2
-
-    const t3C = warrior[2].querySelector(".crown")
-    t3C.style.color = "yellow"
-    warrior[2].querySelector(".rank").innerHTML = 3
-
-    const t4C = warrior[3].querySelector(".crown")
-    t4C.style.color = "silver"
-    warrior[3].querySelector(".rank").innerHTML = 4
-
-    const t5C = warrior[4].querySelector(".crown")
-    t5C.style.color = "brown"
-    warrior[4].querySelector(".rank").innerHTML = 5
+    Array.from(warrior).forEach((wr, i) => {
+        const tC = wr.querySelector(".crown")
+        tC.style.color = rankColor[i]
+        wr.querySelector(".rank").innerHTML = i+1
+    })
 }
 
 createTopList()
@@ -173,15 +170,20 @@ function updateRankBoard(newValue) {
 }
 
 fightBtn.onclick = () => {
-    if(!selectedPlayer) return;
-    newPoint.innerHTML
+    if(!selectedPlayer || fightBtnStatus.onLoading) return;
     let stt = {}
     info.style.display = "none"
     video.style.display = "none";
     standBy.style.display = "none";
     loading.style.display = "block";
+    $(".info_elo-fluc--pre").innerHTML = userElo.innerHTML
+    newPoint.innerHTML = ""
     user.style.backgroundColor = "#121212"
     enemy.style.backgroundColor = "#121212"
+
+    fightBtn.innerHTML = `<div class="loading_btn"></div>`
+    fightBtn.style.backgroundColor = "#191B26"
+    fightBtnStatus.onLoading = true
     fetch("/fighting", {
         method: "POST",
         headers: {
@@ -237,6 +239,9 @@ fightBtn.onclick = () => {
         source.src = stt.new_url
         video.style.display = "block"
         video.load()
+        fightBtn.innerHTML = "chọn đối thủ để đấu"
+        fightBtnStatus.onLoading = false
+        selectedPlayer = null
         setTimeout(() => info.style.display = "block", 1000)
     })
 }

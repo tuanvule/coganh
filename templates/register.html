@@ -16,13 +16,13 @@
             </h1>
             <br>
             {{ form.username.label() }}
-            {{ form.username(class="form-control", placeholder="Tên đăng nhập") }}
+            {{ form.username(class="form-control", placeholder="Tên đăng nhập", style="color: #fff;") }}
 
             {{ form.password.label() }}
-            {{ form.password(class="form-control", placeholder="Mật khẩu") }}
+            {{ form.password(class="form-control", placeholder="Mật khẩu", style="color: #fff;") }}
 
             {{ form.conf_pass.label() }}
-            {{ form.conf_pass(class="form-control", placeholder="Xác nhận mật khẩu") }}
+            {{ form.conf_pass(class="form-control", placeholder="Xác nhận mật khẩu", style="color: #fff;") }}
             <br>
             {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
         </form>
