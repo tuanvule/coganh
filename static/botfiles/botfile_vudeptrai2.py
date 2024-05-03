@@ -19,7 +19,6 @@ def is_valid_move(move, current_side, board): # HÀM HỖ TRỢ: KIỂM TRA NƯ�
     return False
     
 def main(player):
-
     while True:
         selected_pos = random.choice(player.your_pos)
         board = player.board

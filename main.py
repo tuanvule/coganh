@@ -191,7 +191,15 @@ def save_code():
 @app.route('/create_bot')
 @login_required
 def create_bot():
-    return render_template('create_bot.html')
+    if 'secret_key' in session:
+        user = User.query.where(User.username == session['username']).first()
+        login_user(user)
+        return render_template('create_bot.html')
+    else:
+        if current_user:
+            logout_user()
+        return redirect(url_for('login'))
+        
 
 @app.route('/get_code')
 @login_required
@@ -209,9 +217,17 @@ def get_users():
 @app.route('/bot_bot')
 @login_required
 def bot_bot():
-    users = [(i.username, i.elo) for i in User.query.filter(User.username != current_user.username, User.fightable == True).order_by(User.elo.desc()).limit(10).all()]
-    rank_board = [(i.username, i.elo) for i in User.query.filter(User.fightable == True).order_by(User.elo.desc()).limit(5).all()]
-    return render_template('bot_bot.html', users = users, rank_board = rank_board)
+    if 'secret_key' in session:
+        user = User.query.where(User.username == session['username']).first()
+        login_user(user)
+        users = [(i.username, i.elo) for i in User.query.filter(User.username != current_user.username, User.fightable == True).order_by(User.elo.desc()).limit(10).all()]
+        rank_board = [(i.username, i.elo) for i in User.query.filter(User.fightable == True).order_by(User.elo.desc()).limit(5).all()]
+        return render_template('bot_bot.html', users = users, rank_board = rank_board)
+    else:
+        if current_user:
+            logout_user()
+        return redirect(url_for('login'))
+    
 
 @app.route('/human_bot')
 @login_required
