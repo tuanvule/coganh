@@ -176,7 +176,6 @@ function changeBoard(newBoard, valid_remove) {
 }
 
 function ganh_chet(move, opp_pos, side, opp_side) {
-    console.log(opp_pos)
     let valid_remove = [];
     let at_8intction = (move[0] + move[1]) % 2 === 0;
 
@@ -190,7 +189,6 @@ function ganh_chet(move, opp_pos, side, opp_side) {
             }
         }
     }
-    console.log(valid_remove)
     for (let [x, y] of valid_remove) {
         grid[y][x] = 0;
         console.log(grid)

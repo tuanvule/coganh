@@ -207,7 +207,7 @@ def run_game(UserBot, Bot2): # Main
     #     print('\n\n\n\n')
         # generate_image(positions,move,remove)
     # print(body)
-    res = requests.post("http://127.0.0.1:4000//generate_video", json=body)
+    res = requests.post("http://tlv23.pythonanywhere.com//generate_video", json=body)
     print(res.text)
     new_url = res.text
     # ur = res.json()
