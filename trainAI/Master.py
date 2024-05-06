@@ -44,6 +44,7 @@ def vay(opp_pos, board):
     return valid_remove
 
 def main(player):
+    print("_________tim thay___________")
     global move, board_pointF
     move = {"selected_pos": None, "new_pos": None}
     dirname = os.path.dirname(__file__)

@@ -261,8 +261,6 @@ function swap(chess, box, newPos) {
         chess.dataset.posx = box.dataset.posx
         chess.dataset.posy = box.dataset.posy
     } else {
-        chess.style.left = newPos[1] * chessGrapX - 34 + "px"
-        chess.style.top = newPos[0] * chessGrapX - 34 + "px"
         chessPosition[0][chessPosition[0].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)])] = [newPos[1], newPos[0]]
         console.log(chessPosition[0].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)]))
         console.log(chessPosition)
@@ -273,6 +271,10 @@ function swap(chess, box, newPos) {
         changePos(chess.dataset.posx, chess.dataset.posy, newPos[1], newPos[0])
         valid_remove = [...ganh_chet([newPos[1], newPos[0]], opp_pos, -1, 1), ...vay(opp_pos)]
         console.log(valid_remove)
+        console.log("left: " + chess.style.left + " " + "top: " + chess.style.top)
+        chess.style.left = newPos[1] * chessGrapX - 34 + "px"
+        chess.style.top = newPos[0] * chessGrapX - 34 + "px"
+        console.log("left: " + chess.style.left + " " + "top: " + chess.style.top)
         chess.dataset.posx = `${newPos[1]}`
         chess.dataset.posy = `${newPos[0]}`
         isReady(true)
