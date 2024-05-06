@@ -301,8 +301,6 @@ function getBotmove() {
         })
     })
 
-    // console.log(data)
-
     fetch("/get_pos_of_playing_chess", {
         method: "POST",
         headers: {
@@ -312,7 +310,6 @@ function getBotmove() {
     })
     .then(res => res.json(data))
     .then(resData => {
-        // console.log(resData)
         const {selected_pos, new_pos} = resData
         const selectedChess = Array.from(chessEnemy).find(e => {
             return Number(e.dataset.posx) === selected_pos[1] && Number(e.dataset.posy) === selected_pos[0]

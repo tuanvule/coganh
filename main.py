@@ -238,6 +238,7 @@ def human_bot():
 @app.route('/get_pos_of_playing_chess', methods=['POST'])
 @login_required
 def get_pos_of_playing_chess():
+    print(request.get_json())
     player = Player(request.get_json())
     player.your_pos = [tuple(i) for i in player.your_pos]
     player.opp_pos = [tuple(i) for i in player.opp_pos]
