@@ -151,7 +151,6 @@ function changeBoard(newBoard, valid_remove) {
                         captureSound.play()
                         changedChess.classList.add("disappear")
                         setTimeout(() => changedChess.remove(), 200)
-                        
                     }
                 }
             }
@@ -262,13 +261,15 @@ function swap(chess, box, newPos) {
     } else {
         chess.style.left = newPos[1] * chessGrapX - 34 + "px"
         chess.style.top = newPos[0] * chessGrapX - 34 + "px"
+        chessPosition[0][chessPosition[0].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)])] = [newPos[1], newPos[0]]
         console.log(chessPosition[0].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)]))
+        console.log(chessPosition)
         console.log(grid)
         console.log([newPos[1], newPos[0]])
-        chessPosition[0][chessPosition[0].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)])] = [newPos[1], newPos[0]]
         let opp_pos = chessPosition[1]
         changePos(chess.dataset.posx, chess.dataset.posy, newPos[1], newPos[0])
         valid_remove = [...ganh_chet([newPos[1], newPos[0]], opp_pos, -1, 1), ...vay(opp_pos)]
+        console.log(valid_remove)
         chess.dataset.posx = `${newPos[1]}`
         chess.dataset.posy = `${newPos[0]}`
         isReady(true)
