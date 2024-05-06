@@ -316,6 +316,7 @@ function getBotmove() {
         const selectedChess = Array.from(chessEnemy).find(e => {
             return Number(e.dataset.posx) === selected_pos[1] && Number(e.dataset.posy) === selected_pos[0]
         })
+        console.log(selectedChess)
         swap(selectedChess, null, new_pos)
     })
 }
