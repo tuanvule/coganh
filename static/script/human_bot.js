@@ -137,19 +137,20 @@ function changeBoard(newBoard, valid_remove) {
     const chesses = $$(".chess")
     for(let i = 0; i < 5; i++) {
         for(let j = 0; j < 5; j++) {
-            if(curBoard[i][j] != newBoard[i][j] && valid_remove.length !== 0) {
-                if((curBoard[i][j] === 1 || curBoard[i][j] === -1) && newBoard[i][j] === 0) {
+            if(curBoard[i][j] !== newBoard[i][j] && valid_remove.length !== 0) {
+                if(curBoard[i][j] !== 0 && newBoard[i][j] === 0) {
                     const changedChess = Array.from(chesses).find(e => {
                         return Number(e.dataset.posx) === j && Number(e.dataset.posy) === i
                     })
                     if(changedChess) {
                         chessPosition.forEach((es,index) => es.forEach((e, indx)=> {
-                            if(es.findIndex(findI, [j,i]) != -1) {
+                            if(es.findIndex(findI, [j,i]) !== -1) {
                                 chessPosition[index].splice(es.findIndex(findI, [j,i]),1)
                             }
                         }))
                         captureSound.play()
                         changedChess.classList.add("disappear")
+                        console.log("removeChess: " + "(" + j + ",", + i + ")")
                         setTimeout(() => changedChess.remove(), 200)
                     }
                 }
@@ -266,7 +267,7 @@ function swap(chess, box, newPos) {
         console.log(chessPosition[0].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)]))
         console.log(chessPosition)
         console.log(grid)
-        console.log("selected_pos: " + "(" + chess.dataset.posx + "," + chess.dataset.posy + ")")
+        console.log("selected_pos: " + "(" + chess.dataset.posy + "," + chess.dataset.posx + ")")
         console.log("new_pos: " + "(" + newPos[1] + "," + newPos[0] + ")")
         let opp_pos = chessPosition[1]
         changePos(chess.dataset.posx, chess.dataset.posy, newPos[1], newPos[0])
