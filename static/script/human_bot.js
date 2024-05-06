@@ -188,9 +188,10 @@ function ganh_chet(move, opp_pos, side, opp_side) {
             }
         }
     }
+
     for (let [x, y] of valid_remove) {
         grid[y][x] = 0;
-        console.log(grid)
+        // console.log(grid)
         opp_pos = opp_pos.filter(([px, py]) => px !== x || py !== y);
     }
 
@@ -215,10 +216,10 @@ function vay(opp_pos) {
     }
 
     let valid_remove = opp_pos.slice();
-    console.log(valid_remove)
+    // console.log(valid_remove)
     for (let [x, y] of opp_pos) {
         grid[y][x] = 0;
-        console.log(grid)
+        // console.log(grid)
     }
     opp_pos = [];
     return valid_remove;
@@ -265,7 +266,8 @@ function swap(chess, box, newPos) {
         console.log(chessPosition[0].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)]))
         console.log(chessPosition)
         console.log(grid)
-        console.log([newPos[1], newPos[0]])
+        console.log("selected_pos: " + "(" + chess.dataset.posx + "," + chess.dataset.posy + ")")
+        console.log("new_pos: " + "(" + newPos[1] + "," + newPos[0] + ")")
         let opp_pos = chessPosition[1]
         changePos(chess.dataset.posx, chess.dataset.posy, newPos[1], newPos[0])
         valid_remove = [...ganh_chet([newPos[1], newPos[0]], opp_pos, -1, 1), ...vay(opp_pos)]
