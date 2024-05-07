@@ -8,6 +8,10 @@ const chessGrapY = boardValue.height / 4 + 2
 let ready = true
 const d1 = [[1,0],[0,1],[0,-1],[-1,0]]
 const d2 = [[1,0],[0,1],[0,-1],[-1,0],[-1,-1],[-1,1],[1,1],[1,-1]]
+// let chessPosition = [
+//     [[0, 0],[1, 1],[2, 2],[3, 1],[4, 0],[0, 1],[4, 1],[4, 2]], 
+//     [[0, 2],[1, 2],[2, 3],[4, 3],[0, 4],[1, 4],[3, 3],[4, 4]]
+// ]
 let chessPosition = [
     [[0, 0],[1, 0],[2, 0],[3, 0],[4, 0],[0, 1],[4, 1],[4, 2]], 
     [[0, 2],[0, 3],[2, 4],[4, 3],[0, 4],[1, 4],[3, 4],[4, 4]]
@@ -47,6 +51,21 @@ const gridHTML = `
 <div class="row4"></div>
 </div>
 `
+// let grid = [
+//     [-1,0,0,0,-1],
+//     [-1, -1, 0, -1,-1],
+//     [1, 1, -1, 0, -1],
+//     [0, 0, 1, 1, 1],
+//     [1, 1, 0, 0, 1]
+// ]
+// let curBoard = [
+//     [-1,0,0,0,-1],
+//     [-1, -1, 0, -1,-1],
+//     [1, 1, -1, 0, -1],
+//     [0, 0, 1, 1, 1],
+//     [1, 1, 0, 0, 1]
+// ]
+
 let grid = [
     [-1,-1,-1,-1,-1],
     [-1, 0, 0, 0,-1],
@@ -54,6 +73,7 @@ let grid = [
     [1, 0, 0, 0, 1],
     [1, 1, 1, 1, 1]
 ]
+
 let curBoard = [
     [-1,-1,-1,-1,-1],
     [-1, 0, 0, 0,-1],
@@ -70,15 +90,16 @@ const type = [
 ]
 
 board.innerHTML = gridHTML
-
+let dem = 0
 for(let i = 0; i < grid.length; i++) {
     for(let j = 0; j < grid[i].length; j++) {
         board.innerHTML += `<div data-choosable="false" data-posx="${j}" data-posy="${i}" class="box" style="top:${chessGrapY*i - 42}px; left:${chessGrapX*j - 42}px;"></div>`
         if(grid[i][j] === -1) {
-            board.innerHTML += `<div data-posx="${j}" data-posy="${i}" style="background-color: red; top:${chessGrapY*i - 34}px; left:${chessGrapX*j - 34}px;" class="chess enemy"></div>`
+            board.innerHTML += `<div data-so="${dem}" data-posx="${j}" data-posy="${i}" style="background-color: red; top:${chessGrapY*i - 34}px; left:${chessGrapX*j - 34}px;" class="chess enemy"></div>`
         } else if(grid[i][j] === 1) {
-            board.innerHTML += `<div data-posx="${j}" data-posy="${i}" style="background-color: blue; top:${chessGrapY*i - 34}px; left:${chessGrapX*j - 34}px;" class="chess player"></div>`
+            board.innerHTML += `<div data-so="${dem}" data-posx="${j}" data-posy="${i}" style="background-color: blue; top:${chessGrapY*i - 34}px; left:${chessGrapX*j - 34}px;" class="chess player"></div>`
         }
+        dem++
     }
 }
 
@@ -87,7 +108,7 @@ window.addEventListener('beforeunload', (event) => {
 });
 
 const boxes = $$(".box")
-const chessEnemy = $$(".chess.enemy")
+// const chessEnemy = $$(".chess.enemy")
 
 function getPos(e) {
     if(!ready) return
@@ -132,17 +153,27 @@ function findI(e) {
     return e[0] === this[0]  && e[1] === this[1]
 }
 
-function changeBoard(newBoard, valid_remove) {
+function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
 
     const chesses = $$(".chess")
     for(let i = 0; i < 5; i++) {
         for(let j = 0; j < 5; j++) {
+            let isBlock = false
             if(curBoard[i][j] !== newBoard[i][j] && valid_remove.length !== 0) {
                 if(curBoard[i][j] !== 0 && newBoard[i][j] === 0) {
                     const changedChess = Array.from(chesses).find(e => {
                         return Number(e.dataset.posx) === j && Number(e.dataset.posy) === i
                     })
                     if(changedChess) {
+                        // if(selected_pos) {
+                        //     console.log({j: selected_pos[0], i: selected_pos[1]})
+                        //     console.log({j: new_pos[1], i: new_pos[0]})
+                        //     if((j === selected_pos[0] && i === selected_pos[1]) || j === new_pos[1] && i === new_pos[0]) {
+                        //         isBlock = true
+                        //     }
+                        // }
+                        // if(!isBlock) {
+                        console.log("changedChess: ",changedChess)
                         chessPosition.forEach((es,index) => es.forEach((e, indx)=> {
                             if(es.findIndex(findI, [j,i]) !== -1) {
                                 chessPosition[index].splice(es.findIndex(findI, [j,i]),1)
@@ -151,6 +182,8 @@ function changeBoard(newBoard, valid_remove) {
                         captureSound.play()
                         changedChess.classList.add("disappear")
                         console.log("removeChess: " + "(" + j + ",", + i + ")")
+                            // changedChess.remove()
+                        // }
                         setTimeout(() => changedChess.remove(), 200)
                     }
                 }
@@ -248,38 +281,45 @@ function changePos(x, y, newX, newY) {
     grid[boxY][boxX] = path
 }
 
-function swap(chess, box, newPos) {
+function swap(chess, box, newPos, selected_pos) {
     let valid_remove
+    // let prePos
     moveSound.play()
     if(box) {
         chess.style.left = box.offsetLeft + 10 + "px"
         chess.style.top = box.offsetTop + 10 + "px"
         chessPosition[1][chessPosition[1].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)])] = [Number(box.dataset.posx), Number(box.dataset.posy)]
-        let opp_pos = chessPosition[0]
         changePos(chess.dataset.posx,chess.dataset.posy, box.dataset.posx, box.dataset.posy)
+        let opp_pos = chessPosition[0]
         valid_remove = [...ganh_chet([Number(box.dataset.posx), Number(box.dataset.posy)], opp_pos, 1, -1), ...vay(opp_pos)]
         chess.dataset.posx = box.dataset.posx
         chess.dataset.posy = box.dataset.posy
     } else {
-        chessPosition[0][chessPosition[0].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)])] = [newPos[1], newPos[0]]
-        console.log(chessPosition[0].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)]))
-        console.log(chessPosition)
-        console.log(grid)
-        console.log("selected_pos: " + "(" + chess.dataset.posy + "," + chess.dataset.posx + ")")
-        console.log("new_pos: " + "(" + newPos[1] + "," + newPos[0] + ")")
-        let opp_pos = chessPosition[1]
-        changePos(chess.dataset.posx, chess.dataset.posy, newPos[1], newPos[0])
-        valid_remove = [...ganh_chet([newPos[1], newPos[0]], opp_pos, -1, 1), ...vay(opp_pos)]
-        console.log(valid_remove)
-        console.log("left: " + chess.style.left + " " + "top: " + chess.style.top)
+        chessPosition[0][chessPosition[0].findIndex(findI, [selected_pos[1], selected_pos[0]])] = [newPos[1], newPos[0]]
         chess.style.left = newPos[1] * chessGrapX - 34 + "px"
         chess.style.top = newPos[0] * chessGrapX - 34 + "px"
-        console.log("left: " + chess.style.left + " " + "top: " + chess.style.top)
+        console.log(chessPosition)
+        console.log(grid)
+        console.log(curBoard)
+        console.log("selected_pos: " + "(" + chess.dataset.posy + "," + chess.dataset.posx + ")")
+        // prePos = [Number(chess.dataset.posx), Number(chess.dataset.posy)]
+        console.log("new_pos: " + "(" + newPos[1] + "," + newPos[0] + ")")
+        changePos(selected_pos[1], selected_pos[0], newPos[1], newPos[0])
+        let opp_pos = chessPosition[1]
+        valid_remove = [...ganh_chet([newPos[1], newPos[0]], opp_pos, -1, 1), ...vay(opp_pos)]
+        console.log(valid_remove)
+        // console.log("left: " + chess.style.left + " " + "top: " + chess.style.top)
+        // console.log("left: " + chess.style.left + " " + "top: " + chess.style.top)
         chess.dataset.posx = `${newPos[1]}`
         chess.dataset.posy = `${newPos[0]}`
+        console.log(chess)
         isReady(true)
     }
-    changeBoard(grid, valid_remove)
+    if(newPos) {
+        changeBoard(grid, valid_remove, selected_pos, newPos)
+    } else {
+        changeBoard(grid, valid_remove)
+    }
 }
 
 function clearBox() {
@@ -289,6 +329,7 @@ function clearBox() {
 }
 
 function getBotmove() {
+    chessEnemy = $$(".chess")
     let data = {
         your_pos : [],
         your_side : -1,
@@ -318,7 +359,7 @@ function getBotmove() {
             return Number(e.dataset.posx) === selected_pos[1] && Number(e.dataset.posy) === selected_pos[0]
         })
         console.log(selectedChess)
-        swap(selectedChess, null, new_pos)
+        swap(selectedChess, null, new_pos, selected_pos)
     })
 }
 
