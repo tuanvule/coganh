@@ -8,6 +8,13 @@ const chessGrapY = boardValue.height / 4 + 2
 let ready = true
 const d1 = [[1,0],[0,1],[0,-1],[-1,0]]
 const d2 = [[1,0],[0,1],[0,-1],[-1,0],[-1,-1],[-1,1],[1,1],[1,-1]]
+let radius = 16
+const canvas = $("canvas")
+canvas.style.left = board.offsetLeft - radius - 5 + "px"
+canvas.style.top = board.offsetTop - radius - 5 + "px"
+canvas.width = boardValue.width + 2 * radius + 10
+canvas.height = boardValue.height + 2 * radius + 10
+const cv2 = canvas.getContext("2d")
 // let chessPosition = [
 //     [[0, 0],[1, 1],[2, 2],[3, 1],[4, 0],[0, 1],[4, 1],[4, 2]], 
 //     [[0, 2],[1, 2],[2, 3],[4, 3],[0, 4],[1, 4],[3, 3],[4, 4]]
@@ -15,6 +22,10 @@ const d2 = [[1,0],[0,1],[0,-1],[-1,0],[-1,-1],[-1,1],[1,1],[1,-1]]
 // let chessPosition = [
 //     [[1,1],[2,2]], 
 //     [[0,0],[1,2],[3,3],[0,3],[0,4],[2,4]]
+// ]
+// let chessPosition = [
+//     [[1,0],[3,1],[4,1]], 
+//     [[3,0],[2,1],[2,2],[4,2]]
 // ]
 let chessPosition = [
     [[0, 0],[1, 0],[2, 0],[3, 0],[4, 0],[0, 1],[4, 1],[4, 2]], 
@@ -26,6 +37,8 @@ const gameStatus = $(".game_status")
 const play_again_btn = $(".play_again_btn")
 const moveSound = $(".move_sound")
 const captureSound = $(".capture_sound")
+const fireSound = $(".fire_sound")
+fireSound.volume = 0.8
 
 play_again_btn.onclick = () => location.reload()
 
@@ -86,6 +99,22 @@ const gridHTML = `
 //     [1, 0, 1, 0, 0]
 // ]
 
+// let grid = [
+//     [0, -1, 0, 1,0],
+//     [0, 0, 1, -1, -1],
+//     [0, 0, 1, 0, 1],
+//     [0, 0, 0, 0, 0],
+//     [0,0,0,0,0],
+// ]
+
+// let curBoard = [
+//     [0, -1, 0, 1,0],
+//     [0, 0, 1, -1, -1],
+//     [0, 0, 1, 0, 1],
+//     [0, 0, 0, 0, 0],
+//     [0,0,0,0,0],
+// ]
+
 let grid = [
     [-1,-1,-1,-1,-1],
     [-1, 0, 0, 0,-1],
@@ -115,9 +144,9 @@ for(let i = 0; i < grid.length; i++) {
     for(let j = 0; j < grid[i].length; j++) {
         board.innerHTML += `<div data-choosable="false" data-posx="${j}" data-posy="${i}" class="box" style="top:${chessGrapY*i - 42}px; left:${chessGrapX*j - 42}px;"></div>`
         if(grid[i][j] === -1) {
-            board.innerHTML += `<div data-so="${dem}" data-posx="${j}" data-posy="${i}" style="background-color: red; top:${chessGrapY*i - 34}px; left:${chessGrapX*j - 34}px;" class="chess enemy"></div>`
+            board.innerHTML += `<div data-so="${dem}" data-posx="${j}" data-posy="${i}" style="background-color: red; top:${chessGrapY*i - 32}px; left:${chessGrapX*j - 32}px;" class="chess enemy"></div>`
         } else if(grid[i][j] === 1) {
-            board.innerHTML += `<div data-so="${dem}" data-posx="${j}" data-posy="${i}" style="background-color: blue; top:${chessGrapY*i - 34}px; left:${chessGrapX*j - 34}px;" class="chess player"></div>`
+            board.innerHTML += `<div data-so="${dem}" data-posx="${j}" data-posy="${i}" style="background-color: blue; top:${chessGrapY*i - 32}px; left:${chessGrapX*j - 32}px;" class="chess player"></div>`
         }
         dem++
     }
@@ -174,7 +203,6 @@ function findI(e) {
 }
 
 function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
-
     const chesses = $$(".chess")
     for(let i = 0; i < 5; i++) {
         for(let j = 0; j < 5; j++) {
@@ -199,12 +227,20 @@ function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
                                 chessPosition[index].splice(es.findIndex(findI, [j,i]),1)
                             }
                         }))
-                        captureSound.play()
-                        changedChess.classList.add("disappear")
+                        // captureSound.play()
+                        fireSound.play()
+                        // changedChess.classList.add("disappear")
+                        const fire = document.createElement("img")
+                        fire.setAttribute("src", "./static/img/fire.webp")
+                        fire.setAttribute("style", `top:${chessGrapY*i - 32}px; left:${chessGrapX*j - 32}px;`)
+                        fire.setAttribute("class", "fire")
+                        let newFire = board.appendChild(fire)
                         console.log("removeChess: " + "(" + j + ",", + i + ")")
-                            // changedChess.remove()
-                        // }
-                        setTimeout(() => changedChess.remove(), 200)
+                        // const fire = $$(".fire")
+                        newFire.onanimationend = (e) => {
+                            changedChess.remove()
+                            board.removeChild(newFire)
+                        }
                     }
                 }
             }
@@ -303,9 +339,16 @@ function changePos(x, y, newX, newY) {
 
 function swap(chess, box, newPos, selected_pos) {
     let valid_remove
-    // let prePos
+    cv2.clearRect(0, 0, canvas.width, canvas.height);
     moveSound.play()
     if(box) {
+        cv2.beginPath();
+        cv2.arc(chess.dataset.posx * (boardValue.width / 4) + radius + 5, chess.dataset.posy * (boardValue.height / 4) + radius + 5, radius, 0, 2 * Math.PI);
+        cv2.lineWidth = 5;
+        cv2.fillStyle = "#577DFF"
+        cv2.fill()
+        cv2.strokeStyle = "#577DFF";
+        cv2.stroke();
         chess.style.left = box.offsetLeft + 10 + "px"
         chess.style.top = box.offsetTop + 10 + "px"
         chessPosition[1][chessPosition[1].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)])] = [Number(box.dataset.posx), Number(box.dataset.posy)]
@@ -315,9 +358,16 @@ function swap(chess, box, newPos, selected_pos) {
         chess.dataset.posx = box.dataset.posx
         chess.dataset.posy = box.dataset.posy
     } else {
+        cv2.beginPath();
+        cv2.arc(chess.dataset.posx * (boardValue.width / 4) + radius + 5, chess.dataset.posy * (boardValue.height / 4) + radius + 5, radius, 0, 2 * Math.PI);
+        cv2.lineWidth = 5;
+        cv2.fillStyle = "#FC6666"
+        cv2.fill()
+        cv2.strokeStyle = "#FC6666";
+        cv2.stroke();
         chessPosition[0][chessPosition[0].findIndex(findI, [selected_pos[1], selected_pos[0]])] = [newPos[1], newPos[0]]
-        chess.style.left = newPos[1] * chessGrapX - 34 + "px"
-        chess.style.top = newPos[0] * chessGrapX - 34 + "px"
+        chess.style.left = newPos[1] * chessGrapX - 32 + "px"
+        chess.style.top = newPos[0] * chessGrapX - 32 + "px"
         console.log(chessPosition)
         console.log(grid)
         console.log(curBoard)
@@ -397,5 +447,5 @@ boxes.forEach((e) => {
 const chess = $$(".chess.player")
 
 chess.forEach(e => {
-    e.onclick = () => getPos(e)
+    e.onclick = () => {getPos(e);cv2.clearRect(0, 0, canvas.width, canvas.height)}
 });
