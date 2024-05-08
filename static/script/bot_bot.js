@@ -229,6 +229,11 @@ fightBtn.onclick = () => {
             enemy.style.backgroundColor = "#333"
             info_elo_fluc_new.style.color = "#fff"
         }
+        if(userElo.innerHTML <= 0) {
+            userElo.innerHTML = 0
+        } else if(enemyElo.innerHTML <= 0) {
+            enemyElo.innerHTML = 0
+        }
         newValue = parseInt(userElo.innerHTML)
         updateRankBoard(newValue)
     })
