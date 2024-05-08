@@ -28,12 +28,25 @@
 
 @keyframes fire {
     0% {
+        /* /* width: 30px;
+        height: 30px; */
+        transform: translate(0, 0);
+        scale: .5;
         opacity: 1;
     }
-    90% {
+    50% {
+        /* /* width: 80px;
+        height: 80px; */
+        transform: translate(-5%, -5%);
+        scale: 1.2;
         opacity: .7;
     }
+    65% {
+        opacity: .8;
+    }
     100% {
+        scale: 1;
+        transform: translate(0, 0);
         opacity: 0;
         display: none;
     }

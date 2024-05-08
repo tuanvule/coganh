@@ -3,8 +3,8 @@ const $$ = document.querySelectorAll.bind(document)
 
 const board = $(".board")
 const boardValue = board.getBoundingClientRect()
-const chessGrapX = boardValue.width / 4 + 2
-const chessGrapY = boardValue.height / 4 + 2
+const chessGrapX = boardValue.width / 4
+const chessGrapY = boardValue.height / 4
 let ready = true
 const d1 = [[1,0],[0,1],[0,-1],[-1,0]]
 const d2 = [[1,0],[0,1],[0,-1],[-1,0],[-1,-1],[-1,1],[1,1],[1,-1]]
@@ -38,7 +38,7 @@ const play_again_btn = $(".play_again_btn")
 const moveSound = $(".move_sound")
 const captureSound = $(".capture_sound")
 const fireSound = $(".fire_sound")
-fireSound.volume = 0.8
+fireSound.volume = 0.6
 
 play_again_btn.onclick = () => location.reload()
 
@@ -142,11 +142,11 @@ board.innerHTML = gridHTML
 let dem = 0
 for(let i = 0; i < grid.length; i++) {
     for(let j = 0; j < grid[i].length; j++) {
-        board.innerHTML += `<div data-choosable="false" data-posx="${j}" data-posy="${i}" class="box" style="top:${chessGrapY*i - 42}px; left:${chessGrapX*j - 42}px;"></div>`
+        board.innerHTML += `<div data-choosable="false" data-posx="${j}" data-posy="${i}" class="box" style="top:${chessGrapY*i - 40}px; left:${chessGrapX*j - 40}px;"></div>`
         if(grid[i][j] === -1) {
-            board.innerHTML += `<div data-so="${dem}" data-posx="${j}" data-posy="${i}" style="background-color: red; top:${chessGrapY*i - 32}px; left:${chessGrapX*j - 32}px;" class="chess enemy"></div>`
+            board.innerHTML += `<div data-so="${dem}" data-posx="${j}" data-posy="${i}" style="background-color: red; top:${chessGrapY*i - 30}px; left:${chessGrapX*j - 30}px;" class="chess enemy"></div>`
         } else if(grid[i][j] === 1) {
-            board.innerHTML += `<div data-so="${dem}" data-posx="${j}" data-posy="${i}" style="background-color: blue; top:${chessGrapY*i - 32}px; left:${chessGrapX*j - 32}px;" class="chess player"></div>`
+            board.innerHTML += `<div data-so="${dem}" data-posx="${j}" data-posy="${i}" style="background-color: blue; top:${chessGrapY*i - 30}px; left:${chessGrapX*j - 30}px;" class="chess player"></div>`
         }
         dem++
     }
@@ -232,14 +232,14 @@ function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
                         // changedChess.classList.add("disappear")
                         const fire = document.createElement("img")
                         fire.setAttribute("src", "./static/img/fire.webp")
-                        fire.setAttribute("style", `top:${chessGrapY*i - 32}px; left:${chessGrapX*j - 32}px;`)
+                        fire.setAttribute("style", `top:${chessGrapY*i - 30}px; left:${chessGrapX*j - 30}px;`)
                         fire.setAttribute("class", "fire")
                         let newFire = board.appendChild(fire)
                         console.log("removeChess: " + "(" + j + ",", + i + ")")
                         // const fire = $$(".fire")
                         newFire.onanimationend = (e) => {
                             changedChess.remove()
-                            board.removeChild(newFire)
+                            // board.removeChild(newFire)
                         }
                     }
                 }
@@ -341,9 +341,10 @@ function swap(chess, box, newPos, selected_pos) {
     let valid_remove
     cv2.clearRect(0, 0, canvas.width, canvas.height);
     moveSound.play()
+    let r = [2,1.5,2,2.5,2]
     if(box) {
         cv2.beginPath();
-        cv2.arc(chess.dataset.posx * (boardValue.width / 4) + radius + 5, chess.dataset.posy * (boardValue.height / 4) + radius + 5, radius, 0, 2 * Math.PI);
+        cv2.arc(chess.dataset.posx * (boardValue.width / 4) + radius + 2.5 * r[chess.dataset.posx], chess.dataset.posy * (boardValue.height / 4) + radius + 2.5 * r[chess.dataset.posx], radius, 0, 2 * Math.PI);
         cv2.lineWidth = 5;
         cv2.fillStyle = "#577DFF"
         cv2.fill()
@@ -359,15 +360,15 @@ function swap(chess, box, newPos, selected_pos) {
         chess.dataset.posy = box.dataset.posy
     } else {
         cv2.beginPath();
-        cv2.arc(chess.dataset.posx * (boardValue.width / 4) + radius + 5, chess.dataset.posy * (boardValue.height / 4) + radius + 5, radius, 0, 2 * Math.PI);
+        cv2.arc(chess.dataset.posx * (boardValue.width / 4) + radius + 2.5 * r[chess.dataset.posx], chess.dataset.posy * (boardValue.height / 4) + radius + 2.5 * r[chess.dataset.posx], radius, 0, 2 * Math.PI);
         cv2.lineWidth = 5;
         cv2.fillStyle = "#FC6666"
         cv2.fill()
         cv2.strokeStyle = "#FC6666";
         cv2.stroke();
         chessPosition[0][chessPosition[0].findIndex(findI, [selected_pos[1], selected_pos[0]])] = [newPos[1], newPos[0]]
-        chess.style.left = newPos[1] * chessGrapX - 32 + "px"
-        chess.style.top = newPos[0] * chessGrapX - 32 + "px"
+        chess.style.left = newPos[1] * chessGrapX - 30 + "px"
+        chess.style.top = newPos[0] * chessGrapX - 30 + "px"
         console.log(chessPosition)
         console.log(grid)
         console.log(curBoard)

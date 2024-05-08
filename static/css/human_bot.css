@@ -58,6 +58,7 @@ canvas {
     margin-bottom: 40px;
     background-color: #007BFF;
     border-radius: 10px;
+    width: 214px;
 }
 
 .menu_btn {
@@ -101,8 +102,8 @@ canvas {
     /* top: 50%;
     left: 50%; 
     transform: translate(-50%,-50%); */
-    width: 500px;
-    height: 500px;
+    width: 504px;
+    height: 504px;
     background-color: #242527;
 }
 
@@ -136,18 +137,19 @@ canvas {
 
 .row3 {
     position: absolute;
-    left: 49%;
+    left: 50%;
+    transform: translateX(-50%);
     width: 4px;
-    height: 250px;
+    height: 100%;
     background-color: #242527;
 }
 
 .row4 {
     position: absolute;
-    left: 49%;
+    left: 50%;
     width: 4px;
-    height: 250px;
-    transform: rotate(90deg);
+    height: 100%;
+    transform: translateX(-50%) rotate(90deg);
     background-color: #242527;
 }
 
