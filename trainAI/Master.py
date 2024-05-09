@@ -51,7 +51,7 @@ def main(player):
 
     your_board = int("0b"+"".join("1" if ele == -1 else "0" for row in player.board for ele in row),2)
     opp_board = int("0b"+"".join("1" if ele == 1 else "0" for row in player.board for ele in row),2)
-    minimax(player.your_pos, player.opp_pos, your_board, opp_board, Stopdepth=6, cache=cache)
+    minimax(player.your_pos, player.opp_pos, your_board, opp_board, Stopdepth=12, cache=cache)
 
     # with open(os.path.join(dirname, f"source_code/bit_board.txt"), mode="w") as f:
     #     [f.write( f"{' '.join(map(str, i[0])).replace('False', '0').replace('True', '1')} {' '.join(map(str, i[1]))}\n" ) for i in sorted(cache.items(), key=lambda i: i[1][1], reverse=True)]
@@ -64,7 +64,9 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
         cache[state][1] += 1
         return cache[state][0]
 
-    if depth == Stopdepth or your_board == 0 or opp_board == 0:
+    if your_board == 0 or opp_board == 0:
+        return -1000 + depth if isMaximizingPlayer else 1000 - depth
+    if depth == Stopdepth:
         if isMaximizingPlayer:
             return (len(your_pos) - len(opp_pos))*50 + sum(board_pointF[y][x] for x, y in your_pos) - sum(board_pointF[y][x] for x, y in opp_pos) - depth
         else:
@@ -92,9 +94,6 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
                 if depth == 0 and value > bestVal:
                     move["selected_pos"] = pos
                     move["new_pos"] = invalid_move
-                if depth == 0:
-                    print(your_new_pos, opp_new_pos, your_new_board, opp_new_board)
-                    print(move, value, (pos, invalid_move))
 
                 if isMaximizingPlayer:
                     alpha = max(alpha, value)
