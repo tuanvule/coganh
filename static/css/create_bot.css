@@ -84,7 +84,9 @@ body {
 
 .container_element {
     height: 100%;
-    width: 50%;
+    flex: 1;
+    max-width: calc(50% - 20px);
+    /* max-height: calc(100% - 40px); */
     display: flex;
 }
 
@@ -110,7 +112,8 @@ body {
 
 .utility {
     padding: 0 2% 0;
-    height: 100%;
+    height: calc(50% - 20px);
+    width: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -167,8 +170,11 @@ body {
 }
 
 .utility_block {
-    flex: 1;
+    /* flex: 1; */
+    width: 100%;
+    height: 100%;
     padding: 0 0 20px 0;
+    overflow: scroll;
 }
 
 .utility_block-element.rule {
@@ -188,10 +194,8 @@ body {
 
 .utility_block-element.terminal {
     background-color: #000;
-    width: 100%;
+    max-width: 100%;
     height: 100%;
-    margin-top: 5px;
-    padding: 5px;
     overflow: scroll;
     display: none;
     /* max-width: 100%; */

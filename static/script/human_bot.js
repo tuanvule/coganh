@@ -400,6 +400,7 @@ function clearBox() {
 }
 
 function getBotmove() {
+    if(chessPosition[0].length <= 0) return
     chessEnemy = $$(".chess.enemy")
     let data = {
         your_pos : [],
