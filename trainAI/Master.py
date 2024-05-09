@@ -64,29 +64,22 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
         cache[state][1] += 1
         return cache[state][0]
 
-    board = player.board
-    if isMaximizingPlayer:
-        bestVal = float("-inf")
-        your_pos = player.your_pos
-        opp_pos = player.opp_pos
-        your_side = player.your_side
-        opp_side = -your_side
-    else:
-        bestVal = float("inf")
-        opp_pos = player.your_pos
-        your_pos = player.opp_pos
-        opp_side = player.your_side
-        your_side = -opp_side
+    if depth == Stopdepth or your_board == 0 or opp_board == 0:
+        if isMaximizingPlayer:
+            return (len(your_pos) - len(opp_pos))*50 + sum(board_pointF[y][x] for x, y in your_pos) - sum(board_pointF[y][x] for x, y in opp_pos) - depth
+        else:
+            return (len(opp_pos) - len(your_pos))*50 + sum(board_pointF[y][x] for x, y in opp_pos) - sum(board_pointF[y][x] for x, y in your_pos) - depth
+
+    bestVal = float("-inf") if isMaximizingPlayer else float("inf")
 
     for pos in your_pos:
         for movement in ((0,-1), (0,1), (1,0), (-1,0), (-1,1), (1,-1), (1,1), (-1,-1)):
             invalid_move = (pos[0] + movement[0], pos[1] + movement[1])
-            if 0 <= invalid_move[0] <= 4 and 0 <= invalid_move[1] <= 4 and board[invalid_move[1]][invalid_move[0]] == 0 and \
+            if 0 <= invalid_move[0] <= 4 and 0 <= invalid_move[1] <= 4 and (your_board|opp_board)&(1<<5*(4-invalid_move[1])+(4-invalid_move[0])) == 0 and \
                 (movement[0]*movement[1]==0 or (movement[0]*movement[1]!=0 and (pos[0]+pos[1])%2==0)) and alpha < beta:
 
                 # Update move to board
-                board[invalid_move[1]][invalid_move[0]] = your_side
-                board[pos[1]][pos[0]] = 0
+                your_new_board = your_board^(1<<5*(4-pos[1])+(4-pos[0]))|(1<<5*(4-invalid_move[1])+(4-invalid_move[0]))
                 # Update move to positions
                 your_new_pos = your_pos.copy()
                 your_new_pos[your_pos.index(pos)] = invalid_move
@@ -99,6 +92,9 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
                 if depth == 0 and value > bestVal:
                     move["selected_pos"] = pos
                     move["new_pos"] = invalid_move
+                if depth == 0:
+                    print(your_new_pos, opp_new_pos, your_new_board, opp_new_board)
+                    print(move, value, (pos, invalid_move))
 
                 if isMaximizingPlayer:
                     alpha = max(alpha, value)
