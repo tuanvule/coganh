@@ -120,6 +120,17 @@ def register():
         new_user = User(username=form.username.data, password=hashed_password, elo=0, fightable=False)
         db.session.add(new_user)
         db.session.commit()
+        code = '''
+# Remember that player.board[y][x] is the tile at (x, y) when printing
+def main(player):
+    for x,y, in player.your_pos:
+        move = ((0,-1),(0,1),(1,0),(-1,0)) 
+        for mx, my in move:
+            if 0 <= x+mx <=4 and 0 <= y+my <= 4 and player.board[y+my][x+mx] == 0: #check if new position is valid
+                return {"selected_pos": (x,y), "new_pos": (x+mx, y+my)}
+'''
+        with open(f"static/botfiles/botfile_{form.username.data}.py", mode="w", encoding="utf-8") as f:
+            f.write(code)
         return redirect(url_for('login'))
     for err_msg in form.errors.values(): #If there are errors from the validations
         flash(err_msg[0], category="danger")
