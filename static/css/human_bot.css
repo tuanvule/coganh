@@ -59,6 +59,7 @@ canvas {
     background-color: #007BFF;
     border-radius: 10px;
     width: 214px;
+    text-align: center;
 }
 
 .menu_btn {
