@@ -520,10 +520,10 @@ window.addEventListener("load", (event) => {
     console.log(event)
     if(window.outerWidth <= 500) {
         rs = 0.5
-        radius = radius / 2
+        radius = 8
     } else {
         rs = 1
-        radius = radius * 2
+        radius = 16
     }
     resetBoard()
     boxes = $$(".box")

@@ -95,8 +95,6 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
                 if depth == 0 and value > bestVal:
                     move["selected_pos"] = pos
                     move["new_pos"] = invalid_move
-                if depth == 0:
-                    print(value, (pos, invalid_move))
 
                 if isMaximizingPlayer:
                     alpha = max(alpha, value)
