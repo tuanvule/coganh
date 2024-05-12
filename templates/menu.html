@@ -57,7 +57,7 @@
   .btn {
         display: block;
         text-decoration: none;
-        width: fit-content;
+        width: max-content;
         color: #fff;
         font-size: 20px;
         padding: 10px 80px;
@@ -87,6 +87,14 @@
     .code_require {
       display: flex;
       align-items: center;
+    }
+
+    @media (max-width: 400px) {
+      .btn {
+        font-size: 16px;
+        padding: 10px 30px;
+        margin: 20px 10px 20px;
+      }
     }
 </style>
 <body class="text-center">

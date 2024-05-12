@@ -178,7 +178,7 @@ def run_game(UserBot, Bot2): # Main
             winner = "lost"
         elif not positions[-1]:
             winner = "win"
-        elif (len(positions[1]) + len(positions[-1]) <= 2) or move_counter == 400:
+        elif (len(positions[1]) + len(positions[-1]) <= 2) or move_counter == 200:
             winner = "draw"
 
         game_state["current_turn"] *= -1
@@ -214,8 +214,8 @@ def run_game(UserBot, Bot2): # Main
     #     print('\n\n\n\n')
         # generate_image(positions,move,remove)
     # print(body)
-    # res = requests.post("http://127.0.0.1:4000//generate_video", json=body)
-    res = requests.post("http://tlv23.pythonanywhere.com//generate_video", json=body)
+    res = requests.post("http://127.0.0.1:4000//generate_video", json=body)
+    # res = requests.post("http://tlv23.pythonanywhere.com//generate_video", json=body)
     print(res.text)
     new_url = res.text
 
