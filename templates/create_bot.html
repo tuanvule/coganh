@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/animation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../static/css/create_bot.css">
 </head>
@@ -24,11 +25,46 @@
 
     <div class="container">
         <div class="container_element bot_display">
+            <div class="bot_display_nav">
+                <div class="bot_display_nav-block">
+                    <div class="bot_display_nav-block--item video">
+                        VIDEO
+                        <div class="loading_nav_video">
+                            <div class="loader"></div>
+                            <i class="fa-solid fa-circle-check check_icon"></i>
+                        </div>
+                    </div>
+                    <div class="bot_display_nav-block--item debug">
+                        DEBUG
+                        <div class="loading_nav_image">
+                            <i class="fa-solid fa-circle-check check_icon"></i>
+                            <div class="loader"></div>
+                        </div>
+                    </div>
+                    <div class="animation">
+                        <div class="children"></div>
+                    </div>
+                </div>
+            </div>
             <div class="bot_display-video--background">
-                <video class="bot_display-video--result" controls>
+                <video class="bot_display-video-item bot_display-video--result" controls>
                     <source src="{{ url_for('static', filename='upload_video/demo.mp4') }}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
+                <div class="loading_video">
+                    <div class="loader"></div>
+                </div>
+                <div style="display: none;" class="bot_display-video-item bot_display-video--debug">
+                    <div class="loading_image">
+                        <div class="loader"></div>
+                    </div>
+                    <i class="fa-solid fa-angle-left arrow_left"></i>
+                    <ul class="debug_img_list">
+                        <li class="debug_img_item default"><img src="../static/img/chessboard.png" alt=""></li>
+                    </ul>
+                    <i class="fa-solid fa-angle-right arrow_right"></i>
+                    <div class="counter">1</div>
+                </div>
             </div>
             <div class="utility">
                 <div class="utility_nav">
@@ -83,9 +119,32 @@
         <div class="container_element coding_module">
             <div class="coding_module-nav">
                 <a href="{{ url_for('menu') }}" class="coding_module-nav--backBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                <div class="debug_mode_selector">
+                    <div>Debug turn</div>
+                    <select class="selector">
+                        <!-- <option value="default" class="option">default</option> -->
+                        <option value="2" class="option">2</option>
+                        <option value="4" class="option">4</option>
+                        <option value="6" class="option">6</option>
+                    </select>
+                </div>
                 <div class="coding_module-nav--saveBtn btn" data-saved="false">save</div>
                 <div class="coding_module-nav--runBtn loader" style="display: none; animation: none;"><div class="coding_module-nav--loading"></div></div>
                 <div class="coding_module-nav--runBtn btn">run</div>
+                <div class="coding_module-nav--setting">
+                    <label for="check"><i class="fa-solid fa-gear setting_icon"></i></label>
+                    <input type="checkbox" name="check" id="check" hidden>
+                    <ul class="setting_list">
+                        <label for="debug" class="setting_item">
+                            Enable debug
+                            <input type="checkbox" name="debug" id="debug" checked>
+                        </label>
+                        <label for="video" class="setting_item">
+                            Enable video
+                            <input type="checkbox" name="video" id="video" checked>
+                        </label>
+                    </ul>
+                </div>
             </div>
             <div class="a" style="height: 100%; position: relative;">
                 <div id="coding_module-coding_block"></div>

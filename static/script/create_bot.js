@@ -9,15 +9,43 @@ const result = $(".utility_block-element.result")
 const uniBlock = $$(".utility_block-element")
 const loader = $(".coding_module-nav--runBtn.loader")
 const video = $(".bot_display-video--result")
+const debug = $(".bot_display-video--debug")
 
 const uniNavItem = $$(".utility_nav-block--item")
 const ruleBtn = $(".utility_nav-block--item.rule")
 const terminalBtn = $(".utility_nav-block--item.terminal")
 const resultBtn = $(".utility_nav-block--item.result")
+const videoBtn = $(".bot_display_nav-block--item.video")
+const debugtBtn = $(".bot_display_nav-block--item.debug")
 const animation = $(".utility_nav-block .animation")
 const animationChild = $(".utility_nav-block .animation .children")
+const bDAnimation = $(".bot_display_nav-block .animation")
+const bDAnimationChild = $(".bot_display_nav-block .animation .children")
+const botDisplayBlock = $$(".bot_display-video-item")
+
+const debugArrowRight = $(".bot_display-video--debug .arrow_right")
+const debugArrowLeft = $(".bot_display-video--debug .arrow_left")
+const debugImageList = $(".debug_img_list")
+const counter = $(".counter")
+const selectDebugNum = $(".selector")
+const loadingVideo = $(".loading_video")
+const loadingImage = $(".loading_image")
+const loadingNavImage = $(".loading_nav_image")
+const loadingNavVideo = $(".loading_nav_video")
+const loadingNavImageLD = $(".loading_nav_image .loader")
+const loadingNavVideoLD = $(".loading_nav_video .loader")
+const loadingNavImageCI = $(".loading_nav_image .check_icon")
+const loadingNavVideoCI = $(".loading_nav_video .check_icon")
+const isEnableDebug = $("input#debug")
+const isEnableVideo = $("input#video")
+
+let debugImageItems
+let imageNum = 0
+let currentDisplayMode = "video"
+let currentUtiMode = "rule"
 
 let gameResult;
+let img_url = []
 // const terminalLoader = $(".")
 
 var audio = $(".bot_display-video--result");
@@ -50,6 +78,9 @@ saveBtn.onclick = () => {
 }
 
 runBtn.onclick = () => {
+    if(!isEnableDebug.checked && !isEnableVideo.checked) {
+        return
+    }
     const source = $("source")
     const code = editor.getValue()
     loader.style.display = "block"
@@ -60,23 +91,83 @@ runBtn.onclick = () => {
     terminalBtn.style.color = "#fff"
     ruleBtn.style.color = "#ccc"
     resultBtn.style.color = "#ccc"
-    changeAnimation(terminalBtn, `${((terminalBtn.clientWidth - 10) / animation.clientWidth * 100)}%`, terminalBtn.clientWidth + "px", "terminal")
+    changeAnimation(terminalBtn, `${((terminalBtn.clientWidth - 10) / animation.clientWidth * 100)}%`, terminalBtn.clientWidth + "px", "terminal", animationChild)
     terminal.innerHTML = `>>> loading...`
     gameResult = null
+    
+    if(isEnableVideo.checked && !isEnableDebug.checked) {
+        uploadCode(code)
+        return
+    }
+    debugImageList.style.display = "none"
+    loadingImage.style.display = "block"
+    loadingNavImageLD.style.display = "block"
+    loadingNavImageCI.style.display = "none"
+    if(isEnableVideo.checked) {
+        loadingVideo.style.display = "block"
+        video.style.display = "none"
+        loadingNavVideoLD.style.display = "block"
+        loadingNavVideoCI.style.display = "none"
+    }
+    
+
+    fetch("/debug_code", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            code,
+            debugNum: Number(selectDebugNum.value)
+        }),
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.code === 200) {
+            loader.style.display = "none"
+            runBtn.style.display = "block"
+            img_url = JSON.parse(data.img_url)
+            console.log(img_url)
+            debugImageList.innerHTML = ""
+            img_url.forEach((url, index) => {
+                debugImageList.innerHTML += `
+                    <li data-num="${index}" class="debug_img_item"><img src="${url}" alt=""></li>
+                `
+            })
+            loadingImage.style.display = "none"
+            debugImageList.style.display = "block"
+            debugImageItems = $$(".debug_img_item")
+            debugImageItems[0].classList.add("display_image")
+            imageNum = 0
+            counter.innerHTML = imageNum + 1
+            loadingNavImageLD.style.display = "none"
+            loadingNavImageCI.style.display = "block"
+            debugArrowRight.style.opacity = "1"
+            if(isEnableVideo.checked) uploadCode(code)
+        } else {
+            const a = data.err.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
+            terminal.innerHTML = `>>> ${a}`
+        }
+    })
+}
+
+function uploadCode(code) {
+    loadingVideo.style.display = "block"
+    video.style.display = "none"
+    loadingNavVideoLD.style.display = "block"
+    loadingNavVideoCI.style.display = "none"
     fetch("/upload_code", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(code.replaceAll('\r', '')),
+        body: JSON.stringify(code),
     })
     .then(res => res.json())
     .then(data => {
         console.log(data)
         if(data.code === 200) {
             gameResult = data
-            terminal.innerHTML = ">>> success"
-            // console.log(data)
         } else {
             const a = data.err.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
             terminal.innerHTML = `>>> ${a}`
@@ -89,14 +180,16 @@ runBtn.onclick = () => {
         runBtn.style.display = "block"
         terminal.style.backgroundColor = "#000"
         if(gameResult?.code === 200) {
+            loadingNavVideoLD.style.display = "none"
+            loadingNavVideoCI.style.display = "block"
             source.src = gameResult.new_url
-            video.style.display = "inline"
+            loadingVideo.style.display = "none"
             video.load()
-            changeAnimation(resultBtn, "0", resultBtn.clientWidth + "px", "result")
+            if(currentDisplayMode === "video") video.style.display = ""
+            changeAnimation(resultBtn, "0", resultBtn.clientWidth + "px", "result", animationChild)
             toggleMode("result")
         }
     })
-    
 }
 
 const defaultValue = `
@@ -284,18 +377,22 @@ const guides = [
 const utility_nav_block = $(".utility_nav-block")
 
 function toggleMode(mode) {
-    uniBlock.forEach(ele => ele.style.display = "none")
+    currentMode = mode
     switch (mode) {
-        case "terminal":           
+        case "terminal":  
+            currentUtiMode = mode        
+            uniBlock.forEach(ele => ele.style.display = "none")
             terminal.style.display = "block"
             break;
         case "rule":
-            // uniBlock.forEach(ele => ele.style.display = "none")
+            currentUtiMode = mode
+            uniBlock.forEach(ele => ele.style.display = "none")
             rule.style.display = "flex"
             break;
         case "result": 
+            currentUtiMode = mode
             if(gameResult) {
-                // uniBlock.forEach(ele => ele.style.display = "none")
+                uniBlock.forEach(ele => ele.style.display = "none")
                 console.log(gameResult)
                 const {max_move_win, status} = gameResult
                 const moveCount = $(".info_move-count")
@@ -306,14 +403,30 @@ function toggleMode(mode) {
                 result.style.display = "flex"
             }
             break;
+        case "video":
+            currentDisplayMode = mode
+            botDisplayBlock.forEach(ele => ele.style.display = "none")
+            if(loadingVideo.style.display === "none" || loadingVideo.style.display === "") video.style.display = ""
+            debug.style.display = "none"
+            break;
+        case "debug":
+            currentDisplayMode = mode
+            botDisplayBlock.forEach(ele => ele.style.display = "none")
+            video.style.display = "none"
+            debug.style.display = "flex"
+            break;
         default:
             break;
     }
 
 }
 
-function changeAnimation(e, right, width, mode) {
-    uniNavItem.forEach(ele => ele.style.color = "#ccc")
+function changeAnimation(e, right, width, mode, animationChild) {
+    if(mode === "terminal" || mode === "rule" || mode === "result") {
+        uniNavItem.forEach(ele => ele.style.color = "#ccc")
+    } else {
+        $$(".bot_display_nav-block--item").forEach(ele => ele.style.color = "#ccc")
+    }
     e.style.color = "#fff"
     animationChild.style.right = right;
     animationChild.style.width = width;
@@ -321,15 +434,56 @@ function changeAnimation(e, right, width, mode) {
 }
 
 ruleBtn.onclick = (e) => {
-    changeAnimation(ruleBtn, `${100 - (e.target.clientWidth / animation.clientWidth * 100)}%`, e.target.clientWidth + "px", "rule")
+    changeAnimation(ruleBtn, `${100 - (e.target.clientWidth / animation.clientWidth * 100)}%`, e.target.clientWidth + "px", "rule", animationChild)
 }
 
 terminalBtn.onclick = (e) => {
-    changeAnimation(terminalBtn, `${((e.target.clientWidth - 10) / animation.clientWidth * 100)}%`, e.target.clientWidth + "px", "terminal")
+    changeAnimation(terminalBtn, `${((e.target.clientWidth - 10) / animation.clientWidth * 100)}%`, e.target.clientWidth + "px", "terminal", animationChild)
 }
 
 resultBtn.onclick = (e) => {
-    if(gameResult) changeAnimation(result, "0", e.target.clientWidth + "px", "result")
+    if(gameResult) changeAnimation(result, "0", e.target.clientWidth + "px", "result", animationChild)
+}
+
+videoBtn.onclick = (e) => {
+    // console.log("Asdadss")
+    changeAnimation(videoBtn, `${100 - (e.target.clientWidth / bDAnimation.clientWidth * 100)}%`, e.target.clientWidth + "px", "video", bDAnimationChild)
+}
+
+debugtBtn.onclick = (e) => {
+    console.log("Asda")
+    // if(gameResult) 
+    changeAnimation(debugtBtn, "0", e.target.clientWidth + "px", "debug", bDAnimationChild)
+}
+
+debugArrowRight.onclick = (e) => {  
+    if(imageNum + 1 < debugImageItems.length) {
+        debugImageItems[imageNum].classList.remove("display_image")
+        imageNum++
+        if(imageNum + 1 === debugImageItems.length) {
+            debugArrowRight.style.opacity = "0"
+        }
+        if(imageNum > 0 && debugArrowLeft.style.opacity === "0") {
+            debugArrowLeft.style.opacity = "1"
+        }
+        counter.innerHTML = imageNum + 1
+        debugImageItems[imageNum].classList.add("display_image")
+    }
+}
+
+debugArrowLeft.onclick = (e) => {
+    if(imageNum - 1 >= 0) {
+        debugImageItems[imageNum].classList.remove("display_image")
+        imageNum--
+        if(imageNum === 0) {
+            debugArrowLeft.style.opacity = "0"
+        }
+        if(imageNum + 1 < debugImageItems.length && debugArrowRight.style.opacity === "0") {
+            debugArrowRight.style.opacity = "1"
+        }
+        counter.innerHTML = imageNum + 1
+        debugImageItems[imageNum].classList.add("display_image")
+    }
 }
 
 const box = $(".guide")

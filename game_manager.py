@@ -1,26 +1,13 @@
 from random import choice
 import os
 import requests
-import glob
-from PIL import Image, ImageDraw
 from copy import deepcopy
-# import cv2
-import moviepy.editor as mpe
 from importlib import reload
 import traceback
-import datetime
-import numpy as np
-from flask_login import current_user
-from flask import session
 from fdb.firestore_config import fdb
-from fdb.uti.upload import upload_video_to_storage
+# from fdb.uti.upload import upload_video_to_storage
 
-# ROW = y
-# COLUMN = x
-# ==> board[y][x] == board[ROW][COLUMN]
 absolute_path = os.getcwd()
-
-boards = []
 
 class Player:
     def __init__(self, your_pos=None, opp_pos=None, your_side=None, board=None):
@@ -30,7 +17,7 @@ class Player:
         self.board = board
 
 def declare():
-    global game_state, positions, point, player1, player2, frame, video
+    global game_state, positions, point, player1, player2, img
 
     player1 = Player()
     player2 = Player()
@@ -52,17 +39,7 @@ def declare():
 
     point = []
 
-    frame = Image.open(os.path.join(absolute_path, "static/img/chessboard.png"))
-    frame_cop = frame.copy()
-    draw = ImageDraw.Draw(frame_cop)
-
-    for x, y in positions[1]:
-        draw.ellipse((x*100+80, y*100+80, x*100+120, y*100+120), fill="blue", outline="blue")
-    for x, y in positions[-1]:
-        draw.ellipse((x*100+80, y*100+80, x*100+120, y*100+120), fill="red", outline="red")
-
-    frame_cop = np.array(frame_cop)
-    video = [mpe.ImageClip(frame_cop).set_duration(1)]
+    img = [[deepcopy(positions), {"selected_pos": (-1000,-1000), "new_pos": (-1000,-1000)}, []]]
 
 # Board manipulation
 def Raise_exception(move, current_side, board):
@@ -118,28 +95,24 @@ def vay(opp_pos):
     return valid_remove
 
 # System
-def activation(option, session_name):
+def activation(option, session_name, debugNum):
     UserBot = __import__("static.botfiles.botfile_"+session_name, fromlist=[None])
     reload(UserBot)
     Bot2 = __import__(option, fromlist=[None])
     reload(Bot2)
-    try: return run_game(UserBot, Bot2)
+    try: return run_game(UserBot, Bot2, session_name, debugNum)
     except Exception: raise Exception(traceback.format_exc())
-def run_game(UserBot, Bot2): # Main
+def run_game(UserBot, Bot2, session_name, debugNum): # Main
 
     declare()
     winner = False
     move_counter = 1
     body = {
-        "username": session['username'],
-        "img": []
+        "username": session_name,
+        "img": img
     }
 
-    # body = []
-
     while not winner:
-
-        boards.append(game_state["board"])
 
         current_turn = game_state["current_turn"]
         if player1.your_side == current_turn:
@@ -166,14 +139,13 @@ def run_game(UserBot, Bot2): # Main
 
         print("-------------", move_counter, "------------")
 
-        # generate_image(positions, move, remove)
+        body["img"].append([deepcopy(positions), move, remove])
 
-        nPos = deepcopy(positions)
-
-        body["img"].append([nPos, move, remove])
-        # body.append([nPos, move, remove])
-
-        # print(positions, '\n\n\n\n\n')
+        if debugNum > 0 and move_counter == debugNum:
+            imageData = deepcopy(body)
+            img_url = requests.post("http://tlv23.pythonanywhere.com//generate_debug_image", json=imageData).text
+            return img_url
+        
         if not positions[1]:
             winner = "lost"
         elif not positions[-1]:
@@ -184,63 +156,9 @@ def run_game(UserBot, Bot2): # Main
         game_state["current_turn"] *= -1
         move_counter += 1
 
-    current_time = datetime.datetime.now().microsecond
-    new_url = f"/static/upload_video/result_{current_user.username}_{current_time}.mp4"
-    url = absolute_path + new_url
-
-    # old_video = glob.glob(os.path.join(absolute_path, f"static/upload_video/result_{current_user.username}_*.mp4"))
-    # print(old_video)
-    # for vid in old_video:
-    #     os.remove(vid)
-
-    # concat_video = mpe.concatenate_videoclips(video, method="compose")
-
-    # chèn nhạc vô video
-    # audio_background = mpe.AudioFileClip(absolute_path + '/static/audio.mp3').set_duration(concat_video.duration)
-    # my_clip = concat_video.set_audio(audio_background)
-    # my_clip.write_videofile(url, 1)
-    # my_clip.close()
-
-    # furl = upload_video_to_storage(url, "videos/video.mp4")
-
-    # print("------------", furl, "------------------")
-
-    # print(boards)
-
-    # for [positions, move, remove] in body:
-    #     print(positions)
-    #     print(move)
-    #     print(remove)
-    #     print('\n\n\n\n')
-        # generate_image(positions,move,remove)
-    # print(body)
     # res = requests.post("http://127.0.0.1:4000//generate_video", json=body)
-    res = requests.post("http://tlv23.pythonanywhere.com//generate_video", json=body)
-    print(res.text)
-    new_url = res.text
-
+    new_url = requests.post("http://tlv23.pythonanywhere.com//generate_video", json=body).text
     return winner, move_counter-1, new_url
-
-def generate_image(positions, move, remove):
-    frame_cop = frame.copy()
-    draw = ImageDraw.Draw(frame_cop)
-
-    for x, y in remove:
-        draw.ellipse((x*100+80, y*100+80, x*100+120, y*100+120), fill=None, outline="#FFC900", width=4)
-    for x, y in positions[1]:
-        draw.ellipse((x*100+80, y*100+80, x*100+120, y*100+120), fill="blue", outline="blue")
-    for x, y in positions[-1]:
-        draw.ellipse((x*100+80, y*100+80, x*100+120, y*100+120), fill="red", outline="red")
-    new_x = move["new_pos"][0]
-    new_y = move["new_pos"][1]
-    old_x = move["selected_pos"][0]
-    old_y = move["selected_pos"][1]
-    draw.ellipse((new_x*100+80, new_y*100+80, new_x*100+120, new_y*100+120), fill=None, outline="green", width=5)
-    draw.ellipse((old_x*100+80, old_y*100+80, old_x*100+120, old_y*100+120), fill=None, outline="green", width=5)
-
-    frame_cop = np.array(frame_cop)
-    video.append(mpe.ImageClip(frame_cop).set_duration(1))
-
 if __name__ == '__main__':
     import trainAI.Master as Master, CGEngine
     winner, win_move_counter = run_game(CGEngine, Master)

@@ -1,6 +1,5 @@
 from flask import Flask, flash, request, redirect, url_for, render_template, session
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm 
 from wtforms import SubmitField, PasswordField, StringField
@@ -170,7 +169,7 @@ def upload_code():
     with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
         f.write(code)
     try: 
-        winner, max_move_win, new_url = activation("trainAI.Master", name) # người thắng / số lượng lượt chơi
+        winner, max_move_win, new_url = activation("trainAI.Master", name, 0) # người thắng / số lượng lượt chơi
         user.fightable = True
         db.session.commit()
         data = {
@@ -178,6 +177,32 @@ def upload_code():
             "status": winner,
             "max_move_win": max_move_win,
             "new_url": new_url
+        }
+        return json.dumps(data)
+    except Exception as err:
+        err = str(err).replace(r"c:\Users\Hello\OneDrive\Code Tutorial\Python", "...")
+        user.fightable = False
+        db.session.commit()
+        data = {
+            "code": 400,
+            "err": err,
+        }
+        return json.dumps(data) # Giá trị Trackback Error
+    
+@app.route('/debug_code', methods=['POST'])
+@login_required
+def debug_code():
+    name = current_user.username
+    data = request.get_json()
+    print(data)
+    user = User.query.filter_by(username=name).first()
+    with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
+        f.write(data["code"])
+    try: 
+        img_url = activation("trainAI.Master", name, data["debugNum"]) # người thắng / số lượng lượt chơi
+        data = {
+            "code": 200,
+            "img_url": img_url
         }
         return json.dumps(data)
     except Exception as err:
@@ -263,7 +288,7 @@ def get_pos_of_playing_chess():
 def fighting():
     name = current_user.username
     player = request.get_json()
-    winner, max_move_win, new_url = activation("static.botfiles.botfile_"+player['name'], name)
+    winner, max_move_win, new_url = activation("static.botfiles.botfile_"+player['name'], name, 0)
     
     data = {
         "status": winner,
@@ -283,7 +308,6 @@ def update_rank_board():
     enemy.elo = data['enemy']['elo']
     player.elo = data['player']['elo']
     db.session.commit()
-    # print(enemy.elo, player.elo)
     users = [(i.username, i.elo) for i in User.query.filter(User.fightable == True).order_by(User.elo.desc()).limit(5).all()]
 
     return users
