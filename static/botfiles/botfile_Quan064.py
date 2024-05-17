@@ -27,6 +27,7 @@ def main(player):
         new_pos = (new_pos_select[0], new_pos_select[1])
         move = {"selected_pos": selected_pos, "new_pos": new_pos}
         if is_valid_move(move, player.your_side, board):
+            print(move)
             return move
 
 # Function of the game manager

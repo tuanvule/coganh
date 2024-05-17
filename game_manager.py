@@ -5,6 +5,7 @@ from copy import deepcopy
 from importlib import reload
 import traceback
 from fdb.firestore_config import fdb
+import sys
 # from fdb.uti.upload import upload_video_to_storage
 
 absolute_path = os.getcwd()
@@ -96,12 +97,28 @@ def vay(opp_pos):
 
 # System
 def activation(option, session_name, debugNum):
+    global org_stdout
+    open(f"static/output/stdout_{session_name}.txt", mode="w", encoding="utf-8")
+    if debugNum > 0:
+        org_stdout = sys.stdout
+        f = open(f"static/output/stdout_{session_name}.txt", mode="a", encoding="utf-8")
+        sys.stdout = f
+
     UserBot = __import__("static.botfiles.botfile_"+session_name, fromlist=[None])
     reload(UserBot)
     Bot2 = __import__(option, fromlist=[None])
     reload(Bot2)
-    try: return run_game(UserBot, Bot2, session_name, debugNum)
-    except Exception: raise Exception(traceback.format_exc())
+    try:
+        temp = run_game(UserBot, Bot2, session_name, debugNum)
+        if debugNum > 0:
+            sys.stdout = org_stdout
+            f.close()
+        return temp
+    except Exception:
+        if debugNum > 0:
+            sys.stdout = org_stdout
+            f.close()
+        raise Exception(traceback.format_exc())
 def run_game(UserBot, Bot2, session_name, debugNum): # Main
 
     declare()
@@ -138,7 +155,7 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
         remove += vay(opp_pos)
         if remove: point[:] += [move_selected_pos]*len(remove)
 
-        print("-------------", move_counter, "------------")
+        print("-------------", move_counter, "------------", file=org_stdout)
 
         body["img"].append([deepcopy(positions), move, remove])
         debug_game_state.append(deepcopy(player1))

@@ -180,13 +180,14 @@ def upload_code():
         return json.dumps(data)
     except Exception as err:
         err = str(err).replace(r"c:\Users\Hello\OneDrive\Code Tutorial\Python", "...")
-        user.fightable = False
-        db.session.commit()
-        data = {
-            "code": 400,
-            "err": err,
-        }
-        return json.dumps(data) # Giá trị Trackback Error
+        with open(f"static/output/stdout_{name}.txt", mode="r", encoding="utf-8") as output:
+            user.fightable = False
+            db.session.commit()
+            data = {
+                "code": 400,
+                "output": output.read(),
+            }
+            return json.dumps(data) # Giá trị Trackback Error
     
 @app.route('/debug_code', methods=['POST'])
 @login_required
@@ -199,22 +200,22 @@ def debug_code():
         f.write(data["code"])
     try: 
         img_url, debug_game_state = activation("trainAI.Master", name, data["debugNum"]) # người thắng / số lượng lượt chơi
-        player = Player(request.get_json())
-        print(debug_game_state)
-        data = {
-            "code": 200,
-            "img_url": img_url
-        }
-        return json.dumps(data)
+        with open(f"static/output/stdout_{name}.txt", mode="r", encoding="utf-8") as output:
+            data = {
+                "code": 200,
+                "img_url": img_url,
+                "output": output.read()
+            }
+            return json.dumps(data)
     except Exception as err:
-        err = str(err).replace(r"c:\Users\Hello\OneDrive\Code Tutorial\Python", "...")
-        user.fightable = False
-        db.session.commit()
-        data = {
-            "code": 400,
-            "err": err,
-        }
-        return json.dumps(data) # Giá trị Trackback Error
+        with open(f"static/output/stdout_{name}.txt", mode="r", encoding="utf-8") as output:
+            user.fightable = False
+            db.session.commit()
+            data = {
+                "code": 400,
+                "output": output.read(),
+            }
+            return json.dumps(data) # Giá trị Trackback Error
     
 @app.route('/save_code', methods=['POST'])
 @login_required

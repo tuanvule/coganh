@@ -143,9 +143,11 @@ runBtn.onclick = () => {
             loadingNavImageLD.style.display = "none"
             loadingNavImageCI.style.display = "block"
             debugArrowRight.style.opacity = "1"
+            const a = data.output.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
+            terminal.innerHTML = `>>> ${a}`
             if(isEnableVideo.checked) uploadCode(code)
         } else {
-            const a = data.err.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
+            const a = data.output.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
             terminal.innerHTML = `>>> ${a}`
         }
     })
@@ -169,7 +171,7 @@ function uploadCode(code) {
         if(data.code === 200) {
             gameResult = data
         } else {
-            const a = data.err.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
+            const a = data.output.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
             terminal.innerHTML = `>>> ${a}`
         }
     })
