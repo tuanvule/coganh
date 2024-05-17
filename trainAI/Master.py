@@ -34,20 +34,20 @@ def vay(opp_pos, your_board, opp_board):
     return 0, []
 
 def main(player):
-    global move, board_pointF, cache
+    global move, board_pointF, cache, Stopdepth
     move = {"selected_pos": None, "new_pos": None}
     dirname = os.path.dirname(__file__)
 
-    with open(os.path.join(dirname, "source_code/pos_point.txt")) as f:
-        max_pointF = int(f.readline()[:-1])
-        board_pointF = eval(f.read())
-    for i in range(5):
-        for j in range(5):
-            board_pointF[i][j] = board_pointF[i][j]/max_pointF
+    board_pointF = [[ 0, 0,  1, 0, 0],
+                    [ 0, 7,  2, 5, 0],
+                    [ 4, 2, 10, 2, 4],
+                    [ 0, 5,  2, 7, 0],
+                    [ 0, 0,  1, 0, 0]]
 
     your_board = int("0b"+"".join("1" if ele == -1 else "0" for row in player.board for ele in row),2)
     opp_board = int("0b"+"".join("1" if ele == 1 else "0" for row in player.board for ele in row),2)
 
+    Stopdepth = 6
     with open(os.path.join(dirname, "source_code/bit_board.txt")) as f:
         cache = {i.split("  ")[0]:i.split("  ")[1] for i in f.read().split("\n")}
     if (state := f"{your_board} {opp_board}") in cache:
@@ -56,30 +56,31 @@ def main(player):
         move["new_pos"] = tuple(map(int, temp[2:]))
         return move
 
-    v = minimax(player.your_pos, player.opp_pos, your_board, opp_board, Stopdepth=6)
+    v = minimax(player.your_pos, player.opp_pos, your_board, opp_board)
 
     with open(os.path.join(dirname, f"source_code/bit_board.txt"), mode="a") as f:
-        f.write( f"\n{your_board} {opp_board}  {move['selected_pos'][0]}{move['selected_pos'][1]}{move['new_pos'][0]}{move['new_pos'][1]} {v}" )
+        f.write( f"\n{your_board} {opp_board}  {move['selected_pos'][0]}{move['selected_pos'][1]}{move['new_pos'][0]}{move['new_pos'][1]} {' '.join(map(str, v))}" )
 
     return move
 
-def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlayer=True, Stopdepth=None, alpha=float("-inf"), beta=float("inf")):
+def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlayer=True, alpha=(float("-inf"),), beta=(float("inf"),)):
 
-    if (state := f"{your_board} {opp_board}") in cache:
-        return float(cache[state].split(' ')[1])
+    if (state := f"{your_board} {opp_board}") in cache and not isMaximizingPlayer:
+        temp = cache[state].split(' ')
+        return float(temp[1]), float(temp[2])-depth, float(temp[3])
 
     if your_board == 0 or opp_board == 0:
-        return -1000 + depth if isMaximizingPlayer else 1000 - depth
-    if depth == Stopdepth:
-        return (len(your_pos) - len(opp_pos))*50 + sum(board_pointF[y][x] for x, y in your_pos) - sum(board_pointF[y][x] for x, y in opp_pos) - depth
+        return (-100, depth, 0) if isMaximizingPlayer else (100, -depth, 0)
+    if depth == Stopdepth: 
+        return (len(your_pos) - len(opp_pos)), -depth, sum(board_pointF[y][x] for x, y in your_pos) - sum(board_pointF[y][x] for x, y in opp_pos)
 
-    bestVal = float("-inf") if isMaximizingPlayer else float("inf")
+    bestVal = (float("-inf"),) if isMaximizingPlayer else (float("inf"),)
 
     for pos in your_pos:
         for movement in ((0,-1), (0,1), (1,0), (-1,0), (-1,1), (1,-1), (1,1), (-1,-1)):
             invalid_move = (pos[0] + movement[0], pos[1] + movement[1])
             if 0 <= invalid_move[0] <= 4 and 0 <= invalid_move[1] <= 4 and (your_board|opp_board)&(1<<24-5*invalid_move[1]-invalid_move[0]) == 0 and \
-                (movement[0]*movement[1]==0 or (movement[0]*movement[1]!=0 and (pos[0]+pos[1])%2==0)) and alpha < beta:
+                (movement[0]*movement[1]==0 or (movement[0]*movement[1]!=0 and (pos[0]+pos[1])%2==0)):
 
                 # Update move to board
                 your_new_board = your_board^(1<<24-5*pos[1]-pos[0])|(1<<24-5*invalid_move[1]-invalid_move[0])
@@ -91,7 +92,7 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
                 if len(your_new_pos) > len(opp_new_pos) or len(your_new_pos) == len(opp_new_pos) == 3:
                     opp_new_board, opp_new_pos = vay(opp_new_pos, your_new_board, opp_new_board)
 
-                value = minimax(opp_new_pos, your_new_pos, opp_new_board, your_new_board, depth+1, not isMaximizingPlayer, Stopdepth, alpha, beta)
+                value = minimax(opp_new_pos, your_new_pos, opp_new_board, your_new_board, depth+1, not isMaximizingPlayer, alpha, beta)
                 if depth == 0 and value > bestVal:
                     move["selected_pos"] = pos
                     move["new_pos"] = invalid_move
@@ -102,5 +103,8 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
                 else:
                     beta = min(beta, value)
                     bestVal = min(bestVal, value)
+
+                if alpha >= beta:
+                    return bestVal
 
     return bestVal

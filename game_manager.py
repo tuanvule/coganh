@@ -111,6 +111,7 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
         "username": session_name,
         "img": img
     }
+    debug_game_state = []
 
     while not winner:
 
@@ -140,11 +141,12 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
         print("-------------", move_counter, "------------")
 
         body["img"].append([deepcopy(positions), move, remove])
+        debug_game_state.append(deepcopy(player1))
 
         if debugNum > 0 and move_counter == debugNum:
-            imageData = deepcopy(body)
+            imageData = body
             img_url = requests.post("http://tlv23.pythonanywhere.com//generate_debug_image", json=imageData).text
-            return img_url
+            return img_url, debug_game_state
         
         if not positions[1]:
             winner = "lost"

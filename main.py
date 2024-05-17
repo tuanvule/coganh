@@ -150,7 +150,6 @@ def logout():
 @login_required
 def menu():
     if 'secret_key' in session:
-        print(session['secret_key'])
         user = User.query.where(User.username == session['username']).first()
         login_user(user)
         return render_template('menu.html', current_user=current_user)
@@ -199,7 +198,9 @@ def debug_code():
     with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
         f.write(data["code"])
     try: 
-        img_url = activation("trainAI.Master", name, data["debugNum"]) # người thắng / số lượng lượt chơi
+        img_url, debug_game_state = activation("trainAI.Master", name, data["debugNum"]) # người thắng / số lượng lượt chơi
+        player = Player(request.get_json())
+        print(debug_game_state)
         data = {
             "code": 200,
             "img_url": img_url
@@ -231,6 +232,18 @@ def create_bot():
         user = User.query.where(User.username == session['username']).first()
         login_user(user)
         return render_template('create_bot.html')
+    else:
+        if current_user:
+            logout_user()
+        return redirect(url_for('login'))
+    
+@app.route('/challenge_mode')
+@login_required
+def challenge_mode():
+    if 'secret_key' in session:
+        user = User.query.where(User.username == session['username']).first()
+        login_user(user)
+        return render_template('challenge_mode.html')
     else:
         if current_user:
             logout_user()

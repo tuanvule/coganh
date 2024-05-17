@@ -7,78 +7,121 @@
     <link rel="stylesheet" href="../static/css/style.css">
     <link rel="stylesheet" href="../static/css/animation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="../static/css/create_bot.css">
+    <link rel="stylesheet" href="../static/css/challenge_mode.css">
 </head>
 <body>
 
     <div class="cover" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, .05); z-index: 1000;"></div>
 
-    <!-- <div class="instruction" style="max-width: 500px; position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); background: #fff; z-index: 9999; color: #121212; padding: 10px 20px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .8);">
-        <p style="font-size: 20px">nếu bạn là người mới thì chúng tôi khuyến kích bạn xem hướng dẫn trước khi bắt đầu</p>
-        <div style="display: flex; justify-content: right; margin-top: 20px;">
-            <div class="btn reject-btn" style="user-select: none; cursor: pointer; padding: 5px 10px; margin: 0 10px; transition: .05s linear;">bỏ qua</div>
-            <div class="btn accept-btn" style="user-select: none; cursor: pointer; padding: 5px 10px; margin: 0 10px; background-color: #121212; color: #fff; transition: .05s linear">xem</div>
-        </div>
-    </div> -->
-
     <div class="guide"></div>
 
     <div class="container">
         <div class="container_element bot_display">
+            <div class="bot_display-tasks">
+                <div class="bot_display-tasks_nav">
+                    
+                </div>
+            </div>
             <div class="bot_display_nav">
                 <div class="bot_display_nav-block">
-                    <div class="bot_display_nav-block--item video">
-                        VIDEO
-                        <div class="loading_nav_video">
+                    <div class="bot_display_nav-block--item task">
+                        TASK
+                        <div class="loading_nav_task">
                             <div class="loader"></div>
                             <i class="fa-solid fa-circle-check check_icon"></i>
                         </div>
                     </div>
-                    <div class="bot_display_nav-block--item debug">
-                        DEBUG
+                    <div class="bot_display_nav-block--item result">
+                        RESULT
                         <div class="loading_nav_image">
                             <i class="fa-solid fa-circle-check check_icon"></i>
                             <div class="loader"></div>
                         </div>
+                    </div>
+                    <div class="bot_display_nav-block--item submissions">
+                        SUBMISSIONS
                     </div>
                     <div class="animation">
                         <div class="children"></div>
                     </div>
                 </div>
             </div>
-            <div class="bot_display-video--background">
-                <video class="bot_display-video-item bot_display-video--result" controls>
+    
+            <div style="display: none;" class="bot_display-item bot_display-task">
+                <div class="bot_display-task--title">1. Blank</div>
+                <ul class="bot_display-task--class_list">
+                    <li class="bot_display-task--class_item medium">easy</li>
+                    <li class="bot_display-task--class_item">beginner</li>
+                    <li class="bot_display-task--class_item">100</li>
+                </ul>
+
+                <div class="bot_display-task--board">
+                    <img class="bot_display-task--image" src="../static/img/chessboard.png" alt="">
+                </div>
+                <!-- <video class="bot_display-video-item bot_display-video--result" controls>
                     <source src="{{ url_for('static', filename='upload_video/demo.mp4') }}" type="video/mp4">
                     Your browser does not support the video tag.
-                </video>
-                <div class="loading_video">
-                    <div class="loader"></div>
+                </video> -->
+                <div class="bot_display-task--rule">
+                    Input: grid = [[0,1,-1],[1,0,-1],[1,1,1]]
+                    Output: 5
+                    Explanation: The player started at (0, 0) and went down, down, right right to reach (2, 2).
+                    4 cherries were picked up during this single trip, and the matrix becomes [[0,1,-1],[0,0,-1],[0,0,0]].
+                    Then, the player went left, up, up, left to return home, picking up one more cherry.
+                    The total number of cherries picked up is 5, and this is the maximum possible.
                 </div>
-                <div style="display: none;" class="bot_display-video-item bot_display-video--debug">
-                    <div class="loading_image">
-                        <div class="loader"></div>
+
+                <div class="bot_display-task--status">
+                    <div class="bot_display-task--status_item tallent">Tallent <div class="num">100</div></div>
+                    <div class="bot_display-task--status_item good">good <div class="num">21</div></div>
+                    <div class="bot_display-task--status_item submissions">submissions <div class="num">213</div></div>
+                </div>
+            </div>
+
+            <div class="bot_display-item bot_display-result">
+                <div class="rate">
+                    <div class="type">excellent</div>
+                    <div class="moves">
+                        <div class="moves_max-move">moves: 20</div>
+                        <div class="move moves_excellent-move">
+                            <div class="percent_bar"></div> 
+                            <div class="count">1</div>
+                        </div>
+                        <div class="move moves_good-move">
+                            <div class="percent_bar"></div> 
+                            <div class="count">16</div>
+                        </div>
+                        <div class="move moves_bad-move">
+                            <div class="percent_bar"></div> 
+                            <div class="count">3</div>
+                        </div>
                     </div>
-                    <div class="debug_nav">
-                        <i class="fa-solid fa-angle-up arrow_left"></i>
-                        <i class="fa-solid fa-angle-down arrow_right"></i>
-                    </div>
-                    <div class="debug_img_main">
-                        <ul class="debug_img_list">
-                            <li class="debug_img_item default"><img src="../static/img/chessboard.png" alt=""></li>
+                </div>
+                <div class="display_result">
+                    <div class="image_block">
+                        <i class="fa-solid fa-angle-left arrow_left"></i>
+                        <ul class="img_list">
+                            <li class="img_item"><img src="../static/img/chessboard.png" alt=""></li>
                         </ul>
                         <div class="counter">1</div>
+                        <i class="fa-solid fa-angle-right arrow_right"></i>
                     </div>
-                    <div class="debug_info">
-                        <div class="debug_info-state">
-                            <div class="debug_info-selected_pos">(0,2)</div>
-                            <div class="debug_info-arrow"><i class="fa-solid fa-arrow-down-long"></i></div>
-                            <div class="debug_info-new_pos">(2,0)</div>
+                    <div class="evaluation">
+                        <div class="evaluation_pos">
+                            <div class="evaluation_selected-pos">Selected pos (0,0)</div>
+                            <div class="evaluation_new-pos">New pos (1,2)</div>
                         </div>
-                        <div class="debug_info-move_level">nhu c</div>
+                        <div class="evaluation_rate">
+                            excellent
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="utility">
+
+            <div class="bot_display-item bot_display-submissions">
+
+            </div>
+            <!-- <div class="utility">
                 <div class="utility_nav">
                     <div class="utility_nav-block">
                         <div class="utility_nav-block--item rule">RULE</div>
@@ -91,30 +134,6 @@
                 </div>
                 <div class="utility_block">
                     <div class="utility_block-element rule">
-                        <div class="input">
-                            <div class="type">input</div> 
-                            <div class="content">
-                                Player.your_pos: vị trí tất cả quân cờ của bản thân (x, y) <br>
-                                Player.opp_pos: vị trí tất cả quân cờ của đối thủ (x, y) <br>
-                                Player.your_side: màu cờ của bản thân (-1:🔴 / 1:🔵) <br>
-                                Player.board: bàn cờ (-1:🔴 / 1:🔵 / 0:∅) <br>
-                                <hr>
-                                <br>
-                                -điều kiện:
-                                <hr>
-                                <br>
-                                0 ≤ x, y ≤ 4 <hr>
-                                Player.your_side in (-1, 1) <hr>
-                                {i for i in Player.board} == {0, 1, -1}
-                            </div>
-                        </div>
-                        <div class="output">
-                            <div class="type">output</div> 
-                            <div class="content">
-                                selected_pos: vị trí của quân cờ được chọn
-                                new_pos: vị trí sau khi di chuyển của quân cờ đó
-                            </div>
-                        </div>
                     </div>
                     <div class="utility_block-element terminal">>>> </div>
                     <div class="utility_block-element result">
@@ -126,20 +145,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
         <div class="container_element coding_module">
             <div class="coding_module-nav">
                 <a href="{{ url_for('menu') }}" class="coding_module-nav--backBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-                <div class="debug_mode_selector">
-                    <div>Debug turn</div>
-                    <select class="selector">
-                        <!-- <option value="default" class="option">default</option> -->
-                        <option value="2" class="option">2</option>
-                        <option value="4" class="option">4</option>
-                        <option value="6" class="option">6</option>
-                    </select>
-                </div>
                 <div class="coding_module-nav--saveBtn btn" data-saved="false">save</div>
                 <div class="coding_module-nav--runBtn loader" style="display: none; animation: none;"><div class="coding_module-nav--loading"></div></div>
                 <div class="coding_module-nav--runBtn btn">run</div>
@@ -173,6 +183,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.min.js"></script>
-    <script src="../static/script/create_bot.js"></script>
+    <script src="../static/script/challenge_mode.js"></script>
 </body>
 </html>
