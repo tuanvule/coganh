@@ -150,6 +150,7 @@ def logout():
 @login_required
 def menu():
     if 'secret_key' in session:
+        # print(session['secret_key'])
         user = User.query.where(User.username == session['username']).first()
         login_user(user)
         return render_template('menu.html', current_user=current_user)
@@ -169,53 +170,59 @@ def upload_code():
         f.write(code)
     try: 
         winner, max_move_win, new_url = activation("trainAI.Master", name, 0) # người thắng / số lượng lượt chơi
+        # with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
+        #     txt = f.read()
         user.fightable = True
         db.session.commit()
         data = {
             "code": 200,
             "status": winner,
             "max_move_win": max_move_win,
-            "new_url": new_url
+            "new_url": new_url,
         }
         return json.dumps(data)
     except Exception as err:
         err = str(err).replace(r"c:\Users\Hello\OneDrive\Code Tutorial\Python", "...")
-        with open(f"static/output/stdout_{name}.txt", mode="r", encoding="utf-8") as output:
-            user.fightable = False
-            db.session.commit()
-            data = {
-                "code": 400,
-                "output": output.read(),
-            }
-            return json.dumps(data) # Giá trị Trackback Error
+        with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
+            txt = f.read()
+        user.fightable = False
+        db.session.commit()
+        data = {
+            "code": 400,
+            "err": txt
+        }
+        return json.dumps(data) # Giá trị Trackback Error
     
 @app.route('/debug_code', methods=['POST'])
 @login_required
 def debug_code():
     name = current_user.username
     data = request.get_json()
-    print(data)
+    # print(data)
     user = User.query.filter_by(username=name).first()
     with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
         f.write(data["code"])
     try: 
-        img_url, debug_game_state = activation("trainAI.Master", name, data["debugNum"]) # người thắng / số lượng lượt chơi
-        with open(f"static/output/stdout_{name}.txt", mode="r", encoding="utf-8") as output:
-            data = {
-                "code": 200,
-                "img_url": img_url,
-                "output": output.read()
-            }
-            return json.dumps(data)
+        img_url = activation("trainAI.Master", name, data["debugNum"]) # người thắng / số lượng lượt chơi
+        with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
+            txt = f.read()
+        data = {
+            "code": 200,
+            "img_url": img_url,
+            "output": txt
+        }
+        return json.dumps(data)
     except Exception as err:
-        with open(f"static/output/stdout_{name}.txt", mode="r", encoding="utf-8") as output:
-            user.fightable = False
-            db.session.commit()
-            data = {
-                "code": 400,
-                "output": output.read(),
-            }
-            return json.dumps(data) # Giá trị Trackback Error
+        # err = str(err).replace(r"c:\Users\Hello\OneDrive\Code Tutorial\Python", "...")
+        with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
+            txt = f.read()
+        user.fightable = False
+        db.session.commit()
+        data = {
+            "code": 400,
+            "output": txt,
+        }
+        return json.dumps(data) # Giá trị Trackback Error
     
 @app.route('/save_code', methods=['POST'])
 @login_required
@@ -277,7 +284,6 @@ def bot_bot():
         if current_user:
             logout_user()
         return redirect(url_for('login'))
-    
 
 @app.route('/human_bot')
 @login_required

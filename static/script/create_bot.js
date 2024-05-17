@@ -36,6 +36,8 @@ const loadingNavImageLD = $(".loading_nav_image .loader")
 const loadingNavVideoLD = $(".loading_nav_video .loader")
 const loadingNavImageCI = $(".loading_nav_image .check_icon")
 const loadingNavVideoCI = $(".loading_nav_video .check_icon")
+const loadingNavImageFI = $(".loading_nav_image .fail_icon")
+const loadingNavVideoFI = $(".loading_nav_video .fail_icon")
 const isEnableDebug = $("input#debug")
 const isEnableVideo = $("input#video")
 
@@ -58,6 +60,11 @@ editor.setOptions({
     selectionStyle: "text",
     theme: "ace/theme/dracula",
 });
+
+function setState(LD, RBtn, DIL) {
+
+}
+
 saveBtn.onclick = () => {
     const code = editor.getValue()
     saveBtn.dataset.saved = "true"
@@ -73,7 +80,7 @@ saveBtn.onclick = () => {
         saveBtn.style.backgroundColor = "#fff"
         saveBtn.style.color = "#000"
         const a = data.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
-        terminal.innerHTML = `>>> ${a}`
+        terminal.innerHTML = `${a}`
     })
 }
 
@@ -92,7 +99,7 @@ runBtn.onclick = () => {
     ruleBtn.style.color = "#ccc"
     resultBtn.style.color = "#ccc"
     changeAnimation(terminalBtn, `${((terminalBtn.clientWidth - 10) / animation.clientWidth * 100)}%`, terminalBtn.clientWidth + "px", "terminal", animationChild)
-    terminal.innerHTML = `>>> loading...`
+    terminal.innerHTML = `loading...`
     gameResult = null
     
     if(isEnableVideo.checked && !isEnableDebug.checked) {
@@ -103,11 +110,13 @@ runBtn.onclick = () => {
     loadingImage.style.display = "block"
     loadingNavImageLD.style.display = "block"
     loadingNavImageCI.style.display = "none"
+    loadingNavImageFI.style.display = "none"
     if(isEnableVideo.checked) {
         loadingVideo.style.display = "block"
         video.style.display = "none"
         loadingNavVideoLD.style.display = "block"
         loadingNavVideoCI.style.display = "none"
+        loadingNavVideoFI.style.display = "none"
     }
     
 
@@ -123,8 +132,10 @@ runBtn.onclick = () => {
     })
     .then(res => res.json())
     .then(data => {
+        loader.style.display = "none"
+        loadingImage.style.display = "none"
+        terminal.style.backgroundColor = "#000"
         if(data.code === 200) {
-            loader.style.display = "none"
             runBtn.style.display = "block"
             img_url = JSON.parse(data.img_url)
             console.log(img_url)
@@ -134,7 +145,6 @@ runBtn.onclick = () => {
                     <li data-num="${index}" class="debug_img_item"><img src="${url}" alt=""></li>
                 `
             })
-            loadingImage.style.display = "none"
             debugImageList.style.display = "block"
             debugImageItems = $$(".debug_img_item")
             debugImageItems[0].classList.add("display_image")
@@ -142,13 +152,23 @@ runBtn.onclick = () => {
             counter.innerHTML = imageNum + 1
             loadingNavImageLD.style.display = "none"
             loadingNavImageCI.style.display = "block"
+            loadingNavImageFI.style.display = "none"
             debugArrowRight.style.opacity = "1"
             const a = data.output.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
-            terminal.innerHTML = `>>> ${a}`
+            terminal.innerHTML = `${a}`
             if(isEnableVideo.checked) uploadCode(code)
         } else {
+            loadingNavImageFI.style.display = "block"
+            loadingNavVideoFI.style.display = "block"
+            loadingNavVideoLD.style.display = "none"
+            loadingVideo.style.display = "none"
+            loadingNavVideoFI.style.display = "block"
+            debugImageList.style.display = "block"
+            runBtn.style.display = "block"
+            if(currentDisplayMode === "video") video.style.display = ""
+            console.log(data.output)
             const a = data.output.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
-            terminal.innerHTML = `>>> ${a}`
+            terminal.innerHTML = `${a}`
         }
     })
 }
@@ -172,24 +192,30 @@ function uploadCode(code) {
             gameResult = data
         } else {
             const a = data.output.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
-            terminal.innerHTML = `>>> ${a}`
+            terminal.innerHTML = `${a}`
         }
     })
-    .catch(err => terminal.innerHTML = `>>> ${err}`)
+    .catch(err => {
+        terminal.innerHTML = `${err}`
+        loadingNavVideoFI.style.display = "block"
+    })
     .finally(() => {
         const source = $("source")
         loader.style.display = "none"
         runBtn.style.display = "block"
         terminal.style.backgroundColor = "#000"
+        loadingNavVideoLD.style.display = "none"
+        loadingVideo.style.display = "none"
         if(gameResult?.code === 200) {
-            loadingNavVideoLD.style.display = "none"
             loadingNavVideoCI.style.display = "block"
+            loadingNavVideoFI.style.display = "none"
             source.src = gameResult.new_url
-            loadingVideo.style.display = "none"
             video.load()
             if(currentDisplayMode === "video") video.style.display = ""
             changeAnimation(resultBtn, "0", resultBtn.clientWidth + "px", "result", animationChild)
             toggleMode("result")
+        } else {
+            loadingNavVideoFI.style.display = "block"
         }
     })
 }

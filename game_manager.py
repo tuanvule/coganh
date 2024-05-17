@@ -1,4 +1,4 @@
-from random import choice
+
 import os
 import requests
 from copy import deepcopy
@@ -8,24 +8,21 @@ from fdb.firestore_config import fdb
 import sys
 # from fdb.uti.upload import upload_video_to_storage
 
-absolute_path = os.getcwd()
-
 class Player:
     def __init__(self, your_pos=None, opp_pos=None, your_side=None, board=None):
         self.your_pos = your_pos
         self.opp_pos = opp_pos
         self.your_side = your_side
         self.board = board
-
 def declare():
-    global game_state, positions, point, player1, player2, img
+    global game_state, positions, point, player1, player2
 
     player1 = Player()
     player2 = Player()
     player1.your_side = 1
     player2.your_side = -1
 
-    game_state = {"current_turn": choice((-1, 1)),
+    game_state = {"current_turn": 1,
                   "board": [[-1, -1, -1, -1, -1],
                             [-1,  0,  0,  0, -1],
                             [ 1,  0,  0,  0, -1],
@@ -40,10 +37,11 @@ def declare():
 
     point = []
 
-    img = [[deepcopy(positions), {"selected_pos": (-1000,-1000), "new_pos": (-1000,-1000)}, []]]
-
 # Board manipulation
 def Raise_exception(move, current_side, board):
+    if not (move.__class__ == dict and tuple(move.keys()) == ('selected_pos', 'new_pos') and move['selected_pos'].__class__ == tuple and move['new_pos'].__class__ == tuple):
+        raise Exception(r"The return value must be in the form: {'selected_pos': (x, y), 'new_pos': (x, y)} " + f"(not {move})")
+
     current_x, current_y = move["selected_pos"]
     new_x, new_y = move["new_pos"]
 
@@ -98,17 +96,17 @@ def vay(opp_pos):
 # System
 def activation(option, session_name, debugNum):
     global org_stdout
-    open(f"static/output/stdout_{session_name}.txt", mode="w", encoding="utf-8")
     if debugNum > 0:
+        open(f"static/output/stdout_{session_name}.txt", mode="w", encoding="utf-8")
         org_stdout = sys.stdout
         f = open(f"static/output/stdout_{session_name}.txt", mode="a", encoding="utf-8")
         sys.stdout = f
 
-    UserBot = __import__("static.botfiles.botfile_"+session_name, fromlist=[None])
-    reload(UserBot)
-    Bot2 = __import__(option, fromlist=[None])
-    reload(Bot2)
     try:
+        UserBot = __import__("static.botfiles.botfile_"+session_name, fromlist=[None])
+        reload(UserBot)
+        Bot2 = __import__(option, fromlist=[None])
+        reload(Bot2)
         temp = run_game(UserBot, Bot2, session_name, debugNum)
         if debugNum > 0:
             sys.stdout = org_stdout
@@ -116,9 +114,10 @@ def activation(option, session_name, debugNum):
         return temp
     except Exception:
         if debugNum > 0:
+            f.write(traceback.format_exc())
             sys.stdout = org_stdout
             f.close()
-        raise Exception(traceback.format_exc())
+        raise Exception()
 def run_game(UserBot, Bot2, session_name, debugNum): # Main
 
     declare()
@@ -126,9 +125,8 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
     move_counter = 1
     body = {
         "username": session_name,
-        "img": img
+        "img": [[deepcopy(positions), {"selected_pos": (-1000,-1000), "new_pos": (-1000,-1000)}, []]]
     }
-    debug_game_state = []
 
     while not winner:
 
@@ -155,17 +153,12 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
         remove += vay(opp_pos)
         if remove: point[:] += [move_selected_pos]*len(remove)
 
-        print("-------------", move_counter, "------------", file=org_stdout)
-
         body["img"].append([deepcopy(positions), move, remove])
-        debug_game_state.append(deepcopy(player1))
 
         if debugNum > 0 and move_counter == debugNum:
-            imageData = body
-            img_url = requests.post("http://tlv23.pythonanywhere.com//generate_debug_image", json=imageData).text
-            return img_url, debug_game_state
-        
-        if not positions[1]:
+            img_url = requests.post("http://tlv23.pythonanywhere.com//generate_debug_image", json=body).text
+            return img_url
+        elif not positions[1]:
             winner = "lost"
         elif not positions[-1]:
             winner = "win"
@@ -178,6 +171,3 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
     # res = requests.post("http://127.0.0.1:4000//generate_video", json=body)
     new_url = requests.post("http://tlv23.pythonanywhere.com//generate_video", json=body).text
     return winner, move_counter-1, new_url
-if __name__ == '__main__':
-    import trainAI.Master as Master, CGEngine
-    winner, win_move_counter = run_game(CGEngine, Master)

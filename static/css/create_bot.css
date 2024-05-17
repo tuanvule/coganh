@@ -206,9 +206,21 @@ body {
     display: block;
 }
 
-.bot_display-video--debug .debug_nav i {
+/* .bot_display-video--debug .debug_nav i {
     font-size: 25px;
-    /* padding: 20px; */
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, .2);
+    border-radius: 100%;
+    margin: auto 0;
+    transition: 0.08s linear;
+    cursor: pointer;
+} */
+
+.bot_display-video--debug i {
+    font-size: 25px;
     width: 50px;
     height: 50px;
     line-height: 50px;
@@ -268,6 +280,16 @@ body {
 
 .check_icon {
     color: #007BFF;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 14px;
+    display: none;
+}
+
+.fail_icon {
+    color: red;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -392,7 +414,7 @@ body {
     height: 100%;
     overflow: scroll;
     display: none;
-    /* max-width: 100%; */
+    padding: 10px;
 }
 
 .output {
