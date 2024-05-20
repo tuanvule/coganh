@@ -1,7 +1,7 @@
 const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
 
-const socket = io('http://127.0.0.1:5000/', {
+const socket = io('https://coganh.onrender.com/', {
     allowRequest: (req, callback) => {
         console.log(req.headers.origin, '===================================')
         const noOriginHeader = req.headers.origin === undefined;
@@ -9,7 +9,7 @@ const socket = io('http://127.0.0.1:5000/', {
     },
     withCredentials: true,
     extraHeaders: {
-        "origin": "http://127.0.0.1:5000/"
+        "origin": "https://coganh.onrender.com/"
     },
     serveClient: true,
     transports : ['websocket'],
