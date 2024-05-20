@@ -109,7 +109,7 @@
                                 <br>
                                 0 ≤ x, y ≤ 4 <hr>
                                 Player.your_side in (-1, 1) <hr>
-                                {i for i in Player.board} == {0, 1, -1}
+                                {j for i in Player.board for j in i} == {0, 1, -1}
                             </div>
                         </div>
                         <div class="output">

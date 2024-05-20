@@ -12,6 +12,7 @@ from threading import Timer
 import json
 import secrets
 from fdb.firestore_config import fdb
+import socketio
 
 # doc_ref = fdb.collection("app").document("User")
 
@@ -37,6 +38,9 @@ db = SQLAlchemy(app)
 
 app.config['MAX_CONTENT_LENGTH'] = 16_000_00  #Max file size
 app.config['UPLOAD_FOLDER'] = "static/botfiles"
+
+sio = socketio.Server(cors_allowed_origins='*')
+app.wsgi_app = socketio.WSGIApp(sio, app.wsgi_app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -292,8 +296,12 @@ def bot_bot():
 @app.route('/human_bot')
 @login_required
 def human_bot():
-    users = [(i.username, i.elo) for i in User.query.all()]
-    return render_template('human_bot.html', users = users)
+    return render_template('human_bot.html')
+
+@app.route('/human_human')
+@login_required
+def human_human():
+    return render_template('human_human.html', user = current_user)
 
 @app.route('/get_pos_of_playing_chess', methods=['POST'])
 @login_required
@@ -335,6 +343,30 @@ def update_rank_board():
     users = [(i.username, i.elo) for i in User.query.filter(User.fightable == True).order_by(User.elo.desc()).limit(5).all()]
 
     return users
+
+@sio.event
+def connect(sid, environ):
+    print(f"Client connected: {sid}")
+
+# Xử lý ngắt kết nối từ client
+@sio.event
+def disconnect(sid):
+    print(f"Client disconnected: {sid}")
+
+# Xử lý sự kiện 'message' từ client
+@sio.event
+def message(sid, data):
+    print(f"Message from {sid}: {data}")
+    sio.send("Hello from server!")
+
+@sio.event
+def check_user(data, environ):
+    # sio.emit('check_user', environ)
+    sio.emit(f'check_user_{environ}', environ)
+
+@sio.event
+def get_move(data, room, environ):
+    sio.emit(f'get_move_{room}', environ)
 
 if __name__ == '__main__':
     open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
