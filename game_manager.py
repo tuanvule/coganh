@@ -112,7 +112,8 @@ def activation(option, session_name, debugNum):
             sys.stdout = org_stdout
             f.close()
         return temp
-    except Exception:
+    except Exception as err:
+        print(str(err))
         if debugNum > 0:
             f.write(traceback.format_exc())
             sys.stdout = org_stdout
@@ -170,4 +171,8 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
 
     # res = requests.post("http://127.0.0.1:4000//generate_video", json=body)
     new_url = requests.post("http://tlv23.pythonanywhere.com//generate_video", json=body).text
+
+    print("-----------------------------------------------------------------------------------")
+
+    print(winner, move_counter, new_url)
     return winner, move_counter-1, new_url

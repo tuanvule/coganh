@@ -56,3 +56,14 @@
         display: none;
     }
 }
+
+@keyframes ske_loading {
+    0% {
+        opacity: .6;
+        transform: translateY(3px) scale(0.98);
+    }
+    85%, 100% {
+        opacity: 1;
+        transform: translateY(0px) scale(1);
+    }
+}

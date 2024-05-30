@@ -32,22 +32,56 @@ def vay(opp_pos, your_board, opp_board):
                 return opp_board, opp_pos
 
     return 0, []
+def check_pos_point(your_board, opp_board):
+
+    board_pointF = (0,0,1,0,0,0,7,2,5,0,4,2,10,2,4,0,5,2,7,0,0,0,1,0,0)
+    move_count = (
+        (5,4,3,2,1,4,4,3,2,1,3,3,3,2,1,2,2,2,2,1,1,1,1,1,1),
+        (4,5,4,3,2,3,4,3,3,2,3,3,3,2,2,2,2,2,2,1,1,1,1,1,1),
+        (3,4,5,4,3,3,4,4,4,3,3,3,3,3,3,2,2,2,2,2,1,1,1,1,1),
+        (2,3,4,5,4,2,3,3,4,3,2,2,3,3,3,1,2,2,2,2,1,1,1,1,1),
+        (1,2,3,4,5,1,2,3,4,4,1,2,3,3,3,1,2,2,2,2,1,1,1,1,1),
+        (4,3,3,2,1,5,4,3,2,1,4,3,3,2,1,3,3,2,2,1,2,2,2,1,1),
+        (4,4,4,3,2,4,5,4,3,2,4,4,4,3,2,3,3,3,3,2,2,2,2,2,2),
+        (3,3,4,3,3,3,4,5,4,3,3,3,4,3,3,2,3,3,3,2,2,2,2,2,2),
+        (2,3,4,4,4,2,3,4,5,4,2,3,4,4,4,2,3,3,3,3,2,2,2,2,2),
+        (1,2,3,3,4,1,2,3,4,5,1,2,3,3,4,1,2,2,3,3,1,1,2,2,2),
+        (3,3,3,2,1,4,4,3,2,1,5,4,3,2,1,4,4,3,2,1,3,3,3,2,1),
+        (3,3,3,2,2,3,4,3,3,2,4,5,4,3,2,3,4,3,3,2,3,3,3,2,2),
+        (3,3,3,3,3,3,4,4,4,3,3,4,5,4,3,3,4,4,4,3,3,3,3,3,3),
+        (2,2,3,3,3,2,3,3,4,3,2,3,4,5,4,2,3,3,4,3,2,2,3,3,3),
+        (1,2,3,3,3,1,2,3,4,4,1,2,3,4,5,1,2,3,4,4,1,2,3,3,3),
+        (2,2,2,1,1,3,3,2,2,1,4,3,3,2,1,5,4,3,2,1,4,3,3,2,1),
+        (2,2,2,2,2,3,3,3,3,2,4,4,4,3,2,4,5,4,3,2,4,4,4,3,2),
+        (2,2,2,2,2,2,3,3,3,2,3,3,4,3,3,3,4,5,4,3,3,3,4,3,3),
+        (2,2,2,2,2,2,3,3,3,3,2,3,4,4,4,2,3,4,5,4,2,3,4,4,4),
+        (1,1,2,2,2,1,2,2,3,3,1,2,3,3,4,1,2,3,4,5,1,2,3,3,4),
+        (1,1,1,1,1,2,2,2,2,1,3,3,3,2,1,4,4,3,2,1,5,4,3,2,1),
+        (1,1,1,1,1,2,2,2,2,1,3,3,3,2,2,3,4,3,3,2,4,5,4,3,2),
+        (1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,3,4,4,4,3,3,4,5,4,3),
+        (1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,2,3,3,4,3,2,3,4,5,4),
+        (1,1,1,1,1,1,2,2,2,2,1,2,3,3,3,1,2,3,4,4,1,2,3,4,5)
+    )
+
+    your_cm = tuple(zip(*[move_count[i] for i in range(25) if your_board&(16777216>>i)]))
+    opp_cm = tuple(zip(*[move_count[i] for i in range(25) if opp_board&(16777216>>i)]))
+
+    sum = 0
+    for i in range(25):
+        sub = max(your_cm[i]) - max(opp_cm[i])
+        if sub > 0: sum += board_pointF[i]
+        elif sub < 0: sum -= board_pointF[i]
+
+    return sum
 
 def main(player):
     global move, board_pointF, cache, Stopdepth
     move = {"selected_pos": None, "new_pos": None}
-    dirname = os.path.dirname(__file__)
-
-    board_pointF = [[ 0, 0,  1, 0, 0],
-                    [ 0, 7,  2, 5, 0],
-                    [ 4, 2, 10, 2, 4],
-                    [ 0, 5,  2, 7, 0],
-                    [ 0, 0,  1, 0, 0]]
 
     your_board = int("0b"+"".join("1" if ele == -1 else "0" for row in player.board for ele in row),2)
     opp_board = int("0b"+"".join("1" if ele == 1 else "0" for row in player.board for ele in row),2)
 
-    Stopdepth = 6
+    dirname = os.path.dirname(__file__)
     with open(os.path.join(dirname, "source_code/bit_board.txt")) as f:
         cache = {i.split("  ")[0]:i.split("  ")[1] for i in f.read().split("\n")}
     if (state := f"{your_board} {opp_board}") in cache:
@@ -56,6 +90,7 @@ def main(player):
         move["new_pos"] = tuple(map(int, temp[2:]))
         return move
 
+    Stopdepth = 6
     v = minimax(player.your_pos, player.opp_pos, your_board, opp_board)
 
     with open(os.path.join(dirname, f"source_code/bit_board.txt"), mode="a") as f:
@@ -70,9 +105,9 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
         return float(temp[1]), float(temp[2])-depth, float(temp[3])
 
     if your_board == 0 or opp_board == 0:
-        return (-100, depth, 0) if isMaximizingPlayer else (100, -depth, 0)
-    if depth == Stopdepth: 
-        return (len(your_pos) - len(opp_pos)), -depth, sum(board_pointF[y][x] for x, y in your_pos) - sum(board_pointF[y][x] for x, y in opp_pos)
+        return (-8, depth, 0) if isMaximizingPlayer else (8, -depth, 0)
+    if depth == Stopdepth:
+        return (len(your_pos) - len(opp_pos)), -depth, check_pos_point(your_board, opp_board)
 
     bestVal = (float("-inf"),) if isMaximizingPlayer else (float("inf"),)
 
@@ -80,7 +115,7 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
         for movement in ((0,-1), (0,1), (1,0), (-1,0), (-1,1), (1,-1), (1,1), (-1,-1)):
             invalid_move = (pos[0] + movement[0], pos[1] + movement[1])
             if 0 <= invalid_move[0] <= 4 and 0 <= invalid_move[1] <= 4 and (your_board|opp_board)&(1<<24-5*invalid_move[1]-invalid_move[0]) == 0 and \
-                (movement[0]*movement[1]==0 or (movement[0]*movement[1]!=0 and (pos[0]+pos[1])%2==0)):
+                ((True, sum(pos)%2==0)[movement[0]*movement[1]]):
 
                 # Update move to board
                 your_new_board = your_board^(1<<24-5*pos[1]-pos[0])|(1<<24-5*invalid_move[1]-invalid_move[0])
@@ -93,11 +128,12 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
                     opp_new_board, opp_new_pos = vay(opp_new_pos, your_new_board, opp_new_board)
 
                 value = minimax(opp_new_pos, your_new_pos, opp_new_board, your_new_board, depth+1, not isMaximizingPlayer, alpha, beta)
-                if depth == 0 and value > bestVal:
-                    move["selected_pos"] = pos
-                    move["new_pos"] = invalid_move
 
                 if isMaximizingPlayer:
+                    if depth == 0 and value > bestVal:
+                        move["selected_pos"] = pos
+                        move["new_pos"] = invalid_move
+
                     alpha = max(alpha, value)
                     bestVal = max(bestVal, value)
                 else:

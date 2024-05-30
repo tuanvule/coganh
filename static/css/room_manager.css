@@ -1,0 +1,80 @@
+
+body {
+    height: 100%;
+    background-color: #191B26;
+}
+
+.room_manager {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #242527;
+    color: #fff;
+    width: 30%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    border-radius: 10px;
+    user-select: none;
+}
+
+.title {
+    font-size: 30px;
+}
+
+.room_list {
+    height: 75%;
+    width: 100%;
+    background-color: #333;
+    overflow-y: scroll;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+.room {
+    padding: 15px 20px;
+    cursor: pointer;
+    background-color: #333;
+}
+
+.room:hover {
+    background-color: #2a2a2a;
+}
+
+.room.choose {
+    background-color: #222;
+}
+
+.btn {
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.fight_btn {
+    padding: 14px 30px;
+    font-size: 20px;
+    background-color: #007BFF;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.fight_btn:hover {
+    filter: brightness(90%);
+}
+
+.create_room_btn {
+    padding: 14px 30px;
+    font-size: 20px;
+    background-color: #007BFF;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.create_room_btn:hover {
+    filter: brightness(90%);
+}

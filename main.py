@@ -1,4 +1,4 @@
-from flask import Flask, flash, request, redirect, url_for, render_template, session
+from flask import Flask, flash, request, redirect, url_for, render_template, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm 
@@ -14,7 +14,7 @@ import secrets
 from fdb.firestore_config import fdb
 import socketio
 
-# doc_ref = fdb.collection("app").document("User")
+doc_ref_room = fdb.collection("room")
 
 # doc = doc_ref.get()
 
@@ -124,8 +124,8 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         code = '''
-from tool import enable_move, distance
-# enable_move(x, y, board)
+from tool import valid_move, distance
+# valid_move(x, y, board)
 # distance(x1, y1, x2, y2)
 
 # Remember that player.board[y][x] is the tile at (x, y) when printing
@@ -191,6 +191,7 @@ def upload_code():
         return json.dumps(data)
     except Exception as err:
         err = str(err).replace(r"c:\Users\Hello\OneDrive\Code Tutorial\Python", "...")
+        print(err)
         with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
             txt = f.read()
         user.fightable = False
@@ -221,7 +222,8 @@ def debug_code():
         }
         return json.dumps(data)
     except Exception as err:
-        # err = str(err).replace(r"c:\Users\Hello\OneDrive\Code Tutorial\Python", "...")
+        err = str(err).replace(r"c:\Users\Hello\OneDrive\Code Tutorial\Python", "...")
+        print(err)
         with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
             txt = f.read()
         user.fightable = False
@@ -265,7 +267,6 @@ def challenge_mode():
             logout_user()
         return redirect(url_for('login'))
         
-
 @app.route('/get_code')
 @login_required
 def get_code():
@@ -303,6 +304,11 @@ def human_bot():
 def human_human():
     return render_template('human_human.html', user = current_user)
 
+@app.route('/room_manager')
+@login_required
+def room_manager():
+    return render_template('room_manager.html', user = current_user)
+
 @app.route('/get_pos_of_playing_chess', methods=['POST'])
 @login_required
 def get_pos_of_playing_chess():
@@ -333,7 +339,6 @@ def fighting():
 @app.route('/update_rank_board', methods=['POST'])
 @login_required
 def update_rank_board():
-    # name = current_user.username
     data = request.get_json()
     enemy = User.query.filter_by(username=data['enemy']['name']).first()
     player = User.query.filter_by(username=data['player']['name']).first()
@@ -344,9 +349,69 @@ def update_rank_board():
 
     return users
 
+@app.route('/get_room', methods=['GET'])
+@login_required
+def get_room():
+    # name = current_user.username
+    doc_ref = doc_ref_room.where("player_2", "==", "").where("player_1", "!=", current_user.username).where("ready_P1", "==", 1).stream()
+    rooms = []
+    for doc in doc_ref:
+        rooms.append(doc.to_dict())
+    return jsonify(rooms)
+
+@app.route('/create_room', methods=['POST'])
+@login_required
+def create_room():
+    data = request.get_json()
+    name = current_user.username
+
+    doc_ref_room.document(name).set(data)
+    return json.dumps("success")
+
+@app.route('/join_room', methods=['POST'])
+@login_required
+def join_room():
+    data = request.get_json()
+
+    doc_ref = doc_ref_room.document(data["player_1"])
+    doc_ref.update(data)
+    return json.dumps("success")
+
+@app.route('/out_room', methods=['POST'])
+@login_required
+def out_room():
+    try:
+        data = request.get_data(as_text=True)
+        json_data = json.loads(data)
+        room_id = json_data["room_id"]
+        print(f"Received notification: {json_data}")
+        sio.emit(f'out_room_{room_id}')
+        return '', 204
+    except Exception as e:
+        print(f"Error processing request: {e}")
+        return 'Error', 400
+
+
 @sio.event
-def connect(sid, environ):
+def connect(sid, eviron):
     print(f"Client connected: {sid}")
+
+@sio.event
+def join_room(sid, room_id, type, state, user_info):
+    doc_ref = doc_ref_room.document(room_id)
+    doc_ref.set({type: state}, merge=True)
+    sio.emit(f"join_room_{room_id}", {
+        "type": type,
+        "user_info": user_info,
+    })
+    print(f"Client connected: {sid}")
+
+# @sio.event
+# def out_room(sid, room_id, type, state):
+#     doc_ref = doc_ref_room.document(room_id)
+#     doc_ref.set({type: state}, merge=True)
+#     sio.emit(f"out_room_{room_id}")
+#     print(f"Client disconnected: {sid}")
 
 # Xử lý ngắt kết nối từ client
 @sio.event

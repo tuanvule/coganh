@@ -1,4 +1,4 @@
-def enable_move(x, y, board):
+def valid_move(x, y, board):
     if not (0 <= x <= 4 and 0 <= y <= 4):
         raise Exception("(x, y) out of board")
     
@@ -20,4 +20,4 @@ def distance(x1, y1, x2, y2):
     if not (0 <= x2 <= 4 and 0 <= y2 <= 4):
         raise Exception("(x2, y2) out of board")
 
-    return max((dx := abs(x1 - x2)), (dy := abs(y1 - y2))) + ((x1+y1)%2 and (x2+y2)%2 and dx == dy)
+    return max((dx := abs(x1 - x2)), (dy := abs(y1 - y2))) + ((x1+y1)%2 and (x2+y2)%2 and dx == dy != 0)

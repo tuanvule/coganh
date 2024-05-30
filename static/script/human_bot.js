@@ -1,5 +1,5 @@
-const $ = document.querySelector.bind(document)
-const $$ = document.querySelectorAll.bind(document)
+// const $ = document.querySelector.bind(document)
+// const $$ = document.querySelectorAll.bind(document)
 
 let board = $(".board")
 let boardValue = board.getBoundingClientRect()
@@ -16,22 +16,57 @@ canvas.width = boardValue.width + 2 * radius + 10
 canvas.height = boardValue.height + 2 * radius + 10
 let cv2 = canvas.getContext("2d")
 let rs = 1
-// let chessPosition = [
-//     [[0, 0],[1, 1],[2, 2],[3, 1],[4, 0],[0, 1],[4, 1],[4, 2]], 
-//     [[0, 2],[1, 2],[2, 3],[4, 3],[0, 4],[1, 4],[3, 3],[4, 4]]
-// ]
-// let chessPosition = [
-//     [[1,1],[2,2]], 
-//     [[0,0],[1,2],[3,3],[0,3],[0,4],[2,4]]
-// ]
-// let chessPosition = [
-//     [[1,0],[3,1],[4,1]], 
-//     [[3,0],[2,1],[2,2],[4,2]]
-// ]
+
+const data = [
+    {
+        type: "excellent",
+        move: {
+            sellected_pos: "(0,1)",
+            new_pos: "(1,0)",
+        },
+        img_url: "../static/img/chessboard.png",
+    },
+    {
+        type: "good",
+        move: {
+            sellected_pos: "(0,1)",
+            new_pos: "(1,0)",
+        },
+        img_url: "../static/img/chessboard.png",
+    },
+    {
+        type: "bad",
+        move: {
+            sellected_pos: "(0,1)",
+            new_pos: "(1,0)",
+        },
+        img_url: "../static/img/chessboard.png",
+    },
+    {
+        type: "bad",
+        move: {
+            sellected_pos: "(0,1)",
+            new_pos: "(1,0)",
+        },
+        img_url: "../static/img/chessboard.png",
+    },
+    {
+        type: "excellent",
+        move: {
+            sellected_pos: "(0,1)",
+            new_pos: "(1,0)",
+        },
+        img_url: "../static/img/chessboard.png",
+    }
+]
+
 let chessPosition = [
     [[0, 0],[1, 0],[2, 0],[3, 0],[4, 0],[0, 1],[4, 1],[4, 2]], 
     [[0, 2],[0, 3],[2, 4],[4, 3],[0, 4],[1, 4],[3, 4],[4, 4]]
 ]
+
+let gameHistory = [[[[],...chessPosition], {selected_pos: [-1000,-1000], new_pos: [-1000,-1000]}, []]]
+
 let selectedChess
 const gameResult = $(".game_result")
 const gameStatus = $(".game_status")
@@ -40,6 +75,19 @@ const moveSound = $(".move_sound")
 const captureSound = $(".capture_sound")
 const fireSound = $(".fire_sound")
 fireSound.volume = 0.6
+
+const rate_btn = $(".rate_btn")
+const rate = $(".rate")
+const ske_loading = $(".ske_loading")
+
+rate_btn.onclick = () => {
+    rate.classList.toggle("appear")
+    rate_btn.classList.toggle("active")
+    setTimeout(() => {
+        const rateModel = createRateModel(".rate", data)
+        rateModel.start()
+    },3000)
+}
 
 play_again_btn.onclick = () => location.reload()
 
@@ -69,52 +117,6 @@ const gridHTML = `
 <div class="row4"></div>
 </div>
 `
-// let grid = [
-//     [-1,0,0,0,-1],
-//     [-1, -1, 0, -1,-1],
-//     [1, 1, -1, 0, -1],
-//     [0, 0, 1, 1, 1],
-//     [1, 1, 0, 0, 1]
-// ]
-// let curBoard = [
-//     [-1,0,0,0,-1],
-//     [-1, -1, 0, -1,-1],
-//     [1, 1, -1, 0, -1],
-//     [0, 0, 1, 1, 1],
-//     [1, 1, 0, 0, 1]
-// ]
-
-// let grid = [
-//     [1,0,0,0,0],
-//     [0, -1, 0, 0,0],
-//     [0, 1, -1, 0, 0],
-//     [1, 0, 0, 1, 0],
-//     [1, 0, 1, 0, 0]
-// ]
-
-// let curBoard = [
-//     [1,0,0,0,0],
-//     [0, -1, 0, 0,0],
-//     [0, 1, -1, 0, 0],
-//     [1, 0, 0, 1, 0],
-//     [1, 0, 1, 0, 0]
-// ]
-
-// let grid = [
-//     [0, -1, 0, 1,0],
-//     [0, 0, 1, -1, -1],
-//     [0, 0, 1, 0, 1],
-//     [0, 0, 0, 0, 0],
-//     [0,0,0,0,0],
-// ]
-
-// let curBoard = [
-//     [0, -1, 0, 1,0],
-//     [0, 0, 1, -1, -1],
-//     [0, 0, 1, 0, 1],
-//     [0, 0, 0, 0, 0],
-//     [0,0,0,0,0],
-// ]
 
 let grid = [
     [-1,-1,-1,-1,-1],
@@ -131,6 +133,7 @@ let curBoard = [
     [1, 0, 0, 0, 1],
     [1, 1, 1, 1, 1]
 ]
+
 const type = [
     [1,0,1,0,1],
     [0,1,0,1,0],
@@ -167,13 +170,11 @@ function resetBoard() {
 
 resetBoard()
 
-
-window.addEventListener('beforeunload', (event) => {
-    event.returnValue = `Những thay đổi trên bàn cờ chưa được lưu. Bạn muốn đi khỏi đây?`;
-});
+// window.addEventListener('beforeunload', (event) => {
+//     event.returnValue = `Những thay đổi trên bàn cờ chưa được lưu. Bạn muốn đi khỏi đây?`;
+// });
 
 let boxes = $$(".box")
-// const chessEnemy = $$(".chess.enemy")
 
 function getPos(e) {
     if(!ready) return
@@ -229,33 +230,21 @@ function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
                         return Number(e.dataset.posx) === j && Number(e.dataset.posy) === i
                     })
                     if(changedChess) {
-                        // if(selected_pos) {
-                        //     console.log({j: selected_pos[0], i: selected_pos[1]})
-                        //     console.log({j: new_pos[1], i: new_pos[0]})
-                        //     if((j === selected_pos[0] && i === selected_pos[1]) || j === new_pos[1] && i === new_pos[0]) {
-                        //         isBlock = true
-                        //     }
-                        // }
-                        // if(!isBlock) {
                         console.log("changedChess: ",changedChess)
                         chessPosition.forEach((es,index) => es.forEach((e, indx)=> {
                             if(es.findIndex(findI, [j,i]) !== -1) {
                                 chessPosition[index].splice(es.findIndex(findI, [j,i]),1)
                             }
                         }))
-                        // captureSound.play()
                         fireSound.play()
-                        // changedChess.classList.add("disappear")
                         const fire = document.createElement("img")
                         fire.setAttribute("src", "./static/img/fire.webp")
                         fire.setAttribute("style", `top:${chessGrapY*i - 30 * rs}px; left:${chessGrapX*j - 30 * rs}px;`)
                         fire.setAttribute("class", "fire")
                         let newFire = board.appendChild(fire)
                         console.log("removeChess: " + "(" + j + ",", + i + ")")
-                        // const fire = $$(".fire")
                         newFire.onanimationend = (e) => {
                             changedChess.remove()
-                            // board.removeChild(newFire)
                         }
                     }
                 }
@@ -268,15 +257,18 @@ function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
         gameStatus.style.backgroundColor = "green"
         gameStatus.style.display = "block"
         gameStatus.style.opacity = "1";
+        rate_btn.style.display = "block"
     } else if(chessPosition[1].length === 0) {
         gameStatus.innerHTML = "You lost"
         gameStatus.style.backgroundColor = "red"
         gameStatus.style.opacity = "1";
+        rate_btn.style.display = "block"
     } else if(chessPosition[0].length === 1 && chessPosition[1].length === 1) {
         gameStatus.innerHTML = "draw"
         gameStatus.style.backgroundColor = "#ccc"
         gameStatus.style.display = "block"
         gameStatus.style.opacity = "1";
+        rate_btn.style.display = "block"
     }
 }
 
@@ -372,6 +364,7 @@ function swap(chess, box, newPos, selected_pos) {
         changePos(chess.dataset.posx,chess.dataset.posy, box.dataset.posx, box.dataset.posy)
         let opp_pos = chessPosition[0]
         valid_remove = [...ganh_chet([Number(box.dataset.posx), Number(box.dataset.posy)], opp_pos, 1, -1), ...vay(opp_pos)]
+        gameHistory.push([[[],...chessPosition], {selected_pos: [Number(chess.dataset.posx),Number(chess.dataset.posy)], new_pos: [Number(box.dataset.posx), Number(box.dataset.posy)]}, valid_remove])
         chess.dataset.posx = box.dataset.posx
         chess.dataset.posy = box.dataset.posy
     } else {
@@ -397,11 +390,13 @@ function swap(chess, box, newPos, selected_pos) {
         console.log(valid_remove)
         // console.log("left: " + chess.style.left + " " + "top: " + chess.style.top)
         // console.log("left: " + chess.style.left + " " + "top: " + chess.style.top)
+        gameHistory.push([[[],...chessPosition], {selected_pos: [Number(chess.dataset.posx),Number(chess.dataset.posy)], new_pos: [newPos[1], newPos[0]]}, valid_remove])
         chess.dataset.posx = `${newPos[1]}`
         chess.dataset.posy = `${newPos[0]}`
         console.log(chess)
         isReady(true)
     }
+    console.log(gameHistory)
     if(newPos) {
         changeBoard(grid, valid_remove, selected_pos, newPos)
     } else {

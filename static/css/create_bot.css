@@ -562,10 +562,6 @@ body {
     height: 100%;
 }
 
-.ace_content {
-    max-width: 500px;
-}
-
 .coding_block-coding {
     display: flex;
 }

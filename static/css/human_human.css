@@ -45,6 +45,14 @@ canvas {
     background-color: #007BFF;
 }
 
+.game_turn-bot_reverse {
+    background-color: #007BFF;
+}
+
+.game_turn-player_reverse {
+    background-color: #FF0000;
+}
+
 .game_result {
     /* position: absolute;
     top: 50%;
@@ -77,6 +85,24 @@ canvas {
 }
 
 .menu_btn:hover {
+    background-color: #007BFF;
+}
+
+.rate_btn {
+    display: none;
+    text-decoration: none;
+    color: #fff;
+    font-size: 20px;
+    padding: 10px 40px;
+    margin-bottom: 40px;
+    border: 1px solid #007BFF;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s linear;
+}
+
+.rate_btn:hover {
     background-color: #007BFF;
 }
 
@@ -201,6 +227,140 @@ canvas {
     position: absolute;
     z-index: 1001;
     animation: fire 1s linear forwards;
+}
+
+.warning {
+    position: absolute;
+    top: 2%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 40%;
+    height: 50%;
+    background-color: #fff;
+    color: #000;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 100000000;
+    padding-top: 30px;
+}
+
+.sign {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    height: 50%;
+    background-color: #fff;
+    color: #000;
+    font-size: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 100000000;
+    padding-top: 60px;
+}
+
+.ok_btn {
+    margin: auto 0 60px 0;
+    padding: 10px 20px;
+    background-color: #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.ok_btn:hover {
+    filter: brightness(90%);
+}
+
+.btn {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    margin: 20px;
+}
+
+.btn div {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn div:hover {
+    filter: brightness(90%);
+}
+
+.overflow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255,255,255,.2);
+    z-index: 10000000000000;
+}
+
+.room_info {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 40%;
+    height: 80%;
+    background-color: #191B26;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 30px;
+    padding: 20px;
+    border-radius: 5%;
+}
+
+.room_info-title {
+    margin: 20px 0 40px 0;
+}
+
+.room_title-player {
+    width: fit-content;
+}
+
+.avatar {
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 10px;
+    margin-left: 5px;
+    background-color: #fff;
+    color: #007BFF;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.due_word_img {
+    width: 200px;
+    margin: 20px 0;
+}
+
+.room_title-loading {
+    width: 60px;
+    height: 60px;
+}
+
+.loading {
+    width: 100%;
+    height: 100%;
+    border: 3px solid #f3f3f3; 
+    border-top: 3px solid #000; 
+    border-radius: 100%;
+    animation: spin 2s linear infinite;
+    /* display: none; */
 }
 
 @media (max-width: 500px) {

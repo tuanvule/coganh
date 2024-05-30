@@ -53,12 +53,16 @@ let img_url = []
 var audio = $(".bot_display-video--result");
 audio.volume = 0.1;
 
+// ace.require("ace/ext/language_tools");
 var editor = ace.edit("coding_module-coding_block");
 
 editor.setOptions({
     mode: "ace/mode/python",
     selectionStyle: "text",
     theme: "ace/theme/dracula",
+    autoScrollEditorIntoView: true,
+    enableBasicAutocompletion: true,
+    enableLiveAutocompletion: true,
 });
 
 function setState(LD, RBtn, DIL) {
@@ -405,7 +409,7 @@ const guides = [
 const utility_nav_block = $(".utility_nav-block")
 
 function toggleMode(mode) {
-    currentMode = mode
+    // currentMode = mode
     switch (mode) {
         case "terminal":  
             currentUtiMode = mode        
