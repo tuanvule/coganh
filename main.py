@@ -321,6 +321,12 @@ def get_pos_of_playing_chess():
     move['new_pos'] = tuple(reversed(list(move['new_pos'])))
     return move
 
+@app.route('/get_rate', methods=['POST'])
+@login_required
+def get_rate():
+    move_list = request.get_json()
+    return json.dumps("bỏ out_put ở đây")
+
 @app.route('/fighting', methods=['POST'])
 @login_required
 def fighting():

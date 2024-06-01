@@ -80,15 +80,6 @@ const rate_btn = $(".rate_btn")
 const rate = $(".rate")
 const ske_loading = $(".ske_loading")
 
-rate_btn.onclick = () => {
-    rate.classList.toggle("appear")
-    rate_btn.classList.toggle("active")
-    setTimeout(() => {
-        const rateModel = createRateModel(".rate", data)
-        rateModel.start()
-    },3000)
-}
-
 play_again_btn.onclick = () => location.reload()
 
 const gridHTML = `
@@ -170,6 +161,47 @@ function resetBoard() {
 
 resetBoard()
 
+let move_list = [
+    // {
+    //     your_pos: chessPosition[0],
+    //     opp_pos: chessPosition[1],
+    //     your_board: [
+    //         [-1,-1,-1,-1,-1],
+    //         [-1, 0, 0, 0,-1],
+    //         [ 1, 0, 0, 0,-1],
+    //         [ 1, 0, 0, 0, 1],
+    //         [ 1, 1, 1, 1, 1]
+    //     ],
+    //     opp_board: curBoard.map(row => row.map(item => item === 0 ? 0 : -item)),
+    //     move: {
+    //         selected_pos: [],
+    //         new_pos: [],
+    //     }
+    // }
+]
+
+rate_btn.onclick = () => {
+    rate.classList.toggle("appear")
+    rate_btn.classList.toggle("active")
+    fetch("/get_rate", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(move_list)
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log(data)
+        // const rateModel = createRateModel(".rate", data)
+        // rateModel.start()
+    })
+    // setTimeout(() => {
+    // },3000)
+}
+
+console.log(move_list)
+
 // window.addEventListener('beforeunload', (event) => {
 //     event.returnValue = `Những thay đổi trên bàn cờ chưa được lưu. Bạn muốn đi khỏi đây?`;
 // });
@@ -223,7 +255,6 @@ function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
     const chesses = $$(".chess")
     for(let i = 0; i < 5; i++) {
         for(let j = 0; j < 5; j++) {
-            let isBlock = false
             if(curBoard[i][j] !== newBoard[i][j] && valid_remove.length !== 0) {
                 if(curBoard[i][j] !== 0 && newBoard[i][j] === 0) {
                     const changedChess = Array.from(chesses).find(e => {
@@ -252,6 +283,18 @@ function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
             curBoard[i][j] = newBoard[i][j];
         }
     }
+
+    move_list.push({
+        your_pos: chessPosition[0],
+        opp_pos: chessPosition[1],
+        your_board: curBoard.map(row => row.map(item => item)),
+        opp_board: curBoard.map(row => row.map(item => item === 0 ? 0 : -item)),
+        move: {
+            selected_pos: selected_pos,
+            new_pos: new_pos,
+        }
+    })
+    
     if(chessPosition[0].length === 0) {
         gameStatus.innerHTML = "You Win"
         gameStatus.style.backgroundColor = "green"
@@ -346,6 +389,8 @@ function changePos(x, y, newX, newY) {
 }
 
 function swap(chess, box, newPos, selected_pos) {
+    // newPos = newPos
+    // selected_pos = selected_pos
     let valid_remove
     cv2.clearRect(0, 0, canvas.width, canvas.height);
     moveSound.play()
@@ -365,6 +410,8 @@ function swap(chess, box, newPos, selected_pos) {
         let opp_pos = chessPosition[0]
         valid_remove = [...ganh_chet([Number(box.dataset.posx), Number(box.dataset.posy)], opp_pos, 1, -1), ...vay(opp_pos)]
         gameHistory.push([[[],...chessPosition], {selected_pos: [Number(chess.dataset.posx),Number(chess.dataset.posy)], new_pos: [Number(box.dataset.posx), Number(box.dataset.posy)]}, valid_remove])
+        newPos = [Number(box.dataset.posx), Number(box.dataset.posy)]
+        selected_pos = [Number(chess.dataset.posx),Number(chess.dataset.posy)]
         chess.dataset.posx = box.dataset.posx
         chess.dataset.posy = box.dataset.posy
     } else {
@@ -397,11 +444,7 @@ function swap(chess, box, newPos, selected_pos) {
         isReady(true)
     }
     console.log(gameHistory)
-    if(newPos) {
-        changeBoard(grid, valid_remove, selected_pos, newPos)
-    } else {
-        changeBoard(grid, valid_remove)
-    }
+    changeBoard(grid, valid_remove, selected_pos, newPos)
 }
 
 function clearBox() {

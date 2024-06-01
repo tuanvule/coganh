@@ -253,26 +253,30 @@ canvas {
     transform: translate(-50%, -50%);
     width: 40%;
     height: 50%;
-    background-color: #fff;
-    color: #000;
+    background-color: #242527;
+    box-shadow: #007BFF 0px 8px 24px;
+    color: #fff;
     font-size: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
     z-index: 100000000;
-    padding-top: 60px;
+    padding: 60px 20px 20px;
+    border-radius: 10px;
+    margin-left: 40px;
 }
 
 .ok_btn {
     margin: auto 0 60px 0;
     padding: 10px 20px;
-    background-color: #ccc;
+    border: 1px solid #007BFF;
     border-radius: 5px;
     cursor: pointer;
+    user-select: none;
 }
 
 .ok_btn:hover {
-    filter: brightness(90%);
+    background-color: #007BFF;
 }
 
 .btn {

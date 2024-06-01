@@ -74,6 +74,11 @@
         text-decoration: none;
         color: #fff;
     }
+
+    .non_code .btn {
+      padding: 10px 60px;
+    }
+
     .content {
         position: absolute;
         top: 50%;
@@ -84,9 +89,19 @@
         align-items: center;
         /* margin-top: 40px; */
     }
-    .code_require {
+    .code_require{
       display: flex;
       align-items: center;
+    }
+
+    .non_code {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .non_code .btn {
+      margin: 16px;
     }
 
     @media (max-width: 400px) {
@@ -115,7 +130,10 @@
       <a class="btn bot_bot">Đấu bot</a>
     </div>
     <h2>Chơi game</h2>
-    <a class="btn" href="{{ url_for('human_bot') }}">Chơi cờ</a>
+    <div class="non_code">
+      <a class="btn" href="{{ url_for('human_bot') }}">Đấu với bot</a>
+      <a class="btn" href="{{ url_for('room_manager') }}">Đấu với người</a>
+    </div>
     <!-- <a class="btn" href="{{ url_for('challenge_mode') }}">Thử thách</a> -->
   </div>
   <!-- <div class="LoginTheme">

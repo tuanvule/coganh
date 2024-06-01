@@ -13,6 +13,27 @@ const P2_loading = $(".room_title-loading")
 
 let isPlaying = false
 
+let move_list = [
+    {
+        your_pos: chessPosition[0],
+        opp_pos: chessPosition[1],
+        your_board: [
+            [-1,-1,-1,-1,-1],
+            [-1, 0, 0, 0,-1],
+            [ 1, 0, 0, 0,-1],
+            [ 1, 0, 0, 0, 1],
+            [ 1, 1, 1, 1, 1]
+        ],
+        opp_board: curBoard.map(row => row.map(item => -item)),
+        move: {
+            selected_pos: [],
+            new_pos: [],
+        }
+    }
+]
+
+console.log(move_list)
+
 if(username === room_id) {
     user_avatar.innerHTML = username[0].toUpperCase()
 } else {
@@ -210,6 +231,11 @@ socket.on('connect', () => {
                 return Number(e.dataset.posy) === selected_pos[1] && Number(e.dataset.posx) === selected_pos[0]
             })
             console.log(selectedChess)
+            move_list.push({
+                selected_pos: selected_pos, 
+                new_pos: new_pos,
+                turn: turn,
+            })
             swap(selectedChess, null, new_pos, selected_pos)
         }
     });
@@ -226,12 +252,11 @@ socket.on('connect', () => {
         gameStatus.style.opacity = "1";
         rate_btn.style.display = "block"
     });
-    
 });
 
 window.addEventListener('beforeunload', (e) => {
-    e.preventDefault()
     e.returnValue = `Nếu thoát khỏi đây thì bạn sẽ bị xử thua. Bạn chắc chứ?`;
+    e.preventDefault()
 });
 
 window.addEventListener('unload', function () {
@@ -242,6 +267,20 @@ window.addEventListener('unload', function () {
     });
     navigator.sendBeacon('/out_room', data);
 });
+
+rate_btn.onclick = () => {
+    fetch("/get_rate", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(move_list)
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log(data)
+    })
+}
 
 accept_btn.onclick = () => {
     // socket.emit("out_room", room_id, username === room_id ? "ready_P1": "ready_P2", 0)
@@ -489,6 +528,11 @@ function sendMove(selected_pos, new_pos) {
     const selectY = Number(selected_pos.dataset.posy)
     const newX = Number(new_pos.dataset.posx)
     const newY = Number(new_pos.dataset.posy)
+    move_list.push({
+        selected_pos: [selectX,selectY], 
+        new_pos: [newY,newX],
+        turn: username,
+    })
     socket.emit(`get_move`, room_id, {
         selected_pos: [selectX,selectY], 
         new_pos: [newY,newX],
