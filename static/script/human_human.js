@@ -13,26 +13,26 @@ const P2_loading = $(".room_title-loading")
 
 let isPlaying = false
 
-let move_list = [
-    {
-        your_pos: chessPosition[0],
-        opp_pos: chessPosition[1],
-        your_board: [
-            [-1,-1,-1,-1,-1],
-            [-1, 0, 0, 0,-1],
-            [ 1, 0, 0, 0,-1],
-            [ 1, 0, 0, 0, 1],
-            [ 1, 1, 1, 1, 1]
-        ],
-        opp_board: curBoard.map(row => row.map(item => -item)),
-        move: {
-            selected_pos: [],
-            new_pos: [],
-        }
-    }
-]
+// let move_list = [
+//     {
+//         your_pos: chessPosition[0],
+//         opp_pos: chessPosition[1],
+//         your_board: [
+//             [-1,-1,-1,-1,-1],
+//             [-1, 0, 0, 0,-1],
+//             [ 1, 0, 0, 0,-1],
+//             [ 1, 0, 0, 0, 1],
+//             [ 1, 1, 1, 1, 1]
+//         ],
+//         opp_board: curBoard.map(row => row.map(item => -item)),
+//         move: {
+//             selected_pos: [],
+//             new_pos: [],
+//         }
+//     }
+// ]
 
-console.log(move_list)
+// console.log(move_list)
 
 if(username === room_id) {
     user_avatar.innerHTML = username[0].toUpperCase()
@@ -282,14 +282,14 @@ rate_btn.onclick = () => {
     })
 }
 
-accept_btn.onclick = () => {
-    // socket.emit("out_room", room_id, username === room_id ? "ready_P1": "ready_P2", 0)
-    // window.location.href = "http://127.0.0.1:5000/room_manager"
-}
+// accept_btn.onclick = () => {
+//     // socket.emit("out_room", room_id, username === room_id ? "ready_P1": "ready_P2", 0)
+//     // window.location.href = "http://127.0.0.1:5000/room_manager"
+// }
 
-reject_btn.onclick = () => {
-    warning.style.display = "none"
-}
+// reject_btn.onclick = () => {
+//     warning.style.display = "none"
+// }
 
 ok_btn.onclick = () => {
     sign.style.display = "none"

@@ -24,9 +24,9 @@
             <i class="fa-solid fa-angle-left arrow_left hide"></i>
                 <div class="img_main">
                     <ul class="img_list">
-                        <li class="img_item default"><img src="../static/img/chessboard.png" alt=""></li>
+                        <li class="img_item default"><img src="../static/img/chessboard1.png" alt=""></li>
                     </ul>
-                    <div class="counter">1</div>
+                    <div class="counter">0</div>
                 </div>
             <i class="fa-solid fa-angle-right arrow_right"></i>
             <div class="loader">
@@ -67,6 +67,8 @@
     </div>
 
     <!-- <img class="fire" style="display: none;" src="{{url_for('static', filename='img/fire.webp')}}" alt=""> -->
+
+    <div class="username" hidden>{{user.username}}</div>
     
     <audio class="capture_sound" src="{{url_for('static', filename='capture.mp3')}}"></audio>
     <audio class="move_sound" src="{{url_for('static', filename='move-self.mp3')}}"></audio>

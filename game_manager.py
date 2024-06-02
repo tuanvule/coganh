@@ -1,5 +1,3 @@
-
-import os
 import requests
 from copy import deepcopy
 from importlib import reload
@@ -112,8 +110,7 @@ def activation(option, session_name, debugNum):
             sys.stdout = org_stdout
             f.close()
         return temp
-    except Exception as err:
-        print(str(err))
+    except Exception:
         if debugNum > 0:
             f.write(traceback.format_exc())
             sys.stdout = org_stdout
@@ -128,16 +125,19 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
         "username": session_name,
         "img": [[deepcopy(positions), {"selected_pos": (-1000,-1000), "new_pos": (-1000,-1000)}, []]]
     }
+    if debugNum: inp_oup = []
 
     while not winner:
 
         current_turn = game_state["current_turn"]
         if player1.your_side == current_turn:
             move = UserBot.main(deepcopy(player1))
+            Raise_exception(move, current_turn, game_state["board"])
+            if debugNum:
+                inp_oup.append(deepcopy(move))
         else:
             move = Bot2.main(deepcopy(player2))
-
-        Raise_exception(move, current_turn, game_state["board"])
+            Raise_exception(move, current_turn, game_state["board"])
 
         move_new_pos = move["new_pos"]
         move_selected_pos = move["selected_pos"]
@@ -158,7 +158,7 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
 
         if debugNum > 0 and move_counter == debugNum:
             img_url = requests.post("http://tlv23.pythonanywhere.com//generate_debug_image", json=body).text
-            return img_url
+            return img_url, inp_oup
         elif not positions[1]:
             winner = "lost"
         elif not positions[-1]:

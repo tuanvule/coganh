@@ -13,6 +13,8 @@ import json
 import secrets
 from fdb.firestore_config import fdb
 import socketio
+import trainAI.MasterUser
+import requests
 
 doc_ref_room = fdb.collection("room")
 
@@ -207,23 +209,22 @@ def upload_code():
 def debug_code():
     name = current_user.username
     data = request.get_json()
-    # print(data)
     user = User.query.filter_by(username=name).first()
     with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
         f.write(data["code"])
     try: 
-        img_url = activation("trainAI.Master", name, data["debugNum"]) # người thắng / số lượng lượt chơi
+        img_url, inp_oup = activation("trainAI.Master", name, data["debugNum"]) # người thắng / số lượng lượt chơi
+
         with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
             txt = f.read()
         data = {
             "code": 200,
             "img_url": img_url,
-            "output": txt
+            "output": txt,
+            "inp_oup": inp_oup
         }
         return json.dumps(data)
-    except Exception as err:
-        err = str(err).replace(r"c:\Users\Hello\OneDrive\Code Tutorial\Python", "...")
-        print(err)
+    except Exception:
         with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
             txt = f.read()
         user.fightable = False
@@ -297,7 +298,7 @@ def bot_bot():
 @app.route('/human_bot')
 @login_required
 def human_bot():
-    return render_template('human_bot.html')
+    return render_template('human_bot.html', user = current_user)
 
 @app.route('/human_human')
 @login_required
@@ -324,8 +325,23 @@ def get_pos_of_playing_chess():
 @app.route('/get_rate', methods=['POST'])
 @login_required
 def get_rate():
-    move_list = request.get_json()
-    return json.dumps("bỏ out_put ở đây")
+    data = request.get_json()
+    move_list = data["move_list"]
+    img_data = data["img_data"]
+    for i in move_list:
+        if i['side'] == -1:
+            i['your_pos'], i['opp_pos'] = [tuple(i) for i in i['opp_pos']], [tuple(i) for i in i['your_pos']]
+            i['board'] = eval(str(i['board']).replace('-1', '`').replace('1', '-1').replace('`', '1'))
+    rate = [trainAI.MasterUser.main(i) for i in move_list]
+
+    for i in range(len(img_data["img"])):
+        img_data["img"][i].append(rate[i])
+
+    print(img_data)
+
+    img_url = requests.post("http://tlv23.pythonanywhere.com//generate_debug_image", json=img_data).text
+
+    return json.dumps({"rate": rate, "img_url": img_url})
 
 @app.route('/fighting', methods=['POST'])
 @login_required

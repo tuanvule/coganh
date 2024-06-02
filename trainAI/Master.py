@@ -15,7 +15,8 @@ def ganh_chet(move, opp_pos, your_board, opp_board):
 
     for x, y in valid_remove:
         opp_board ^= (1<<24-5*y-x)
-        opp_pos.remove((x, y))
+        if (x,y) in opp_pos:
+            opp_pos.remove((x, y))
 
     return opp_board, opp_pos
 def vay(opp_pos, your_board, opp_board):
@@ -75,7 +76,7 @@ def check_pos_point(your_board, opp_board):
     return sum
 
 def main(player):
-    global move, board_pointF, cache, Stopdepth
+    global move, cache, cacheUser, Stopdepth
     move = {"selected_pos": None, "new_pos": None}
 
     your_board = int("0b"+"".join("1" if ele == -1 else "0" for row in player.board for ele in row),2)
@@ -90,6 +91,9 @@ def main(player):
         move["new_pos"] = tuple(map(int, temp[2:]))
         return move
 
+    with open(os.path.join(dirname, "source_code/bit_boardUser.txt")) as f:
+        cacheUser = {i.split("  ")[0]:i.split("  ")[1] for i in f.read().split("\n")}
+
     Stopdepth = 6
     v = minimax(player.your_pos, player.opp_pos, your_board, opp_board)
 
@@ -100,7 +104,11 @@ def main(player):
 
 def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlayer=True, alpha=(float("-inf"),), beta=(float("inf"),)):
 
-    if (state := f"{your_board} {opp_board}") in cache and not isMaximizingPlayer:
+    if isMaximizingPlayer:
+        if (state := f"{opp_board} {your_board}") in cacheUser and depth:
+            temp = cacheUser[state].split(' ')
+            return float(temp[0]), float(temp[1])+depth, float(temp[2])
+    elif (state := f"{your_board} {opp_board}") in cache:
         temp = cache[state].split(' ')
         return float(temp[1]), float(temp[2])-depth, float(temp[3])
 

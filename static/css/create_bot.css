@@ -186,7 +186,18 @@ body {
     min-width: 120px;
     text-align: center;
     border-radius: 5px;
+}
+
+.debug_info-move_level.excellent {
     background-color: #007BFF;
+}
+
+.debug_info-move_level.good {
+    background-color: #00B400;
+}
+
+.debug_info-move_level.bad {
+    background-color: red;
 }
 
 .counter {
@@ -219,7 +230,8 @@ body {
     cursor: pointer;
 } */
 
-.bot_display-video--debug i {
+.arrow_left,
+.arrow_right {
     font-size: 25px;
     width: 50px;
     height: 50px;
@@ -232,7 +244,12 @@ body {
     cursor: pointer;
 }
 
-.bot_display-video--debug i:hover {
+.arrow_right {
+    line-height: 58px;
+}
+
+.arrow_left:hover,
+.arrow_right:hover {
     background-color: rgba(255, 255, 255, .3);
 }
 

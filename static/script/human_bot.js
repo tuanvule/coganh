@@ -17,6 +17,8 @@ canvas.height = boardValue.height + 2 * radius + 10
 let cv2 = canvas.getContext("2d")
 let rs = 1
 
+let username = $(".username").innerHTML
+
 const data = [
     {
         type: "excellent",
@@ -180,24 +182,42 @@ let move_list = [
     // }
 ]
 
+let img_data = {
+    username: username,
+    img: [],
+}
+
+let rateModel
+
 rate_btn.onclick = () => {
     rate.classList.toggle("appear")
     rate_btn.classList.toggle("active")
+    if(rateModel) return
     fetch("/get_rate", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(move_list)
+        body: JSON.stringify({move_list: move_list,img_data: img_data})
     })
     .then(res => res.json())
     .then(data => {
         console.log(data)
-        // const rateModel = createRateModel(".rate", data)
+        const img_list = JSON.parse(data.img_url)
+        let rating = []
+        img_list.forEach((url, i) => {
+            rating.push({
+                type: data.rate[i],
+                move: {
+                    sellected_pos: `(${move_list[i].move.selected_pos[0]}, ${move_list[i].move.selected_pos[1]})`,
+                    new_pos: `(${move_list[i].move.new_pos[0]}, ${move_list[i].move.new_pos[1]})`,
+                },
+                img_url: url,
+            })
+        })
+        // rateModel = createRateModel(".rate", rating)
         // rateModel.start()
     })
-    // setTimeout(() => {
-    // },3000)
 }
 
 console.log(move_list)
@@ -283,18 +303,9 @@ function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
             curBoard[i][j] = newBoard[i][j];
         }
     }
-
-    move_list.push({
-        your_pos: chessPosition[0],
-        opp_pos: chessPosition[1],
-        your_board: curBoard.map(row => row.map(item => item)),
-        opp_board: curBoard.map(row => row.map(item => item === 0 ? 0 : -item)),
-        move: {
-            selected_pos: selected_pos,
-            new_pos: new_pos,
-        }
-    })
     
+    img_data.img.push([[[], [...chessPosition[1]], [...chessPosition[0]]], {selected_pos,new_pos}, valid_remove])
+
     if(chessPosition[0].length === 0) {
         gameStatus.innerHTML = "You Win"
         gameStatus.style.backgroundColor = "green"
@@ -405,13 +416,27 @@ function swap(chess, box, newPos, selected_pos) {
         cv2.stroke();
         chess.style.left = box.offsetLeft + 10 * rs + "px"
         chess.style.top = box.offsetTop + 10 * rs + "px"
-        chessPosition[1][chessPosition[1].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)])] = [Number(box.dataset.posx), Number(box.dataset.posy)]
-        changePos(chess.dataset.posx,chess.dataset.posy, box.dataset.posx, box.dataset.posy)
-        let opp_pos = chessPosition[0]
-        valid_remove = [...ganh_chet([Number(box.dataset.posx), Number(box.dataset.posy)], opp_pos, 1, -1), ...vay(opp_pos)]
-        gameHistory.push([[[],...chessPosition], {selected_pos: [Number(chess.dataset.posx),Number(chess.dataset.posy)], new_pos: [Number(box.dataset.posx), Number(box.dataset.posy)]}, valid_remove])
+
         newPos = [Number(box.dataset.posx), Number(box.dataset.posy)]
         selected_pos = [Number(chess.dataset.posx),Number(chess.dataset.posy)]
+        
+        let opp_pos = chessPosition[0]
+        valid_remove = [...ganh_chet([Number(box.dataset.posx), Number(box.dataset.posy)], opp_pos, 1, -1), ...vay(opp_pos)]
+        move_list.push({
+            your_pos: [...chessPosition[1]],
+            opp_pos: [...chessPosition[0]],
+            board: curBoard.map(row => row.map(item => item)),
+            side: 1,
+            remove: valid_remove,
+            move: {
+                selected_pos: selected_pos,
+                new_pos: newPos,
+            }
+        })
+        
+        chessPosition[1][chessPosition[1].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)])] = [Number(box.dataset.posx), Number(box.dataset.posy)]
+        changePos(chess.dataset.posx,chess.dataset.posy, box.dataset.posx, box.dataset.posy)
+        gameHistory.push([[[],...chessPosition], {selected_pos: [Number(chess.dataset.posx),Number(chess.dataset.posy)], new_pos: [Number(box.dataset.posx), Number(box.dataset.posy)]}, valid_remove])
         chess.dataset.posx = box.dataset.posx
         chess.dataset.posy = box.dataset.posy
     } else {
@@ -422,21 +447,25 @@ function swap(chess, box, newPos, selected_pos) {
         cv2.fill()
         cv2.strokeStyle = "#FC6666";
         cv2.stroke();
+        
+        let opp_pos = chessPosition[1]
+        valid_remove = [...ganh_chet([newPos[1], newPos[0]], opp_pos, -1, 1), ...vay(opp_pos)]
+        move_list.push({
+            your_pos: [...chessPosition[1]],
+            opp_pos: [...chessPosition[0]],
+            board: curBoard.map(row => row.map(item => item)),
+            side: -1,
+            remove: valid_remove,
+            move: {
+                selected_pos: selected_pos.reverse(),
+                new_pos: newPos,
+            }
+        })
+
         chessPosition[0][chessPosition[0].findIndex(findI, [selected_pos[1], selected_pos[0]])] = [newPos[1], newPos[0]]
         chess.style.left = newPos[1] * chessGrapX - 30 * rs + "px"
         chess.style.top = newPos[0] * chessGrapX - 30 * rs + "px"
-        console.log(chessPosition)
-        console.log(grid)
-        console.log(curBoard)
-        console.log("selected_pos: " + "(" + chess.dataset.posy + "," + chess.dataset.posx + ")")
-        // prePos = [Number(chess.dataset.posx), Number(chess.dataset.posy)]
-        console.log("new_pos: " + "(" + newPos[1] + "," + newPos[0] + ")")
         changePos(selected_pos[1], selected_pos[0], newPos[1], newPos[0])
-        let opp_pos = chessPosition[1]
-        valid_remove = [...ganh_chet([newPos[1], newPos[0]], opp_pos, -1, 1), ...vay(opp_pos)]
-        console.log(valid_remove)
-        // console.log("left: " + chess.style.left + " " + "top: " + chess.style.top)
-        // console.log("left: " + chess.style.left + " " + "top: " + chess.style.top)
         gameHistory.push([[[],...chessPosition], {selected_pos: [Number(chess.dataset.posx),Number(chess.dataset.posy)], new_pos: [newPos[1], newPos[0]]}, valid_remove])
         chess.dataset.posx = `${newPos[1]}`
         chess.dataset.posy = `${newPos[0]}`

@@ -4,114 +4,10 @@
 {% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="../static/css/style.css">
 <link rel="stylesheet" href="../static/css/animation.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<style>
-  a {
-    cursor: pointer;
-  }
-  .notification {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform-origin: 0;
-    transform: translate(-50%,-50%);
-    width: 400px;
-    height: 450px;
-    background-color: #343A40;
-    border-radius: 10px;
-    animation: zoomIn .4s ease-in-out;
-  }
-  .notification_header {
-    font-size: 100px;
-    margin: 20px;
-    color: rgb(255, 33, 33);
-  }
-  .notification_content {
-    font-size: 16px;
-    padding: 0 60px;
-  }
-  .notification_directional {
-    margin-top: 100px;
-    padding: 0 40px;
-    display: flex;
-    justify-content: space-between;
-  }
-  .notification_directional div {
-    padding: 10px 30px;
-    border-radius: 5px;
-    cursor: pointer;
-    user-select: none;
-  }
-  .notification_directional div:hover {
-    filter: brightness(90%);
-  }
-  .notification_directional .notification_directional--back {
-    background-color: #ccc;
-    color: #000;
-  }
-  .notification_directional .notification_directional--create_bot {
-    background-color: #007BFF;
-  }
-
-  .btn {
-        display: block;
-        text-decoration: none;
-        width: max-content;
-        color: #fff;
-        font-size: 20px;
-        padding: 10px 80px;
-        margin: 20px 20px 40px;
-        border: 1px solid #007BFF;
-        border-radius: 5px;
-        text-align: center;
-        cursor: pointer;
-        transition: all .2s linear;
-    }
-
-    .btn:hover {
-        background-color: #007BFF;
-        text-decoration: none;
-        color: #fff;
-    }
-
-    .non_code .btn {
-      padding: 10px 60px;
-    }
-
-    .content {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        /* margin-top: 40px; */
-    }
-    .code_require{
-      display: flex;
-      align-items: center;
-    }
-
-    .non_code {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .non_code .btn {
-      margin: 16px;
-    }
-
-    @media (max-width: 400px) {
-      .btn {
-        font-size: 16px;
-        padding: 10px 30px;
-        margin: 20px 10px 20px;
-      }
-    }
-</style>
+<link rel="stylesheet" href="../static/css/menu.css">
 <body class="text-center">
   <div class="notification" style="display:none;">
     <div class="notification_header"><i class="fa-solid fa-face-frown"></i></div>
@@ -124,21 +20,26 @@
   <br>
 
   <div class="content">
-    <h2>Lập trình</h2>
-    <div class="code_require">
-      <a class="btn" href="{{ url_for('create_bot') }}">Tạo bot</a>
-      <a class="btn bot_bot">Đấu bot</a>
+    <div class="main">
+      <img src="{{url_for('static', filename = '/img/chessboard1.png')}}" alt="" class="main_img">
+      <div class="main_nav_module">
+        <div class="code_require">
+          <h2>Lập trình</h2>
+          <a class="btn" href="{{ url_for('create_bot') }}">Tạo bot</a>
+          <a class="btn bot_bot">Đấu bot</a>
+        </div>
+        <div class="non_code">
+          <h2>Chơi game</h2>
+          <a class="btn" href="{{ url_for('human_bot') }}">Đấu với bot</a>
+          <a class="btn" href="{{ url_for('room_manager') }}">Đấu với người</a>
+        </div>
+      </div>
     </div>
-    <h2>Chơi game</h2>
-    <div class="non_code">
-      <a class="btn" href="{{ url_for('human_bot') }}">Đấu với bot</a>
-      <a class="btn" href="{{ url_for('room_manager') }}">Đấu với người</a>
+    <div class="detail_module">
+      
     </div>
     <!-- <a class="btn" href="{{ url_for('challenge_mode') }}">Thử thách</a> -->
   </div>
-  <!-- <div class="LoginTheme">
-    Logged in as : <strong > {{ current_user.username }} </strong> | <a href='{{ url_for("login") }}'>Đăng xuất</a>
-  </div class='LogginTheme'> -->
 </body>
 <script>
   const fightBotDir = document.querySelector(".bot_bot")
