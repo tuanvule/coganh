@@ -157,6 +157,8 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
         body["img"].append([deepcopy(positions), move, remove])
 
         if debugNum > 0 and move_counter == debugNum:
+            for i in range(len(body["img"])):
+                body["img"][i].append("")
             img_url = requests.post("http://tlv23.pythonanywhere.com//generate_debug_image", json=body).text
             return img_url, inp_oup
         elif not positions[1]:

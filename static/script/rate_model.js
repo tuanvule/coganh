@@ -33,14 +33,14 @@ function createRateModel(rate_dom, data) {
             const rate_list_detail = this.get_rate_list_detail()
             let type_count = [
                 {
-                    excellent: 0,
-                    good: 0,
-                    bad: 0,
+                    "Tốt nhất": 0,
+                    "Bình thường": 0,
+                    "Tệ": 0,
                 },
                 {
-                    excellent: 0,
-                    good: 0,
-                    bad: 0,
+                    "Tốt nhất": 0,
+                    "Bình thường": 0,
+                    "Tệ": 0,
                 }
             ]
 
@@ -54,6 +54,7 @@ function createRateModel(rate_dom, data) {
                     type: "",
                     icon: ""
                 }
+
                 type_count[i % 2 === 0 ? 0 : 1][rate.type]++
                 if (rate.type === "Tốt nhất") {
                     res.type = rate.type
@@ -80,27 +81,27 @@ function createRateModel(rate_dom, data) {
                 if(i === 0) {
                     overview.innerHTML += `
                         <li class="excellent_count">
-                            <div class="excellent_count-you">${type_count[0].excellent}</div>
+                            <div class="excellent_count-you">${type_count[0]["Tốt nhất"]}</div>
                             <div class="excellent_count-title excellent">TỐT NHẤT</div>
-                            <div class="excellent_count-opp">${type_count[1].excellent}</div>
+                            <div class="excellent_count-opp">${type_count[1]["Tốt nhất"]}</div>
                         </li>
                     `
                 }
                 if(i === 1) {
                     overview.innerHTML += `
                         <li class="excellent_count">
-                            <div class="excellent_count-you">${type_count[0].good}</div>
+                            <div class="excellent_count-you">${type_count[0]["Bình thường"]}</div>
                             <div class="excellent_count-title good">BÌNH THƯỜNG</div>
-                            <div class="excellent_count-opp">${type_count[1].good}</div>
+                            <div class="excellent_count-opp">${type_count[1]["Bình thường"]}</div>
                         </li>
                     `
                 }
                 if(i === 2) {
                     overview.innerHTML += `
                         <li class="excellent_count">
-                            <div class="excellent_count-you">${type_count[0].bad}</div>
+                            <div class="excellent_count-you">${type_count[0]["Tệ"]}</div>
                             <div class="excellent_count-title bad">TỆ</div>
-                            <div class="excellent_count-opp">${type_count[1].bad}</div>
+                            <div class="excellent_count-opp">${type_count[1]["Tệ"]}</div>
                         </li>
                     `
                 }

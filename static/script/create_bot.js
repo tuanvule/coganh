@@ -160,7 +160,7 @@ runBtn.onclick = () => {
             debugImageList.style.display = "block"
             debugImageItems[0].classList.add("display_image")
             imageNum = 0
-            counter.innerHTML = imageNum + 1
+            counter.innerHTML = imageNum
             loadingNavImageLD.style.display = "none"
             loadingNavImageCI.style.display = "block"
             loadingNavImageFI.style.display = "none"
@@ -496,31 +496,63 @@ debugtBtn.onclick = (e) => {
 }
 
 debugArrowRight.onclick = (e) => {  
-    if(imageNum + 1 < debugImageItems.length) {
+    if(imageNum + 1 <= debugImageItems.length) {
+        let debug_info = $(".debug_info")
+        console.log(imageNum)
         debugImageItems[imageNum].classList.remove("display_image")
         imageNum++
+        if(imageNum === 2) {
+            console.log("abd")
+            const move_rate = debug_info.querySelector(".debug_info-move_level")
+            move_rate.innerHTML = "Tốt nhất"
+            debug_info.querySelector(".debug_info-selected_pos").innerHTML = "(0,0)"
+            debug_info.querySelector(".debug_info-new_pos").innerHTML = "(1,1)"
+            move_rate.classList = "debug_info-move_level excellent"
+        } else if(imageNum === 1) {
+            const move_rate = debug_info.querySelector(".debug_info-move_level")
+            move_rate.innerHTML = "Tệ"
+            debug_info.querySelector(".debug_info-selected_pos").innerHTML = "(0,2)"
+            debug_info.querySelector(".debug_info-new_pos").innerHTML = "(1,2)"
+            move_rate.classList = "debug_info-move_level bad"
+        }
         if(imageNum + 1 === debugImageItems.length) {
             debugArrowRight.style.opacity = "0"
         }
         if(imageNum > 0 && debugArrowLeft.style.opacity === "0") {
             debugArrowLeft.style.opacity = "1"
         }
-        counter.innerHTML = imageNum + 1
+        counter.innerHTML = imageNum
         debugImageItems[imageNum].classList.add("display_image")
     }
 }
 
 debugArrowLeft.onclick = (e) => {
-    if(imageNum - 1 >= 0) {
+    if(imageNum >= 0) {
         debugImageItems[imageNum].classList.remove("display_image")
         imageNum--
+
+        let debug_info = $(".debug_info")
+        if(imageNum === 2) {
+            console.log("abd")
+            const move_rate = debug_info.querySelector(".debug_info-move_level")
+            move_rate.innerHTML = "Tốt nhất"
+            debug_info.querySelector(".debug_info-selected_pos").innerHTML = "(0,0)"
+            debug_info.querySelector(".debug_info-new_pos").innerHTML = "(1,1)"
+            move_rate.classList = "debug_info-move_level excellent"
+        } else if(imageNum === 1) {
+            const move_rate = debug_info.querySelector(".debug_info-move_level")
+            move_rate.innerHTML = "Tệ"
+            debug_info.querySelector(".debug_info-selected_pos").innerHTML = "(0,2)"
+            debug_info.querySelector(".debug_info-new_pos").innerHTML = "(1,2)"
+            move_rate.classList = "debug_info-move_level bad"
+        }
         if(imageNum === 0) {
             debugArrowLeft.style.opacity = "0"
         }
         if(imageNum + 1 < debugImageItems.length && debugArrowRight.style.opacity === "0") {
             debugArrowRight.style.opacity = "1"
         }
-        counter.innerHTML = imageNum + 1
+        counter.innerHTML = imageNum
         debugImageItems[imageNum].classList.add("display_image")
     }
 }

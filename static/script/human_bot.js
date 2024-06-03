@@ -215,8 +215,8 @@ rate_btn.onclick = () => {
                 img_url: url,
             })
         })
-        // rateModel = createRateModel(".rate", rating)
-        // rateModel.start()
+        rateModel = createRateModel(".rate", rating)
+        rateModel.start()
     })
 }
 
@@ -305,6 +305,7 @@ function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
     }
     
     img_data.img.push([[[], [...chessPosition[1]], [...chessPosition[0]]], {selected_pos,new_pos}, valid_remove])
+    console.log(img_data.img[img_data.img.length-1])
 
     if(chessPosition[0].length === 0) {
         gameStatus.innerHTML = "You Win"
@@ -462,14 +463,15 @@ function swap(chess, box, newPos, selected_pos) {
             }
         })
 
-        chessPosition[0][chessPosition[0].findIndex(findI, [selected_pos[1], selected_pos[0]])] = [newPos[1], newPos[0]]
+        chessPosition[0][chessPosition[0].findIndex(findI, [selected_pos[0], selected_pos[1]])] = [newPos[1], newPos[0]]
         chess.style.left = newPos[1] * chessGrapX - 30 * rs + "px"
         chess.style.top = newPos[0] * chessGrapX - 30 * rs + "px"
-        changePos(selected_pos[1], selected_pos[0], newPos[1], newPos[0])
+        changePos(selected_pos[0], selected_pos[1], newPos[1], newPos[0])
         gameHistory.push([[[],...chessPosition], {selected_pos: [Number(chess.dataset.posx),Number(chess.dataset.posy)], new_pos: [newPos[1], newPos[0]]}, valid_remove])
         chess.dataset.posx = `${newPos[1]}`
         chess.dataset.posy = `${newPos[0]}`
         console.log(chess)
+        newPos = newPos.reverse()
         isReady(true)
     }
     console.log(gameHistory)
@@ -509,7 +511,8 @@ function getBotmove() {
     .then(res => res.json(data))
     .then(resData => {
         const {selected_pos, new_pos} = resData
-        console.log({selected_pos, new_pos})
+        // console.log(selected_pos)
+        console.log("selected_pos:  ",{selected_pos, new_pos})
         const selectedChess = Array.from(chessEnemy).find(e => {
             return Number(e.dataset.posx) === selected_pos[1] && Number(e.dataset.posy) === selected_pos[0]
         })

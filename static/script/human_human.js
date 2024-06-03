@@ -231,11 +231,11 @@ socket.on('connect', () => {
                 return Number(e.dataset.posy) === selected_pos[1] && Number(e.dataset.posx) === selected_pos[0]
             })
             console.log(selectedChess)
-            move_list.push({
-                selected_pos: selected_pos, 
-                new_pos: new_pos,
-                turn: turn,
-            })
+            // move_list.push({
+            //     selected_pos: selected_pos, 
+            //     new_pos: new_pos,
+            //     turn: turn,
+            // })
             swap(selectedChess, null, new_pos, selected_pos)
         }
     });
@@ -528,11 +528,11 @@ function sendMove(selected_pos, new_pos) {
     const selectY = Number(selected_pos.dataset.posy)
     const newX = Number(new_pos.dataset.posx)
     const newY = Number(new_pos.dataset.posy)
-    move_list.push({
-        selected_pos: [selectX,selectY], 
-        new_pos: [newY,newX],
-        turn: username,
-    })
+    // move_list.push({
+    //     selected_pos: [selectX,selectY], 
+    //     new_pos: [newY,newX],
+    //     turn: username,
+    // })
     socket.emit(`get_move`, room_id, {
         selected_pos: [selectX,selectY], 
         new_pos: [newY,newX],
