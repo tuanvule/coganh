@@ -192,6 +192,7 @@ let rateModel
 rate_btn.onclick = () => {
     rate.classList.toggle("appear")
     rate_btn.classList.toggle("active")
+    console.log({move_list: move_list,img_data: img_data})
     if(rateModel) return
     fetch("/get_rate", {
         method: "POST",
@@ -451,6 +452,9 @@ function swap(chess, box, newPos, selected_pos) {
         
         let opp_pos = chessPosition[1]
         valid_remove = [...ganh_chet([newPos[1], newPos[0]], opp_pos, -1, 1), ...vay(opp_pos)]
+
+        console.log(selected_pos)
+
         move_list.push({
             your_pos: [...chessPosition[1]],
             opp_pos: [...chessPosition[0]],
@@ -468,7 +472,7 @@ function swap(chess, box, newPos, selected_pos) {
         chess.style.top = newPos[0] * chessGrapX - 30 * rs + "px"
         changePos(selected_pos[0], selected_pos[1], newPos[1], newPos[0])
         gameHistory.push([[[],...chessPosition], {selected_pos: [Number(chess.dataset.posx),Number(chess.dataset.posy)], new_pos: [newPos[1], newPos[0]]}, valid_remove])
-        chess.dataset.posx = `${newPos[1]}`
+        chess.dataset.posx  = `${newPos[1]}`
         chess.dataset.posy = `${newPos[0]}`
         console.log(chess)
         newPos = newPos.reverse()
@@ -516,6 +520,7 @@ function getBotmove() {
         const selectedChess = Array.from(chessEnemy).find(e => {
             return Number(e.dataset.posx) === selected_pos[1] && Number(e.dataset.posy) === selected_pos[0]
         })
+        console.log("resData: ", resData)
         console.log(selectedChess)
         swap(selectedChess, null, new_pos, selected_pos)
     })

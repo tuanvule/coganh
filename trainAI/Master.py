@@ -1,7 +1,6 @@
 import os
 
 def ganh_chet(move, opp_pos, your_board, opp_board):
-
     valid_remove = []
 
     for x0, y0 in opp_pos:
@@ -15,8 +14,7 @@ def ganh_chet(move, opp_pos, your_board, opp_board):
 
     for x, y in valid_remove:
         opp_board ^= (1<<24-5*y-x)
-        if (x,y) in opp_pos:
-            opp_pos.remove((x, y))
+        opp_pos.remove((x, y))
 
     return opp_board, opp_pos
 def vay(opp_pos, your_board, opp_board):
@@ -85,11 +83,11 @@ def main(player):
     dirname = os.path.dirname(__file__)
     with open(os.path.join(dirname, "source_code/bit_board.txt")) as f:
         cache = {i.split("  ")[0]:i.split("  ")[1] for i in f.read().split("\n")}
-    # if (state := f"{your_board} {opp_board}") in cache:
-    #     temp = cache[state].split(' ')[0]
-    #     move["selected_pos"] = tuple(map(int, temp[:2]))
-    #     move["new_pos"] = tuple(map(int, temp[2:]))
-    #     return move
+    if (state := f"{your_board} {opp_board}") in cache:
+        temp = cache[state].split(' ')[0]
+        move["selected_pos"] = tuple(map(int, temp[:2]))
+        move["new_pos"] = tuple(map(int, temp[2:]))
+        return move
 
     with open(os.path.join(dirname, "source_code/bit_boardUser.txt")) as f:
         cacheUser = {i.split("  ")[0]:i.split("  ")[1] for i in f.read().split("\n")}
@@ -97,20 +95,22 @@ def main(player):
     Stopdepth = 6
     v = minimax(player.your_pos, player.opp_pos, your_board, opp_board)
 
-    # with open(os.path.join(dirname, f"source_code/bit_board.txt"), mode="a") as f:
-    #     f.write( f"\n{your_board} {opp_board}  {move['selected_pos'][0]}{move['selected_pos'][1]}{move['new_pos'][0]}{move['new_pos'][1]} {' '.join(map(str, v))}" )
+    with open(os.path.join(dirname, f"source_code/bit_board.txt"), mode="a") as f:
+        f.write( f"\n{your_board} {opp_board}  {move['selected_pos'][0]}{move['selected_pos'][1]}{move['new_pos'][0]}{move['new_pos'][1]} {' '.join(map(str, v))}" )
 
     return move
 
 def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlayer=True, alpha=(float("-inf"),), beta=(float("inf"),)):
 
     if isMaximizingPlayer:
-        if (state := f"{your_board} {opp_board}") in cacheUser and depth:
+        if (state := f"{your_board} {opp_board}") in cache and depth:
+            print("🧀")
+            temp = cache[state].split(' ')
+            return float(temp[1]), float(temp[2])-depth, float(temp[3])
+    else:
+        if (state := f"{your_board} {opp_board}") in cacheUser:
             temp = cacheUser[state].split(' ')
             return float(temp[0]), float(temp[1])+depth, float(temp[2])
-    elif (state := f"{opp_board} {your_board}") in cache:
-        temp = cache[state].split(' ')
-        return float(temp[1]), float(temp[2])-depth, float(temp[3])
 
     if your_board == 0 or opp_board == 0:
         return (-8, depth, 0) if isMaximizingPlayer else (8, -depth, 0)
@@ -141,6 +141,8 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
                     if depth == 0 and value > bestVal:
                         move["selected_pos"] = pos
                         move["new_pos"] = invalid_move
+                    if depth == 0:
+                        print(value, (pos, invalid_move))
 
                     alpha = max(alpha, value)
                     bestVal = max(bestVal, value)

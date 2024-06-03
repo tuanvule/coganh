@@ -332,12 +332,13 @@ def get_rate():
         if i['side'] == -1:
             i['your_pos'], i['opp_pos'] = [tuple(i) for i in i['opp_pos']], [tuple(i) for i in i['your_pos']]
             i['board'] = eval(str(i['board']).replace('-1', '`').replace('1', '-1').replace('`', '1'))
+        else:
+            i['your_pos'], i['opp_pos'] = [tuple(i) for i in i['your_pos']], [tuple(i) for i in i['opp_pos']]
+            
     rate = [trainAI.MasterUser.main(i) for i in move_list]
 
     for i in range(len(img_data["img"])):
         img_data["img"][i].append(rate[i])
-
-    print(img_data)
 
     img_url = requests.post("http://tlv23.pythonanywhere.com//generate_debug_image", json=img_data).text
 
