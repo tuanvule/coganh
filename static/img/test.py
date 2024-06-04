@@ -28,7 +28,7 @@ def declare():
 
 declare()
 frame_cop = frame.copy()
-im = Image.new('RGBA', (600, 600), (0, 255, 0, 0))
+im = Image.new('RGBA', (400, 400), (0, 255, 0, 0))
 draw = ImageDraw.Draw(im)
 
 for x, y in positions[1]:
@@ -57,6 +57,11 @@ for x, y in positions[-1]:
 # draw.ellipse((new_x*100+102+9, new_y*100+85, new_x*100+102+11.5, new_y*100+88.5), fill="white")
 # draw.line((new_x*100+102+10, new_y*100+73, new_x*100+102+10, new_y*100+82), fill="white", width=3)
 # }
+
+# elif rate == "Bình thường":
+#     draw.ellipse((1*100+102, 0*100+70, 1*100+122, 0*100+90), fill="#bbb")
+#     draw.line((1*100+102+3, 0*100+70+10, 1*100+122-3, 0*100+90-10), fill="white", width=4)
+
 
 # elif rate == "bad":
 #     draw.ellipse((new_x*100+102, new_y*100+70, new_x*100+122, new_y*100+90), fill="red", width=5)

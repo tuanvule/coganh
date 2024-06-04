@@ -6,7 +6,9 @@
     <title>Document</title>
     <link rel="stylesheet" href="../static/css/style.css">
     <link rel="stylesheet" href="../static/css/animation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../static/css/human_human.css">
+    <link rel="stylesheet" href="../static/css/rate_model.css">
 </head>
 <body>
     <div class="game_state">
@@ -42,6 +44,51 @@
             </div>
         </div>
     </div>
+
+    <div class="rate">
+        <div class="game_display">
+            <i class="fa-solid fa-angle-left arrow_left hide"></i>
+                <div class="img_main">
+                    <ul class="img_list">
+                        <li class="img_item default"><img src="../static/img/chessboard1.png" alt=""></li>
+                    </ul>
+                    <div class="counter">0</div>
+                </div>
+            <i class="fa-solid fa-angle-right arrow_right"></i>
+            <div class="loader">
+                <div class="loading"></div>
+            </div>
+        </div>
+        <div class="game_rate">
+            <div class="rate_list">
+                <ul class="overview">
+                    <div class="header">
+                        <div class="player you"><div class="content">Bạn</div></div>
+                        <div class="move_count">MOVES: 20</div>
+                        <div class="player enemy"><div class="content">Đối thủ</div></div>
+                    </div>
+                </ul>
+                <div class="spacing"></div>
+                <ul class="detail">
+                </ul>
+            </div>
+            <div class="ske_loading">
+                <ul class="ske_loading-overview">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+                <div class="spacing"></div>
+                <ul class="ske_loading-detail">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <div class="game_result">
         <div class="game_status">Game on...</div>
         <div class="rate_btn">Xem đánh giá</div>
@@ -59,6 +106,7 @@
     <audio class="fire_sound" src="{{url_for('static', filename='fireSound.mp3')}}"></audio>
     
     <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script> -->
+    <script src="../static/script/rate_model.js"></script>
     <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"></script>
     <script type="module" src="../static/script/human_human.js"></script>
 </body>

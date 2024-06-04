@@ -129,20 +129,17 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
     if debugNum: 
         inp_oup = []
     move_list = []
-    cur_move = {
-        "board": "",
-        "opp_pos": [],
-        "your_pos": [],
-        "side": 1,
-        "move": {"selected_pos": [], "new_pos": []},
-    }
+    cur_move = {}
 
     while not winner:
 
         current_turn = game_state["current_turn"]
 
         # get old board
-        cur_move["board"] = deepcopy(game_state["board"])
+        if current_turn == 1:
+            cur_move["board"] = deepcopy(game_state["board"])
+        else:
+            cur_move['board'] = eval(str(game_state['board']).replace('-1', '`').replace('1', '-1').replace('`', '1'))
 
         if player1.your_side == current_turn:
             move = UserBot.main(deepcopy(player1))
@@ -151,22 +148,24 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
                 inp_oup.append(deepcopy(move))
         else:
             move = Bot2.main(deepcopy(player2))
+            if debugNum:
+                inp_oup.append(deepcopy(move))
             Raise_exception(move, current_turn, game_state["board"])
 
         move_new_pos = move["new_pos"]
         move_selected_pos = move["selected_pos"]
-        cur_move["move"]["new_pos"] = deepcopy(move_new_pos)
-        cur_move["move"]["selected_pos"] = deepcopy(move_selected_pos)
+        cur_move["move"] = deepcopy({
+            "new_pos": move_new_pos,
+            "selected_pos": move_selected_pos
+        })
 
         # Update move to board
         game_state["board"][move_new_pos[1]][move_new_pos[0]] = current_turn
         game_state["board"][move_selected_pos[1]][move_selected_pos[0]] = 0
 
         # get old chess position
-        cur_move["your_pos"] = deepcopy(positions[1])
-        cur_move["opp_pos"] = deepcopy(positions[-1])
-
-        cur_move["side"] = current_turn
+        cur_move["your_pos"] = deepcopy(positions[current_turn])
+        cur_move["opp_pos"] = deepcopy(positions[-current_turn])
 
         # Update move to positions
         index_move = positions[current_turn].index(move_selected_pos)
@@ -181,14 +180,12 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
         move_list.append(deepcopy(cur_move))
 
         if debugNum > 0 and move_counter == debugNum:
-            print(move_list)
             rate = [trainAI.MasterUser.main(i) for i in move_list]
-            print(rate)
             body["img"][0].append("")
             for i in range(1, len(body["img"])):
                 body["img"][i].append(rate[i-1])
             img_url = requests.post("http://tlv23.pythonanywhere.com//generate_debug_image", json=body).text
-            return img_url, inp_oup
+            return img_url, inp_oup, rate
         elif not positions[1]:
             winner = "lost"
         elif not positions[-1]:

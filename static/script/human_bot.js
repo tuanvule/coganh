@@ -19,55 +19,10 @@ let rs = 1
 
 let username = $(".username").innerHTML
 
-const data = [
-    {
-        type: "excellent",
-        move: {
-            sellected_pos: "(0,1)",
-            new_pos: "(1,0)",
-        },
-        img_url: "../static/img/chessboard.png",
-    },
-    {
-        type: "good",
-        move: {
-            sellected_pos: "(0,1)",
-            new_pos: "(1,0)",
-        },
-        img_url: "../static/img/chessboard.png",
-    },
-    {
-        type: "bad",
-        move: {
-            sellected_pos: "(0,1)",
-            new_pos: "(1,0)",
-        },
-        img_url: "../static/img/chessboard.png",
-    },
-    {
-        type: "bad",
-        move: {
-            sellected_pos: "(0,1)",
-            new_pos: "(1,0)",
-        },
-        img_url: "../static/img/chessboard.png",
-    },
-    {
-        type: "excellent",
-        move: {
-            sellected_pos: "(0,1)",
-            new_pos: "(1,0)",
-        },
-        img_url: "../static/img/chessboard.png",
-    }
-]
-
 let chessPosition = [
     [[0, 0],[1, 0],[2, 0],[3, 0],[4, 0],[0, 1],[4, 1],[4, 2]], 
     [[0, 2],[0, 3],[2, 4],[4, 3],[0, 4],[1, 4],[3, 4],[4, 4]]
 ]
-
-let gameHistory = [[[[],...chessPosition], {selected_pos: [-1000,-1000], new_pos: [-1000,-1000]}, []]]
 
 let selectedChess
 const gameResult = $(".game_result")
@@ -163,27 +118,11 @@ function resetBoard() {
 
 resetBoard()
 
-let move_list = [
-    // {
-    //     your_pos: chessPosition[0],
-    //     opp_pos: chessPosition[1],
-    //     your_board: [
-    //         [-1,-1,-1,-1,-1],
-    //         [-1, 0, 0, 0,-1],
-    //         [ 1, 0, 0, 0,-1],
-    //         [ 1, 0, 0, 0, 1],
-    //         [ 1, 1, 1, 1, 1]
-    //     ],
-    //     opp_board: curBoard.map(row => row.map(item => item === 0 ? 0 : -item)),
-    //     move: {
-    //         selected_pos: [],
-    //         new_pos: [],
-    //     }
-    // }
-]
+let move_list = []
 
 let img_data = {
     username: username,
+    side: 1,
     img: [],
 }
 
@@ -288,13 +227,13 @@ function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
                                 chessPosition[index].splice(es.findIndex(findI, [j,i]),1)
                             }
                         }))
+                        captureSound.play()
                         fireSound.play()
                         const fire = document.createElement("img")
                         fire.setAttribute("src", "./static/img/fire.webp")
                         fire.setAttribute("style", `top:${chessGrapY*i - 30 * rs}px; left:${chessGrapX*j - 30 * rs}px;`)
                         fire.setAttribute("class", "fire")
                         let newFire = board.appendChild(fire)
-                        console.log("removeChess: " + "(" + j + ",", + i + ")")
                         newFire.onanimationend = (e) => {
                             changedChess.remove()
                         }
@@ -306,7 +245,6 @@ function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
     }
     
     img_data.img.push([[[], [...chessPosition[1]], [...chessPosition[0]]], {selected_pos,new_pos}, valid_remove])
-    console.log(img_data.img[img_data.img.length-1])
 
     if(chessPosition[0].length === 0) {
         gameStatus.innerHTML = "You Win"
@@ -345,7 +283,6 @@ function ganh_chet(move, opp_pos, side, opp_side) {
 
     for (let [x, y] of valid_remove) {
         grid[y][x] = 0;
-        // console.log(grid)
         opp_pos = opp_pos.filter(([px, py]) => px !== x || py !== y);
     }
 
@@ -438,7 +375,6 @@ function swap(chess, box, newPos, selected_pos) {
         
         chessPosition[1][chessPosition[1].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)])] = [Number(box.dataset.posx), Number(box.dataset.posy)]
         changePos(chess.dataset.posx,chess.dataset.posy, box.dataset.posx, box.dataset.posy)
-        gameHistory.push([[[],...chessPosition], {selected_pos: [Number(chess.dataset.posx),Number(chess.dataset.posy)], new_pos: [Number(box.dataset.posx), Number(box.dataset.posy)]}, valid_remove])
         chess.dataset.posx = box.dataset.posx
         chess.dataset.posy = box.dataset.posy
     } else {
@@ -452,8 +388,6 @@ function swap(chess, box, newPos, selected_pos) {
         
         let opp_pos = chessPosition[1]
         valid_remove = [...ganh_chet([newPos[1], newPos[0]], opp_pos, -1, 1), ...vay(opp_pos)]
-
-        console.log(selected_pos)
 
         move_list.push({
             your_pos: [...chessPosition[1]],
@@ -471,14 +405,12 @@ function swap(chess, box, newPos, selected_pos) {
         chess.style.left = newPos[1] * chessGrapX - 30 * rs + "px"
         chess.style.top = newPos[0] * chessGrapX - 30 * rs + "px"
         changePos(selected_pos[0], selected_pos[1], newPos[1], newPos[0])
-        gameHistory.push([[[],...chessPosition], {selected_pos: [Number(chess.dataset.posx),Number(chess.dataset.posy)], new_pos: [newPos[1], newPos[0]]}, valid_remove])
         chess.dataset.posx  = `${newPos[1]}`
         chess.dataset.posy = `${newPos[0]}`
         console.log(chess)
         newPos = newPos.reverse()
         isReady(true)
     }
-    console.log(gameHistory)
     changeBoard(grid, valid_remove, selected_pos, newPos)
 }
 

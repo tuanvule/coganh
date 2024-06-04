@@ -171,6 +171,7 @@ body {
     font-size: 28px;
     position: relative;
     margin: 44px 0;
+    min-width: 82px;
 }
 
 .debug_info-arrow {
@@ -198,6 +199,11 @@ body {
 
 .debug_info-move_level.bad {
     background-color: red;
+}
+
+.debug_info-move_level.normal {
+    background-color: #aaa;
+    font-size: 18px;
 }
 
 .counter {

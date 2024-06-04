@@ -104,18 +104,17 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
 
     if isMaximizingPlayer:
         if (state := f"{your_board} {opp_board}") in cache and depth:
-            print("🧀")
             temp = cache[state].split(' ')
-            return float(temp[1]), float(temp[2])-depth, float(temp[3])
+            return float(temp[1]), float(temp[2]) + (depth if float(temp[2])>0 else -depth), float(temp[3])
     else:
         if (state := f"{your_board} {opp_board}") in cacheUser:
             temp = cacheUser[state].split(' ')
-            return float(temp[0]), float(temp[1])+depth, float(temp[2])
+            return float(temp[0]), float(temp[1]) + (depth if float(temp[2])>0 else -depth), float(temp[2])
 
     if your_board == 0 or opp_board == 0:
         return (-8, depth, 0) if isMaximizingPlayer else (8, -depth, 0)
     if depth == Stopdepth:
-        return (len(your_pos) - len(opp_pos)), -depth, check_pos_point(your_board, opp_board)
+        return (len(your_pos) - len(opp_pos)), float("-inf"), check_pos_point(your_board, opp_board)
 
     bestVal = (float("-inf"),) if isMaximizingPlayer else (float("inf"),)
 
@@ -141,8 +140,6 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
                     if depth == 0 and value > bestVal:
                         move["selected_pos"] = pos
                         move["new_pos"] = invalid_move
-                    if depth == 0:
-                        print(value, (pos, invalid_move))
 
                     alpha = max(alpha, value)
                     bestVal = max(bestVal, value)

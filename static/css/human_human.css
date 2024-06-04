@@ -89,7 +89,7 @@ canvas {
 }
 
 .rate_btn {
-    display: none;
+    /* display: none; */
     text-decoration: none;
     color: #fff;
     font-size: 20px;

@@ -213,7 +213,7 @@ def debug_code():
     with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
         f.write(data["code"])
     try: 
-        img_url, inp_oup = activation("trainAI.Master", name, data["debugNum"]) # người thắng / số lượng lượt chơi
+        img_url, inp_oup, rate = activation("trainAI.Master", name, data["debugNum"]) # người thắng / số lượng lượt chơi
 
         with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
             txt = f.read()
@@ -221,7 +221,8 @@ def debug_code():
             "code": 200,
             "img_url": img_url,
             "output": txt,
-            "inp_oup": inp_oup
+            "inp_oup": inp_oup,
+            "rate": rate,
         }
         return json.dumps(data)
     except Exception:

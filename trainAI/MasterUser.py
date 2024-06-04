@@ -5,18 +5,17 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
 
     if isMaximizingPlayer:
         if (state := f"{your_board} {opp_board}") in cache and depth:
-            print("🧀")
             temp = cache[state].split(' ')
-            return float(temp[1]), float(temp[2])-depth, float(temp[3])
+            return float(temp[1]), float(temp[2]) + (depth if float(temp[2])>0 else -depth), float(temp[3])
     else:
         if (state := f"{your_board} {opp_board}") in cacheUser:
             temp = cacheUser[state].split(' ')
-            return float(temp[0]), float(temp[1])+depth, float(temp[2])
+            return float(temp[0]), float(temp[1]) + (depth if float(temp[2])>0 else -depth), float(temp[2])
 
     if your_board == 0 or opp_board == 0:
         return (-8, depth, 0) if isMaximizingPlayer else (8, -depth, 0)
     if depth == Stopdepth:
-        return (len(opp_pos) - len(your_pos)), depth, check_pos_point(opp_board, your_board)
+        return (len(opp_pos) - len(your_pos)), float("-inf"), check_pos_point(opp_board, your_board)
 
     bestVal = (float("-inf"),) if isMaximizingPlayer else (float("inf"),)
 
@@ -60,7 +59,7 @@ def main(move_listi):
         cacheUser = {i.split("  ")[0]:i.split("  ")[1] for i in f.read().split("\n")}
 
     if (state := f"{your_board} {opp_board}") in cacheUser:
-        rate = eval(cacheUser[state].split(' ')[3])
+        rate = eval(cacheUser[state].replace('inf','float("inf")').split(' ')[3])
 
     else:
         rate = {}
@@ -85,7 +84,7 @@ def main(move_listi):
                         opp_new_board, opp_new_pos = vay(opp_new_pos, your_new_board, opp_new_board)
 
                     rate.update({
-                        f"{pos[0]}{pos[1]}{invalid_move[0]}{invalid_move[1]}" : tuple(map(int , cache[state].split(' ')[1:4]))
+                        f"{pos[0]}{pos[1]}{invalid_move[0]}{invalid_move[1]}" : tuple(map(float , cache[state].split(' ')[1:4]))
                                                                                 if (state := f"{opp_new_board} {your_new_board}") in cache else
                                                                                 minimax(opp_new_pos, your_new_pos, opp_new_board, your_new_board)
                     })
@@ -96,7 +95,6 @@ def main(move_listi):
     move = move_listi["move"]
     p = sorted(list(rate.values())).index(rate[f"{move['selected_pos'][0]}{move['selected_pos'][1]}{move['new_pos'][0]}{move['new_pos'][1]}"])
     l = len(rate.values())
-    print(rate.values(), p, l)
 
     if p*3 > l*2:
         return "Tệ"
