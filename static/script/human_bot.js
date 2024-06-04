@@ -307,10 +307,8 @@ function vay(opp_pos) {
     }
 
     let valid_remove = opp_pos.slice();
-    // console.log(valid_remove)
     for (let [x, y] of opp_pos) {
         grid[y][x] = 0;
-        // console.log(grid)
     }
     opp_pos = [];
     return valid_remove;
@@ -421,7 +419,7 @@ function clearBox() {
 }
 
 function getBotmove() {
-    if(chessPosition[0].length <= 0) return
+    if(chessPosition[0].length <= 0 || chessPosition[1].length <= 0) return
     chessEnemy = $$(".chess.enemy")
     let data = {
         your_pos : [],
