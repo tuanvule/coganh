@@ -334,6 +334,7 @@ function vay(opp_pos) {
             let new_valid_x = pos[0] + move[0];
             let new_valid_y = pos[1] + move[1];
             if (new_valid_x >= 0 && new_valid_x <= 4 && new_valid_y >= 0 && new_valid_y <= 4 && grid[new_valid_y][new_valid_x] === 0) {
+                console.log(new_valid_x, new_valid_y)
                 return [];
             }
         }
@@ -376,6 +377,7 @@ function swap(chess, box, newPos, selected_pos) {
     cv2.clearRect(0, 0, canvas.width, canvas.height);
     moveSound.play()
     let r = [2,1.5,2,2.5,2]
+    let preBoard = curBoard.map(row => row.map(item => item))
     if(box) {
         cv2.beginPath();
         cv2.arc(chess.dataset.posx * (boardValue.width / 4) + radius + 2.5 * r[chess.dataset.posx], chess.dataset.posy * (boardValue.height / 4) + radius + 2.5 * r[chess.dataset.posx], radius, 0, 2 * Math.PI);
@@ -391,11 +393,12 @@ function swap(chess, box, newPos, selected_pos) {
         selected_pos = [Number(chess.dataset.posx),Number(chess.dataset.posy)]
         
         let opp_pos = chessPosition[0]
+        changePos(chess.dataset.posx,chess.dataset.posy, box.dataset.posx, box.dataset.posy)
         valid_remove = [...ganh_chet([Number(box.dataset.posx), Number(box.dataset.posy)], opp_pos, 1, -1), ...vay(opp_pos)]
         move_list.push({
             your_pos: [...chessPosition[1]],
             opp_pos: [...chessPosition[0]],
-            board: curBoard.map(row => row.map(item => item)),
+            board: preBoard,
             side: 1,
             remove: valid_remove,
             move: {
@@ -405,7 +408,6 @@ function swap(chess, box, newPos, selected_pos) {
         })
         
         chessPosition[1][chessPosition[1].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)])] = [Number(box.dataset.posx), Number(box.dataset.posy)]
-        changePos(chess.dataset.posx,chess.dataset.posy, box.dataset.posx, box.dataset.posy)
         chess.dataset.posx = box.dataset.posx
         chess.dataset.posy = box.dataset.posy
     } else {
@@ -423,7 +425,7 @@ function swap(chess, box, newPos, selected_pos) {
         move_list.push({
             your_pos: [...chessPosition[1]],
             opp_pos: [...chessPosition[0]],
-            board: curBoard.map(row => row.map(item => item)),
+            board: preBoard,
             side: -1,
             remove: valid_remove,
             move: {
