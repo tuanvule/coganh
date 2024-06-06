@@ -4,7 +4,7 @@ const $$ = document.querySelectorAll.bind(document)
 const username = $(".username").innerHTML
 
 const runBtn = $(".coding_module-nav--runBtn.btn")
-const saveBtn = $(".coding_module-nav--saveBtn.btn")
+const saveBtn = $(".coding_module-nav--saveBtn")
 const terminal = $(".utility_block-element.terminal")
 const rule = $(".utility_block-element.rule")
 const result = $(".utility_block-element.result")
@@ -89,6 +89,7 @@ bot_items.forEach(item => {
             request_data.bot = ""
             bot_html = ""
             item.classList.remove("selected")
+            runBtn.classList.remove("active")
             return
         }
         bot_items.forEach(e => e.classList.remove("selected"))
@@ -96,6 +97,7 @@ bot_items.forEach(item => {
         item.classList.add("selected")
         request_data.bot = choosen_bot
         bot_html = item
+        runBtn.classList.add("active")
     }
 })
 
@@ -561,8 +563,8 @@ function toggleMode(mode) {
                 } else if(status === "lost") {
                     toggle_bot_result(bot_html, ".fight_result_lost")
                     win_loose_block.innerHTML = `
-                    ${win_loose_items[1].replace("{winer_name}", username)}
-                    ${win_loose_items[0].replace("{loser_name}", choosen_bot)}
+                    ${win_loose_items[1].replace("{loser_name}", choosen_bot).replace("DEFEATED", "VICTORY")}
+                    ${win_loose_items[0].replace("{winer_name}", username).replace("VICTORY", "DEFEATED")}
                     `
                 } else if(status === "draw") {
                     toggle_bot_result(bot_html, ".fight_result_draw")

@@ -322,7 +322,6 @@ def get_pos_of_playing_chess():
     res = request.get_json()
     player = Player(res["data"])
     choosen_bot = res["choosen_bot"]
-    print(f"trainAI.{choosen_bot}")
     player.your_pos = [tuple(i) for i in player.your_pos]
     player.opp_pos = [tuple(i) for i in player.opp_pos]
     player.your_pos, player.opp_pos = player.opp_pos, player.your_pos
