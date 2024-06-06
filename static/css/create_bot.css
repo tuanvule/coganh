@@ -4,10 +4,15 @@ body {
     max-height: 100vh;
     background-color: #121212;
     color: rgba(255, 255, 255, 0.898);
+    overflow: hidden;
 }
 
 .btn:hover {
     filter: brightness(90%);
+}
+
+.ace_print-margin {
+    opacity: 0;
 }
 
 .guide_box {
@@ -460,7 +465,22 @@ body {
     height: calc(100% - 20px);
 }
 
-.info {
+.mode_solo {
+    width: 100%;
+    display: flex;
+    /* flex-direction: column; */
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+}
+
+.mode_tournament {
+    width: 100%;
+    display: flex;
+    height: 100%;
+}
+
+/* .info {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -468,12 +488,12 @@ body {
     width: 50%;
     height: 100%;
     font-size: 40px;
-}
+} */
 
-.status {
+/* .status {
     background-color: #007BFF;
     /* padding: 10px 40px; */
-    display: flex;
+    /* display: flex;
     justify-content: center;
     align-items: center;
     width: 50%;
@@ -481,13 +501,22 @@ body {
     border-radius: 10px;
     margin-top: 14px;
     font-size: 40px;
-}
+} */
 
 .info_move-count {
     font-size: 30px;
+    line-height: 40px;
+    text-align: center;
+    background-color: #007BFF;
+    border-radius: 10px;
+    display: grid;
+    place-content: center;
+    height: 75%;
+    width: 60%;
+    margin-left: 2%;
 }
 
-.player, .enemy {
+/* .player, .enemy {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -495,16 +524,104 @@ body {
 
 .player {
     margin: 10px 0;
+} */
+
+.win_loose_block {
+    width: 100%;
+}
+
+.winer,
+.loser {
+    display: flex;
+    margin: 10px 0;
+    width: 100%;
+}
+
+.winer .side,
+.loser .side {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: auto 100px;
+}
+
+.side.blue {
+    background-color: #007BFF;
+}
+
+.side.red {
+    background-color: red;
+}
+
+.winer_avatar,
+.loser_avatar img {
+    width: 80px;
+    height: 100px;
+    background-color: #DCF9FF;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.loser_info,
+.winer_info {
+    /* width: 100%; */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 10px 20px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.loser_info {
+    color: red;
+    background-color: rgba(255, 0, 0, .3);
+}
+
+.winer_info {
+    color: #007BFF;
+    background-color: rgba(0, 123, 255, .3);
+}
+
+.winer_avatar {
+    font-size: 50px;
+    color: #007BFF;
+    font-weight: bold;
+    display: grid;
+    place-content: center;
+}
+
+.mode_tournament .bot img {
+    display: block;
+    height: 80%;
+}
+
+.mode_tournament .bot {
+    position: relative;
+    margin: 0 auto;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    min-width: 80px;
+    margin: 0 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #DCF9FF;
+    user-select: none;
 }
 
 .coding_module {
-    background: #1E1E1E;
     margin: 0 20px 0 5px;
     display: flex;
     flex-direction: column;
 }
 
 .coding_module-nav {
+    background: #1E1E1E;
     width: 100%;
     height: 7%;
     padding: 5px 10px;
@@ -528,7 +645,7 @@ body {
     filter: brightness(90%);
 }
 
-.btn {
+.btn.active {
     padding: 5px 20px;
     height: max-content;
     border-radius: 5px;
@@ -538,12 +655,16 @@ body {
     user-select: none;
 }
 
+.btn.unactive {
+    background-color: #ccc;
+}
+
 .coding_module-nav--runBtn {
     margin-left: 20px;
     background-color: #007BFF;
 }
 
-.coding_module-nav--saveBtn {
+.coding_module-nav--saveBtn.btn.active {
     margin-left: auto;
     border: 1px solid #fff;
 }
@@ -565,7 +686,7 @@ body {
     user-select: none;
 }
 
-.coding_module-nav--runBtn:hover {
+.coding_module-nav--runBtn.btn.active:hover {
     filter: brightness(90%);
 }
 
@@ -582,7 +703,7 @@ body {
 #coding_module-coding_block {
     width: 100%;
     max-width: 100%;
-    height: 100%;
+    height: 76%;
 }
 
 .coding_block-coding {
@@ -640,6 +761,226 @@ body {
 .coding_module-nav--setting label {
     height: 100%;
 }
+
+.coding_module-bot_list {
+    width: 100%;
+    height: 22%;
+    background-color: #1E1E1E;
+    margin-top: auto;
+    display: flex;
+    padding: 10px 0;
+}
+
+.choose_bot_module {
+    height: 76%;
+    width: 100%;
+}
+
+.choose_bot_module-title {
+    width: 100%;
+    padding: 0 20px 2px;
+    height: fit-content;
+    font-size: 16px;
+    color: #ccc;
+    text-align: center;
+}
+
+.bot_list {
+    /* overflow-x: scroll; */
+    overflow-wrap: break-word;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    /* height: 100%; */
+    width: 100%;
+    /* max-width: 70%; */
+}
+
+.bot_item {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 5px;
+    /* overflow: hidden; */
+    min-width: 80px;
+    margin: 0 10px;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #DCF9FF;
+    user-select: none;
+    z-index: 10000000000;
+}
+
+.bot_item:hover > .bot_item_info {
+    display: block;
+}
+
+.bot_item:hover {
+    opacity: .9;
+}
+
+.bot_item_title {
+    color: #000;
+    font-size: 12px;
+}
+
+.bot_item_title.Master {
+    color: rgb(197, 0, 0);
+    font-weight: bold;
+    font-size: 10px;
+}
+
+.bot_item img {
+    display: block;
+    height: 80%;
+}
+
+.bot_item.Master,
+.bot.Master {
+    background-color: rgb(255, 185, 185);
+}
+
+.bot_item.selected {
+    border: 5px solid #007BFF;
+}
+
+.fight_result {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fight_result_loader {
+    background-color: rgba(255, 255, 255, 0.3);
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.fight_result_loading {
+    border: 4px solid #9c9c9c; 
+    border-top: 4px solid #000; 
+    border-radius: 50%;
+    width: 70%;
+    height: 70%;
+    animation: spin 2s linear infinite;
+}
+
+.fight_result_win {
+    display: none;
+    background-image: url("../img/due_sword.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 46%;
+    background-color: rgba(0, 123, 255, .7);
+    width: 100%;
+    height: 100%;
+}
+
+.fight_result_lost {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 0, 0, .7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.fight_result_lost i {
+    font-size: 40px;
+}
+
+.fight_result_draw i {
+    font-size: 40px;
+    color: #000;
+}
+
+.fight_result_draw {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, .7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.bot_item_info {
+    /* display: none; */
+    pointer-events:visible;
+    position: absolute;
+    display: none;
+    min-width: 200px;
+    bottom: 120%;
+    font-size: 14px;
+    background-color: #1E1E1E;
+    color: snow;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0px 0px 15px 5px #007BFF;
+    z-index: 1000000;
+}
+
+.bot_item_info::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+}
+
+.hint p {
+    vertical-align: center;
+}
+
+/* .choose_mode_module {
+    width: 30%;
+    height: 100%;
+    border-left: 1px solid #007BFF;
+}
+
+.choose_mode_module-title {
+    width: 100%;
+    height: 15%;
+    padding: 0 20px;
+    height: fit-content;
+    font-size: 16px;
+    color: #ccc;
+    text-align: center;
+}
+
+.mode_list {
+    height: 85%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.mode_item {
+    width: 80%;
+    font-size: 20px;
+    padding: 10px 0;
+    border: 1px solid #007BFF;
+    text-align: center;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: .1s linear;
+}
+
+.mode_item:hover {
+    background-color: #007BFF;
+}
+
+.mode_item.selected {
+    background-color: #0058b7;
+} */
 
 .setting_list {
     display: none;

@@ -122,11 +122,32 @@
                     </div>
                     <div class="utility_block-element terminal">>>> </div>
                     <div class="utility_block-element result">
-                        <div class="status">Winner</div>
-                        <div class="info">
-                            <div class="info_move-count">moves: 100</div>
-                            <div class="player">you: <hr> <div style="width: 40px; height: 40px; border-radius: 50%; background-color: blue;"></div></div>
-                            <div class="enemy">bot: <hr> <div style="width: 40px; height: 40px; border-radius: 50%; background-color: red;"></div></div>
+                        <div class="mode_solo">
+                            <!-- <div class="status">Winner</div>
+                            <div class="info">
+                                <div class="info_move-count">moves: 100</div>
+                                <div class="player">you: <hr> <div style="width: 40px; height: 40px; border-radius: 50%; background-color: blue;"></div></div>
+                                <div class="enemy">bot: <hr> <div style="width: 40px; height: 40px; border-radius: 50%; background-color: red;"></div></div>
+                            </div> -->
+                            <div class="win_loose_block">
+                                <div class="winer">
+                                    <div class="winer_avatar">T</div>
+                                    <div class="winer_info">
+                                        <div class="winer_title">VICTORY</div>
+                                        <div class="winer_info_name">tlv23</div>
+                                    </div>
+                                    <!-- <div class="side blue"></div> -->
+                                </div>
+                                <div class="loser">
+                                    <div class="loser_avatar"><img src="../static/img/level4.png" alt=""></div>
+                                    <div class="loser_info">
+                                        <div class="loser_title">DEFEATED</div>
+                                        <div class="loser_info_name">level1</div>
+                                    </div>
+                                    <!-- <div class="side red"></div> -->
+                                </div>
+                            </div>
+                            <div class="info_move-count">move 100</div>
                         </div>
                     </div>
                 </div>
@@ -144,9 +165,9 @@
                         <option value="6" class="option">6</option>
                     </select>
                 </div>
-                <div class="coding_module-nav--saveBtn btn" data-saved="false">save</div>
+                <div class="coding_module-nav--saveBtn btn active" data-saved="false">save</div>
                 <div class="coding_module-nav--runBtn loader" style="display: none; animation: none;"><div class="coding_module-nav--loading"></div></div>
-                <div class="coding_module-nav--runBtn btn">run</div>
+                <div class="coding_module-nav--runBtn btn active">run</div>
                 <div class="coding_module-nav--setting">
                     <label for="check"><i class="fa-solid fa-gear setting_icon"></i></label>
                     <input type="checkbox" name="check" id="check" hidden>
@@ -162,7 +183,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="a" style="height: 100%; position: relative;">
+            <div class="a" style="height: 100%; position: relative; display: flex; flex-direction: column;">
                 <div id="coding_module-coding_block"></div>
                 <div class="guide_box--nav" style="z-index: 2000; display: none;">
                     <div class="left">&#11164;</div>
@@ -172,9 +193,105 @@
                     <div class="guide_box--content">hellohellohellohellellohellohellohelloellohellohellohellohellohellohelloello</div>
                     <div class="guide_box--arrow"></div>
                 </div> -->
+                <div class="coding_module-bot_list">
+                    <div class="choose_bot_module">
+                        <div class="choose_bot_module-title">BOT</div>
+                        <div class="bot_list">
+                            <div data-level="level1" class="bot_item level1">
+                                <img class="" src="../static/img/level1.png" alt="">
+                                <div class="bot_item_title level1">
+                                    level 1
+                                </div>
+                                <div class="fight_result">
+                                    <div class="fight_result_item fight_result_draw"><i class="fa-solid fa-handshake-simple"></i></div>
+                                    <div class="fight_result_item fight_result_loader"><div class="fight_result_loading"></div></div>
+                                    <div class="fight_result_item fight_result_win"></div>
+                                    <div class="fight_result_item fight_result_lost"><i class="fa-solid fa-skull"></i></div>
+                                </div>
+                                <div class="bot_item_info">
+                                    <div class="introduce">Robot của vị tướng lĩnh này sẽ luôn luôn nhả quân cho bạn.</div>
+                                    <div class="hint"><p style="color: red;"><i class="fa-solid fa-angles-down"></i>lời khuyên<i class="fa-solid fa-angles-down"></i></p> Có vẻ robot của bạn cần học cách gánh/ chẹt</div>
+                                </div>
+                            </div>
+                            <div data-level="level2" class="bot_item level2">
+                                <img class="" src="../static/img/level2.png" alt="">
+                                <div class="bot_item_title level2">
+                                    level 2
+                                </div>
+                                <div class="fight_result">
+                                    <div class="fight_result_item fight_result_draw"><i class="fa-solid fa-handshake-simple"></i></div>
+                                    <div class="fight_result_item fight_result_loader"><div class="fight_result_loading"></div></div>
+                                    <div class="fight_result_item fight_result_win"></div>
+                                    <div class="fight_result_item fight_result_lost"><i class="fa-solid fa-skull"></i></div>
+                                </div>
+                                <div class="bot_item_info">
+                                    <div class="introduce">Robot của vị tướng lĩnh này sẽ luôn tiến quân vào những vị trí chiến lược.</div>
+                                    <div class="hint"><p style="color: red;"><i class="fa-solid fa-angles-down"></i>lời khuyên<i class="fa-solid fa-angles-down"></i></p>Robot của bạn cần một chiến thuật vây bắt hợp lý hơn.</div>
+                                </div>
+                            </div>
+                            <div data-level="level3" class="bot_item level3">
+                                <img class="" src="../static/img/level3.png" alt="">
+                                <div class="bot_item_title level3">
+                                    level 3
+                                </div>
+                                <div class="fight_result">
+                                    <div class="fight_result_item fight_result_draw"><i class="fa-solid fa-handshake-simple"></i></div>
+                                    <div class="fight_result_item fight_result_loader"><div class="fight_result_loading"></div></div>
+                                    <div class="fight_result_item fight_result_win"></div>
+                                    <div class="fight_result_item fight_result_lost"><i class="fa-solid fa-skull"></i></div>
+                                </div>
+                                <div class="bot_item_info">
+                                    <div class="introduce">Robot của vị tướng lĩnh này luôn dồn quân tại đáy và sẽ tiêu diệt những quân cờ lại gần.</div>
+                                    <div class="hint"><p style="color: red;"><i class="fa-solid fa-angles-down"></i>lời khuyên<i class="fa-solid fa-angles-down"></i></p>Đừng quên việc phòng thủ khi vây quân.</div>
+                                </div>
+                            </div>
+                            <div data-level="level3" class="bot_item level3">
+                                <img class="" src="../static/img/level4.png" alt="">
+                                <div class="bot_item_title level3">
+                                    level 4
+                                </div>
+                                <div class="fight_result">
+                                    <div class="fight_result_item fight_result_draw"><i class="fa-solid fa-handshake-simple"></i></div>
+                                    <div class="fight_result_item fight_result_loader"><div class="fight_result_loading"></div></div>
+                                    <div class="fight_result_item fight_result_win"></div>
+                                    <div class="fight_result_item fight_result_lost"><i class="fa-solid fa-skull"></i></div>
+                                </div>
+                                <div class="bot_item_info">
+                                    <div class="introduce">Robot của người lãnh đạo này sẽ ăn quân ngay khi có cơ hội.</div>
+                                    <div class="hint"><p style="color: red;"><i class="fa-solid fa-angles-down"></i>lời khuyên<i class="fa-solid fa-angles-down"></i></p>Robot của bạn cần một thế cờ có tính chiến thuật hơn.</div>
+                                </div>
+                            </div>
+                            <div data-level="Master" class="bot_item Master">
+                                <img class="" src="../static/img/Master.png" alt="">
+                                <div class="bot_item_title Master">
+                                    MASTER
+                                </div>
+                                <div class="fight_result">
+                                    <div class="fight_result_item fight_result_draw"><i class="fa-solid fa-handshake-simple"></i></div>
+                                    <div class="fight_result_item fight_result_loader"><div class="fight_result_loading"></div></div>
+                                    <div class="fight_result_item fight_result_win"></div>
+                                    <div class="fight_result_item fight_result_lost"><i class="fa-solid fa-skull"></i></div>
+                                </div>
+                                <div class="bot_item_info" style="right: -60%;">
+                                    <div class="introduce">Robot của người này là bất bại.</div>
+                                    <div class="hint"><p style="color: red;"><i class="fa-solid fa-angles-down"></i>lời khuyên<i class="fa-solid fa-angles-down"></i></p>Cố lên 😏.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="choose_mode_module">
+                        <div class="choose_mode_module-title">MODE</div>
+                        <div class="mode_list">
+                            <div data-mode="solo" class="mode_item">Solo</div>
+                            <div data-mode="tournament" class="mode_item">Tournament</div>
+                        </div>
+                    </div> -->
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="username" hidden>{{user.username}}</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.34.2/ace.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.34.2/ext-searchbox.min.js"></script>

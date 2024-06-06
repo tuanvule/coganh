@@ -12,8 +12,20 @@
 </head>
 <body>
     <div class="game_state">
-        <div class="game_turn game_turn-bot unavalable">Bot's turn</div>
-        <div class="game_turn game_turn-player">Your turn</div>
+        <div class="game_turn game_turn-bot">
+            <div class="bot_avatar"><img src="../static/img/Master.png" alt=""></div>
+            <div class="game_turn_info bot_info unavalable">
+                <!-- <div class="bot_title">DEFEATED</div> -->
+                <div class="bot_info_name">Master</div>
+            </div>
+        </div>
+        <div class="game_turn game_turn-player">
+            <div class="player_avatar">T</div>
+            <div class="game_turn_info player_info">
+                <!-- <div class="player_title">VICTORY</div> -->
+                <div class="player_info_name">tlv23</div>
+            </div>
+        </div>
     </div>
 
     <div class="board"></div>
@@ -67,8 +79,51 @@
     <div class="game_result">
         <div class="game_status">Game on...</div>
         <a href="{{ url_for('menu') }}" class="menu_btn">Menu</a>
-        <div class="rate_btn">Xem đánh giá</div>
+        <div style="display: none;" class="rate_btn">Xem đánh giá</div>
         <div class="play_again_btn">Play again</div>
+    </div>
+
+    <div class="overflow">
+        <div class="choose_bot_model">
+            <div class="choose_bot_model-title">Chọn bot</div>
+            <div class="bot_list">
+                <div class="bot_list_block">
+                    <div data-level="level1" class="bot_item level1">
+                        <img class="" src="../static/img/level1.png" alt="">
+                        <div class="bot_item_title level1">
+                            level 1
+                        </div>
+                    </div>
+                    <div data-level="level2" class="bot_item level2">
+                        <img class="" src="../static/img/level2.png" alt="">
+                        <div class="bot_item_title level2">
+                            level 2
+                        </div>
+                    </div>
+                    <div data-level="level3" class="bot_item level3">
+                        <img class="" src="../static/img/level3.png" alt="">
+                        <div class="bot_item_title level3">
+                            level 3
+                        </div>
+                    </div>
+                </div>
+                <div class="bot_list_block">
+                    <div data-level="level4" class="bot_item level4">
+                        <img class="" src="../static/img/level4.png" alt="">
+                        <div class="bot_item_title level4">
+                            level 4
+                        </div>
+                    </div>
+                    <div data-level="Master" class="bot_item Master">
+                        <img class="" src="../static/img/Master.png" alt="">
+                        <div class="bot_item_title Master">
+                            MASTER
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fight_btn">Thách đấu</div>
+        </div>
     </div>
 
     <!-- <img class="fire" style="display: none;" src="{{url_for('static', filename='img/fire.webp')}}" alt=""> -->

@@ -101,7 +101,9 @@ function createRateModel(rate_dom, data) {
             });
 
             const overview = doom_main_$(".overview")
-            type_count = type_count.reverse()
+
+            if(side === -1) type_count = type_count.reverse()
+
             for(let i = 0; i < 4; i++) {
                 if(i === 0) {
                     overview.innerHTML += `
@@ -183,7 +185,7 @@ function createRateModel(rate_dom, data) {
             this.doom_rate_item.forEach((item, i) => {
                 item.onclick = () => {
                     this.tonggle_img(this.cur_img, i)
-                    this.cur_img = i
+                    this.cur_img = i + 1
                 }
             })
             document.onkeyup = (e) => {

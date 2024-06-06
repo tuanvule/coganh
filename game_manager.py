@@ -95,11 +95,11 @@ def vay(opp_pos):
 # System
 def activation(option, session_name, debugNum):
     global org_stdout
-    if debugNum > 0:
-        open(f"static/output/stdout_{session_name}.txt", mode="w", encoding="utf-8")
-        org_stdout = sys.stdout
-        f = open(f"static/output/stdout_{session_name}.txt", mode="a", encoding="utf-8")
-        sys.stdout = f
+
+    open(f"static/output/stdout_{session_name}.txt", mode="w", encoding="utf-8")
+    org_stdout = sys.stdout
+    f = open(f"static/output/stdout_{session_name}.txt", mode="a", encoding="utf-8")
+    sys.stdout = f
 
     try:
         UserBot = __import__("static.botfiles.botfile_"+session_name, fromlist=[None])
@@ -107,15 +107,14 @@ def activation(option, session_name, debugNum):
         Bot2 = __import__(option, fromlist=[None])
         reload(Bot2)
         temp = run_game(UserBot, Bot2, session_name, debugNum)
-        if debugNum > 0:
-            sys.stdout = org_stdout
-            f.close()
+
+        sys.stdout = org_stdout
+        f.close()
         return temp
     except Exception:
-        if debugNum > 0:
-            f.write(traceback.format_exc())
-            sys.stdout = org_stdout
-            f.close()
+        f.write(traceback.format_exc())
+        sys.stdout = org_stdout
+        f.close()
         raise Exception()
 def run_game(UserBot, Bot2, session_name, debugNum): # Main
 

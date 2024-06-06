@@ -1,13 +1,13 @@
 body {
     height: 100vh;
     max-height: 100vh;
-    padding: 0 40px;
+    padding: 0 6%;
     background-color: #191B26;
     color: rgba(255, 255, 255, 0.898);
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 .game_state {
@@ -15,6 +15,7 @@ body {
     top: 50%;
     left: 20%;
     transform: translate(-50%,-50%); */
+    width: 20%;
 }
 
 canvas {
@@ -26,23 +27,73 @@ canvas {
 }
 
 .game_turn {
-    padding: 15px 70px;
+    /* padding: 15px 70px; */
     margin: 80px 0;
     border-radius: 10px;
     font-size: 30px;
+    height: 100px;
+    display: flex;
     transition: all .2s linear;
 }
 
-.game_turn.unavalable {
+.game_turn_info.unavalable {
     background-color: #333;
 }
 
-.game_turn-bot {
+/* .game_turn-bot {
     background-color: #FF0000;
 }
 
 .game_turn-player {
     background-color: #007BFF;
+} */
+
+
+.bot .side,
+.player .side {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: auto 100px;
+}
+
+.bot_avatar img,
+.player_avatar {
+    width: 80px;
+    height: 100%;
+    background-color: #DCF9FF;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.player_info,
+.bot_info {
+    /* width: 100%; */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 10px 20px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.bot_info {
+    color: red;
+    background-color: rgba(255, 0, 0, .3);
+}
+
+.player_info {
+    color: #007BFF;
+    background-color: rgba(0, 123, 255, .3);
+}
+
+.player_avatar {
+    font-size: 50px;
+    color: #007BFF;
+    font-weight: bold;
+    display: grid;
+    place-content: center;
 }
 
 .game_result {
@@ -229,6 +280,124 @@ canvas {
     animation: fire 1s linear forwards;
 }
 
+.overflow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, .2);
+    z-index: 100000000;
+}
+
+.choose_bot_model {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 10px;
+    width: 42%;
+    height: 82%;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    background-color: #242527;
+    padding: 60px 0 40px;
+}
+
+.choose_bot_model-title {
+    font-size: 30px;
+}
+
+.bot_list {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.bot_list_block {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.bot_item {
+    position: relative;
+    /* display: inline-block; */
+    width: 120px;
+    height: 120px;
+    border-radius: 5px;
+    overflow: hidden;
+    min-width: 80px;
+    margin: 0 10px;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #DCF9FF;
+    user-select: none;
+}
+
+.bot_item:hover {
+    opacity: .9;
+}
+
+.bot_item_title {
+    color: #000;
+    font-size: 12px;
+}
+
+.bot_item_title.Master {
+    color: rgb(197, 0, 0);
+    font-weight: bold;
+    font-size: 10px;
+}
+
+.bot_item img {
+    display: block;
+    height: 80%;
+}
+
+.bot_item.Master,
+.bot.Master {
+    background-color: rgb(255, 185, 185);
+}
+
+.bot_item.selected {
+    border: 5px solid #007BFF;
+}
+
+.fight_btn {
+    /* pointer-events: none; */
+    user-select: none;
+    font-size: 20px;
+    padding: 14px 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    cursor: not-allowed;
+    transition: all .2s linear;
+}
+
+.fight_btn.active {
+    pointer-events: all;
+    font-size: 20px;
+    padding: 14px 40px;
+    border: 1px solid #007BFF;
+    background-color: #007BFF;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.fight_btn.active:hover {
+    filter: brightness(90%);
+}
 @media (max-width: 500px) {
     html {
         height: 100vh;

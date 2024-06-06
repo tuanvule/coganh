@@ -132,10 +132,10 @@ from tool import valid_move, distance
 
 # Remember that player.board[y][x] is the tile at (x, y) when printing
 def main(player):
-    for x,y, in player.your_pos:
-        move = ((0,-1),(0,1),(1,0),(-1,0)) 
-        for mx, my in move:
-            if 0 <= x+mx <=4 and 0 <= y+my <= 4 and player.board[y+my][x+mx] == 0: #check if new position is valid
+    move = [[-1,0],[0,-1],[0,1],[1,0]]
+    for x,y in player.your_pos:
+        for mx,my in move:
+            if 0 <= x+mx <= 4 and 0 <= y+my <= 4 and player.board[y+my][x+mx] == 0:
                 return {"selected_pos": (x,y), "new_pos": (x+mx, y+my)}
 '''
         with open(f"static/botfiles/botfile_{form.username.data}.py", mode="w", encoding="utf-8") as f:
@@ -174,14 +174,15 @@ def menu():
 @login_required
 def upload_code():
     name = current_user.username
-    code = request.get_json()
+    data = request.get_json()
+    bot = data["bot"]
     user = User.query.filter_by(username=current_user.username).first()
     with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
-        f.write(code)
+        f.write(data["code"])
     try: 
-        winner, max_move_win, new_url = activation("trainAI.Master", name, 0) # người thắng / số lượng lượt chơi
-        # with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
-        #     txt = f.read()
+        winner, max_move_win, new_url = activation(f"trainAI.{bot}", name, 0) # người thắng / số lượng lượt chơi
+        with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
+            txt = f.read()
         user.fightable = True
         db.session.commit()
         data = {
@@ -189,31 +190,35 @@ def upload_code():
             "status": winner,
             "max_move_win": max_move_win,
             "new_url": new_url,
+            "output": txt,
         }
         return json.dumps(data)
-    except Exception as err:
-        err = str(err).replace(r"c:\Users\Hello\OneDrive\Code Tutorial\Python", "...")
-        print(err)
+    except Exception:
         with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
             txt = f.read()
         user.fightable = False
         db.session.commit()
         data = {
             "code": 400,
-            "err": txt
+            "output": txt
         }
         return json.dumps(data) # Giá trị Trackback Error
+    
+
+    
     
 @app.route('/debug_code', methods=['POST'])
 @login_required
 def debug_code():
     name = current_user.username
-    data = request.get_json()
+    res = request.get_json()
+    data = res["request_data"]
+    bot = data["bot"]
     user = User.query.filter_by(username=name).first()
     with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
         f.write(data["code"])
     try: 
-        img_url, inp_oup, rate = activation("trainAI.Master", name, data["debugNum"]) # người thắng / số lượng lượt chơi
+        img_url, inp_oup, rate = activation(f"trainAI.{bot}", name, res["debugNum"]) # người thắng / số lượng lượt chơi
 
         with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
             txt = f.read()
@@ -251,7 +256,7 @@ def create_bot():
     if 'secret_key' in session:
         user = User.query.where(User.username == session['username']).first()
         login_user(user)
-        return render_template('create_bot.html')
+        return render_template('create_bot.html', user = current_user)
     else:
         if current_user:
             logout_user()
@@ -314,11 +319,15 @@ def room_manager():
 @app.route('/get_pos_of_playing_chess', methods=['POST'])
 @login_required
 def get_pos_of_playing_chess():
-    player = Player(request.get_json())
+    res = request.get_json()
+    player = Player(res["data"])
+    choosen_bot = res["choosen_bot"]
+    print(f"trainAI.{choosen_bot}")
     player.your_pos = [tuple(i) for i in player.your_pos]
     player.opp_pos = [tuple(i) for i in player.opp_pos]
     player.your_pos, player.opp_pos = player.opp_pos, player.your_pos
-    move = trainAI.Master.main(player)
+    move = __import__(f"trainAI.{choosen_bot}", fromlist=[None]).main(player)
+    # move = trainAI.Master.main(player)
     move['selected_pos'] = tuple(reversed(list(move['selected_pos'])))
     move['new_pos'] = tuple(reversed(list(move['new_pos'])))
     return move

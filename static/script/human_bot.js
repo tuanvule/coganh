@@ -118,6 +118,37 @@ function resetBoard() {
 
 resetBoard()
 
+let choosen_bot
+const bot_items = $$(".bot_item")
+const fight_btn = $(".fight_btn")
+const overflow = $(".overflow")
+const bot_avatar_img = $(".bot_avatar img")
+const bot_info_name = $(".bot_info_name")
+
+bot_items.forEach(item => {
+    item.onclick = (e) => {
+        if(item.classList.contains("selected")) {
+            choosen_bot = ""
+            item.classList.remove("selected")
+            fight_btn.classList.remove("active")
+            return
+        }
+        bot_items.forEach(e => e.classList.remove("selected"))
+        choosen_bot = item.dataset.level
+        item.classList.add("selected")
+        bot_html = item
+        fight_btn.classList.add("active")
+
+    }
+})
+
+fight_btn.onclick = () => {
+    if(!choosen_bot) return
+    bot_avatar_img.src = `../static/img/${choosen_bot}.png`
+    bot_info_name.innerHTML = choosen_bot
+    overflow.style.display = "none"
+}
+
 let move_list = []
 
 let img_data = {
@@ -133,6 +164,7 @@ rate_btn.onclick = () => {
     rate_btn.classList.toggle("active")
     console.log({move_list: move_list,img_data: img_data})
     if(rateModel) return
+    console.log("get_Rate")
     fetch("/get_rate", {
         method: "POST",
         headers: {
@@ -235,6 +267,7 @@ function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
                         fire.setAttribute("class", "fire")
                         let newFire = board.appendChild(fire)
                         newFire.onanimationend = (e) => {
+                            console.log("remove")
                             changedChess.remove()
                         }
                     }
@@ -318,10 +351,10 @@ function isReady(bol) {
     const chesses = $$(".chess")
     if(bol) {
         chesses.forEach(chess => chess.classList.remove("not_ready"))
-        changeTurn(".game_turn-bot", ".game_turn-player")
+        changeTurn(".bot_info", ".player_info")
     } else {
         chesses.forEach(chess => chess.classList.add("not_ready"))
-        changeTurn(".game_turn-player", ".game_turn-bot")
+        changeTurn(".player_info", ".bot_info")
     }
     ready = bol
 }
@@ -419,41 +452,46 @@ function clearBox() {
 }
 
 function getBotmove() {
-    if(chessPosition[0].length <= 0 || chessPosition[1].length <= 0) return
-    chessEnemy = $$(".chess.enemy")
-    let data = {
-        your_pos : [],
-        your_side : -1,
-        opp_pos : [],
-        board : grid,
-    }
+    setTimeout(() => {
+        if(chessPosition[0].length <= 0 || chessPosition[1].length <= 0) return
+        chessEnemy = $$(".chess.enemy")
+        let data = {
+            your_pos : [],
+            your_side : -1,
+            opp_pos : [],
+            board : grid,
+        }
 
-    grid.forEach((row,i) => {
-        row.forEach((__,j) => {
-            if(grid[i][j] === 1) data.your_pos.push([j,i])
-            if(grid[i][j] === -1) data.opp_pos.push([j,i])
+        grid.forEach((row,i) => {
+            row.forEach((__,j) => {
+                if(grid[i][j] === 1) data.your_pos.push([j,i])
+                if(grid[i][j] === -1) data.opp_pos.push([j,i])
+            })
         })
-    })
 
-    fetch("/get_pos_of_playing_chess", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    })
-    .then(res => res.json(data))
-    .then(resData => {
-        const {selected_pos, new_pos} = resData
-        // console.log(selected_pos)
-        console.log("selected_pos:  ",{selected_pos, new_pos})
-        const selectedChess = Array.from(chessEnemy).find(e => {
-            return Number(e.dataset.posx) === selected_pos[1] && Number(e.dataset.posy) === selected_pos[0]
+        fetch("/get_pos_of_playing_chess", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                data: data,
+                choosen_bot: choosen_bot,
+            }),
         })
-        console.log("resData: ", resData)
-        console.log(selectedChess)
-        swap(selectedChess, null, new_pos, selected_pos)
-    })
+        .then(res => res.json(data))
+        .then(resData => {
+            const {selected_pos, new_pos} = resData
+            // console.log(selected_pos)
+            console.log("selected_pos:  ",{selected_pos, new_pos})
+            const selectedChess = Array.from(chessEnemy).find(e => {
+                return Number(e.dataset.posx) === selected_pos[1] && Number(e.dataset.posy) === selected_pos[0]
+            })
+            console.log("resData: ", resData)
+            console.log(selectedChess)
+            swap(selectedChess, null, new_pos, selected_pos)
+        })
+    }, 1000)
 }
 
 boxes.forEach((e) => {

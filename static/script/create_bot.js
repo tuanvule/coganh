@@ -1,6 +1,8 @@
 const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
 
+const username = $(".username").innerHTML
+
 const runBtn = $(".coding_module-nav--runBtn.btn")
 const saveBtn = $(".coding_module-nav--saveBtn.btn")
 const terminal = $(".utility_block-element.terminal")
@@ -43,7 +45,59 @@ const isEnableVideo = $("input#video")
 
 const rate_selected_pos = $(".debug_info-selected_pos")
 const rate_new_pos = $(".debug_info-new_pos")
-const rate_lever = $(".debug_info-move_level")
+const rate_level = $(".debug_info-move_level")
+
+const fight_result_item = $$(".fight_result_item")
+let bot_html
+const win_loose_block = $(".win_loose_block")
+let win_loose_items = [
+    `
+    <div class="winer">
+    <div class="winer_avatar">T</div>
+    <div class="winer_info">
+        <div class="winer_title">VICTORY</div>
+        <div class="winer_info_name">{winer_name}</div>
+    </div>
+    <!-- <div class="side blue"></div> -->
+    `,
+    `
+    </div>
+    <div class="loser">
+        <div class="loser_avatar"><img src="../static/img/bot4.png" alt=""></div>
+        <div class="loser_info">
+            <div class="loser_title">DEFEATED</div>
+            <div class="loser_info_name">{loser_name}</div>
+        </div>
+        <!-- <div class="side red"></div> -->
+    </div>
+    `
+]
+
+// const bot_item = $$(".bot_item")
+let choosen_bot
+var request_data = {
+    code: "",
+    bot: "",
+}
+
+const bot_items = $$(".bot_item")
+
+bot_items.forEach(item => {
+    item.onclick = (e) => {
+        if(item.classList.contains("selected")) {
+            choosen_bot = ""
+            request_data.bot = ""
+            bot_html = ""
+            item.classList.remove("selected")
+            return
+        }
+        bot_items.forEach(e => e.classList.remove("selected"))
+        choosen_bot = item.dataset.level
+        item.classList.add("selected")
+        request_data.bot = choosen_bot
+        bot_html = item
+    }
+})
 
 let debugImageItems
 let imageNum = 0
@@ -82,16 +136,24 @@ saveBtn.onclick = () => {
     .then(data => {
         saveBtn.style.backgroundColor = "#fff"
         saveBtn.style.color = "#000"
-        const a = data.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
-        terminal.innerHTML = `${a}`
+        const a = data
+        terminal.innerHTML = `
+            [debug output] <br>
+        `
+        terminal.innerHTML += `${a}`
     })
 }
 
 runBtn.onclick = () => {
+    if(!choosen_bot) return
+    run()
+}
+
+function run() {
     if(!isEnableDebug.checked && !isEnableVideo.checked) {
         return
     }
-    const code = editor.getValue()
+    request_data.code = editor.getValue()
     loader.style.display = "block"
     runBtn.style.display = "none"
 
@@ -105,7 +167,7 @@ runBtn.onclick = () => {
     gameResult = null
     
     if(isEnableVideo.checked && !isEnableDebug.checked) {
-        uploadCode(code)
+        uploadCode(request_data)
         return
     }
 
@@ -128,17 +190,19 @@ runBtn.onclick = () => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            code,
+            request_data: request_data,
             debugNum: Number(selectDebugNum.value)
         }),
     })
     .then(res => res.json())
     .then(data => {
-        loader.style.display = "none"
         loadingImage.style.display = "none"
         terminal.style.backgroundColor = "#000"
-        if(data.code === 200) {
+        if(!isEnableVideo.checked && isEnableDebug.checked) {
+            loader.style.display = "none"
             runBtn.style.display = "block"
+        }
+        if(data.code === 200) {
             img_url = JSON.parse(data.img_url)
             console.log(img_url)
             debugImageList.innerHTML = ""
@@ -147,7 +211,6 @@ runBtn.onclick = () => {
                     <li data-num="${index}" class="debug_img_item"><img src="${url}" alt=""></li>
                 `
             })
-            console.log(data)
             data.rate.forEach((item, i) => {
                 rate.push({
                     type: item,
@@ -163,26 +226,32 @@ runBtn.onclick = () => {
             loadingNavImageCI.style.display = "block"
             loadingNavImageFI.style.display = "none"
             debugArrowRight.style.opacity = "1"
-            const a = data.output.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
-            terminal.innerHTML = `${a}`
-            if(isEnableVideo.checked) uploadCode(code)
+            const a = data.output
+                terminal.innerHTML = `
+                [debug output] <br>
+            `
+            terminal.innerHTML += `${a}`
+            if(isEnableVideo.checked) uploadCode(request_data)
         } else {
+            loader.style.display = "none"
+            runBtn.style.display = "block"
             loadingNavImageFI.style.display = "block"
             loadingNavVideoFI.style.display = "block"
             loadingNavVideoLD.style.display = "none"
             loadingVideo.style.display = "none"
             loadingNavVideoFI.style.display = "block"
             debugImageList.style.display = "block"
-            runBtn.style.display = "block"
             if(currentDisplayMode === "video") video.style.display = ""
             console.log(data.output)
-            const a = data.output.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
+            const a = data.output
+            console.log(a)
             terminal.innerHTML = `${a}`
         }
     })
 }
 
-function uploadCode(code) {
+function uploadCode(request) {
+    toggle_bot_result(bot_html, ".fight_result_loader")
     loadingVideo.style.display = "block"
     video.style.display = "none"
     loadingNavVideoLD.style.display = "block"
@@ -192,16 +261,21 @@ function uploadCode(code) {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(code),
+        body: JSON.stringify(request),
     })
     .then(res => res.json())
     .then(data => {
-        console.log(data)
+        if(isEnableVideo.checked && !isEnableDebug.checked) terminal.innerHTML = ""
+        const a = data.output
         if(data.code === 200) {
             gameResult = data
+            terminal.innerHTML += `
+                [video output] <br>
+            `
+            terminal.innerHTML += `${a}`
         } else {
-            const a = data.output.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
-            terminal.innerHTML = `${a}`
+            console.log(a)
+            terminal.innerHTML += `${a}`
         }
     })
     .catch(err => {
@@ -224,6 +298,7 @@ function uploadCode(code) {
             changeAnimation(resultBtn, "0", resultBtn.clientWidth + "px", "result", animationChild)
             toggleMode("result")
         } else {
+            toggle_bot_result(bot_html, ".fight_result_lost")
             loadingNavVideoFI.style.display = "block"
         }
     })
@@ -233,31 +308,41 @@ function change_rate(i) {
     if(i < 0) {
         rate_selected_pos.innerHTML = "(x1,y2)"
         rate_new_pos.innerHTML = "(x2,y2)"
-        rate_lever.innerHTML = "đánh giá"
-        rate_lever.classList.remove("excellent", "bad", "good")
-        rate_lever.classList.add("normal")
+        rate_level.innerHTML = "đánh giá"
+        rate_level.classList.remove("excellent", "bad", "good")
+        rate_level.classList.add("normal")
         console.log("I: ", i)
         return
     }
 
-    rate_selected_pos.innerHTML = rate[i].move.selected_pos
-    rate_new_pos.innerHTML = rate[i].move.new_pos
+    rate_selected_pos.innerHTML = `(${rate[i].move.selected_pos})`
+    rate_new_pos.innerHTML = `(${rate[i].move.new_pos})`
     
-    rate_lever.innerHTML = rate[i].type
+    rate_level.innerHTML = rate[i].type
     if(rate[i].type === "Tốt nhất") {
-        rate_lever.classList.remove("good", "bad", "normal")
-        rate_lever.classList.add("excellent")
+        rate_level.classList.remove("good", "bad", "normal")
+        rate_level.classList.add("excellent")
     } else if(rate[i].type === "Tốt") {
-        rate_lever.classList.remove("excellent", "bad", "normal")
-        rate_lever.classList.add("good")
+        rate_level.classList.remove("excellent", "bad", "normal")
+        rate_level.classList.add("good")
     } else if(rate[i].type === "Tệ") {
-        rate_lever.classList.remove("excellent", "good", "normal")
-        rate_lever.classList.add("bad")
+        rate_level.classList.remove("excellent", "good", "normal")
+        rate_level.classList.add("bad")
     } else if(rate[i].type === "Bình thường") {
-        rate_lever.classList.remove("excellent", "good", "bad")
-        rate_lever.classList.add("normal")
+        rate_level.classList.remove("excellent", "good", "bad")
+        rate_level.classList.add("normal")
     }
 
+}
+
+function toggle_bot_result(bot, type) {
+    bot.querySelectorAll(".fight_result_item").forEach(item => {
+        item.style.display = "none"
+    })
+    bot.querySelector(type).style.display = "flex"
+    // fight_result_item.forEach(item => {
+    //     item.style.display = "none"
+    // })
 }
 
 const defaultValue = `
@@ -306,6 +391,9 @@ editor.getSession().on('change', function() {
         saveBtn.style.backgroundColor = "#1E1E1E"
         saveBtn.style.color = "#fff"
     }
+    fight_result_item.forEach(item => {
+        item.style.display = "none"
+    })
 });
 
 fetch("/get_code")
@@ -463,10 +551,27 @@ function toggleMode(mode) {
                 uniBlock.forEach(ele => ele.style.display = "none")
                 console.log(gameResult)
                 const {max_move_win, status} = gameResult
+                if(status === "win") {
+                    toggle_bot_result(bot_html, ".fight_result_win")
+                    win_loose_block.innerHTML = `
+                    ${win_loose_items[0].replace("{winer_name}", username)}
+                    ${win_loose_items[1].replace("{loser_name}", choosen_bot)}
+                    `
+                } else if(status === "lost") {
+                    toggle_bot_result(bot_html, ".fight_result_lost")
+                    win_loose_block.innerHTML = `
+                    ${win_loose_items[1].replace("{winer_name}", username)}
+                    ${win_loose_items[0].replace("{loser_name}", choosen_bot)}
+                    `
+                } else if(status === "draw") {
+                    toggle_bot_result(bot_html, ".fight_result_draw")
+                    win_loose_block.innerHTML = `
+                    ${win_loose_items[0].replace("{winer_name}", username).replace("VICTORY", "DRAW")}
+                    ${win_loose_items[1].replace("{loser_name}", choosen_bot).replace("DEFEATED", "DRAW")}
+                    `
+                }
+                $(".loser_avatar img").src = `../static/img/${choosen_bot}.png`
                 const moveCount = $(".info_move-count")
-                const statusNoti = $(".status")
-                let win_lost = status === "win" ? "blue" : "red"
-                statusNoti.style.backgroundColor = status === "win" || status === "lost" ? win_lost : "#ccc"
                 moveCount.innerHTML = `moves: ${max_move_win}`
                 result.style.display = "flex"
             }
