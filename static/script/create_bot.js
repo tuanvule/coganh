@@ -146,6 +146,7 @@ saveBtn.onclick = () => {
 
 runBtn.onclick = () => {
     if(!choosen_bot) return
+    rate = []
     run()
 }
 
@@ -226,7 +227,7 @@ function run() {
             loadingNavImageCI.style.display = "block"
             loadingNavImageFI.style.display = "none"
             debugArrowRight.style.opacity = "1"
-            const a = data.output
+            const a = data.output.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
                 terminal.innerHTML = `
                 [debug output] <br>
             `
@@ -243,7 +244,7 @@ function run() {
             debugImageList.style.display = "block"
             if(currentDisplayMode === "video") video.style.display = ""
             console.log(data.output)
-            const a = data.output
+            const a = data.output.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
             console.log(a)
             terminal.innerHTML = `${a}`
         }
@@ -266,7 +267,7 @@ function uploadCode(request) {
     .then(res => res.json())
     .then(data => {
         if(isEnableVideo.checked && !isEnableDebug.checked) terminal.innerHTML = ""
-        const a = data.output
+        const a = data.output.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
         if(data.code === 200) {
             gameResult = data
             terminal.innerHTML += `
@@ -630,32 +631,45 @@ debugtBtn.onclick = (e) => {
 }
 
 debugArrowRight.onclick = (e) => {  
-    if(imageNum + 1 <= debugImageItems.length) {
+    if(imageNum + 2 <= debugImageItems.length) {
         debugImageItems[imageNum].classList.remove("display_image")
         imageNum++
+        console.log(imageNum-1)
         change_rate(imageNum-1)
-        if(imageNum + 1 === debugImageItems.length) {
-            debugArrowRight.style.opacity = "0"
-        }
-        if(imageNum > 0 && debugArrowLeft.style.opacity === "0") {
-            debugArrowLeft.style.opacity = "1"
-        }
+        // if(imageNum + 1 === debugImageItems.length) {
+        //     debugArrowRight.style.opacity = "0"
+        // }
+        // if(imageNum > 0 && debugArrowLeft.style.opacity === "0") {
+        //     debugArrowLeft.style.opacity = "1"
+        // }
+        counter.innerHTML = imageNum
+        debugImageItems[imageNum].classList.add("display_image")
+    } else {
+        debugImageItems[imageNum].classList.remove("display_image")
+        imageNum = 0
+        change_rate(-1)
         counter.innerHTML = imageNum
         debugImageItems[imageNum].classList.add("display_image")
     }
 }
 
 debugArrowLeft.onclick = (e) => {
-    if(imageNum >= 0) {
+    if(imageNum - 1 >= 0) {
         debugImageItems[imageNum].classList.remove("display_image")
         imageNum--
         change_rate(imageNum-1)
-        if(imageNum === 0) {
-            debugArrowLeft.style.opacity = "0"
-        }
-        if(imageNum + 1 < debugImageItems.length && debugArrowRight.style.opacity === "0") {
-            debugArrowRight.style.opacity = "1"
-        }
+        // if(imageNum === 0) {
+        //     debugArrowLeft.style.opacity = "0"
+        // }
+        // if(imageNum + 1 < debugImageItems.length && debugArrowRight.style.opacity === "0") {
+        //     debugArrowRight.style.opacity = "1"
+        // }
+        counter.innerHTML = imageNum
+        debugImageItems[imageNum].classList.add("display_image")
+    } else {
+        debugImageItems[imageNum].classList.remove("display_image")
+        imageNum = debugImageItems.length - 1
+        change_rate(debugImageItems.length - 2)
         counter.innerHTML = imageNum
         debugImageItems[imageNum].classList.add("display_image")
     }

@@ -149,9 +149,21 @@ function createRateModel(rate_dom, data) {
         toggle_rate(preI, newI) {
             this.doom_rate_item[preI-1]?.classList.toggle("sellected")
             this.doom_rate_item[newI-1]?.classList.toggle("sellected")
+            this.scrollToView(this.doom_rate_item[newI-1])
         },
 
         tonggle_img(preI, newI) {
+            if(newI < 0) {
+                newI = this.doom_img_item.length - 1
+                this.cur_img = newI + 1
+                this.tonggle_img(preI, newI)
+                return
+            } else if(newI > this.doom_img_item.length - 1) {
+                newI = 0
+                this.cur_img = newI - 1
+                this.tonggle_img(preI, newI)
+                return
+            }
             if(newI >= 0 && newI <= this.doom_img_item.length - 1) {
                 // console.log(this.doom_rate_item)
                 this.doom_img_counter.innerHTML = newI
@@ -160,17 +172,27 @@ function createRateModel(rate_dom, data) {
                 this.toggle_rate(preI, newI)
             }
 
-            if(newI <= 0) {
-                this.arrow_left.classList.add("hide")
-            } else {
-                this.arrow_left.classList.remove("hide")
-            }
+            // if(newI <= 0) {
+            //     this.arrow_left.classList.add("hide")
+            // } else {
+            //     this.arrow_left.classList.remove("hide")
+            // }
 
-            if(newI === this.doom_img_item.length - 1) {
-                this.arrow_right.classList.add("hide")
-            } else {
-                this.arrow_right.classList.remove("hide")
-            }
+            // if(newI === this.doom_img_item.length - 1) {
+            //     this.arrow_right.classList.add("hide")
+            // } else {
+            //     this.arrow_right.classList.remove("hide")
+            // }
+        },
+
+        scrollToView(element) {
+            if(!element) return
+            setTimeout(() => {
+                element.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                })
+            }, 200)
         },
 
         handle_event() {
@@ -181,10 +203,11 @@ function createRateModel(rate_dom, data) {
             this.arrow_right.onclick = () => {
                 this.tonggle_img(this.cur_img, this.cur_img + 1)
                 this.cur_img++
+                
             }
             this.doom_rate_item.forEach((item, i) => {
                 item.onclick = () => {
-                    this.tonggle_img(this.cur_img, i)
+                    this.tonggle_img(this.cur_img, i+1)
                     this.cur_img = i + 1
                 }
             })

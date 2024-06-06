@@ -166,6 +166,7 @@ body {
 .debug_img_item {
     height: 100%;
     display: none;
+    user-select: none;
 }
 
 .debug_img_item.default {
