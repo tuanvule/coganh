@@ -1,2 +1,10 @@
------------------------------------------------------------------------------------
-draw 201 https://storage.googleapis.com/coganh-6ab73.appspot.com/videos/video_tlv23.mp4?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=firebase-adminsdk-354yy%40coganh-6ab73.iam.gserviceaccount.com%2F20240606%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20240606T125337Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=441732fc87e0cf0ac8f7c7ccbf32788b8a68651e5a51966064949a44948ddb1d30044119c9da9c0e8cec50ec68afdba267fecf5c3900d716ae60b18a0a5ca4f7c1eed572fa019dae1fb019f57ad47dcc6406c55cff7194411f56c8496528cc0e50c6d9c9004fbe33504b868c28003102bb530d9b1a23a47e2a2942fa61192286c5d99389cd39eef643ee6966d6d6ee1194737b0984095cf3a4d68b9c05b2b8977877cb959418f2e4cf1cd4701f0e4a2f3ab53da0c401a72d94d592f7e6bf55d5e9dfd4355e5e8a963ac5647c5e7fba56aa2d1d2f2303f74ce8013c8e68a8dd30b02b650712f97488388048678239d1f8edaffb0d05f831c70f178e4e1cfff4e0
+Traceback (most recent call last):
+  File "C:\Users\ADMIN\Desktop\Co_ganh_deploy\game_manager.py", line 109, in activation
+    temp = run_game(UserBot, Bot2, session_name, debugNum)
+  File "C:\Users\ADMIN\Desktop\Co_ganh_deploy\game_manager.py", line 144, in run_game
+    move = UserBot.main(deepcopy(player1))
+  File "C:\Users\ADMIN\Desktop\Co_ganh_deploy\static\botfiles\botfile_tlv23.py", line 8, in main
+    d = random.choice(valid_move(c[0], c[1], player.board))
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python310\lib\random.py", line 378, in choice
+    return seq[self._randbelow(len(seq))]
+IndexError: tuple index out of range

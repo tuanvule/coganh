@@ -11,25 +11,35 @@
     <link rel="stylesheet" href="../static/css/rate_model.css">
 </head>
 <body>
-    <div class="game_state">
-        <div class="game_turn game_turn-bot">
-            <div class="bot_avatar"><img src="../static/img/Master.png" alt=""></div>
-            <div class="game_turn_info bot_info unavalable">
-                <!-- <div class="bot_title">DEFEATED</div> -->
-                <div class="bot_info_name">Master</div>
+    <div class="game_state pc">
+        <div class="game_turn game_turn-bot_">
+            <div class="bot_avatar_pc"><img src="../static/img/Master.png" alt=""></div>
+            <div class="game_turn_info bot_info_pc unavalable">
+                <div class="bot_info_name_pc">Master</div>
             </div>
         </div>
         <div class="game_turn game_turn-player">
             <div class="player_avatar">T</div>
-            <div class="game_turn_info player_info">
-                <!-- <div class="player_title">VICTORY</div> -->
+            <div class="game_turn_info player_info_pc">
                 <div class="player_info_name">tlv23</div>
             </div>
         </div>
     </div>
-
+    <div class="game_turn game_turn-bot mobile_active">
+        <div class="bot_avatar_mobile"><img src="../static/img/Master.png" alt=""></div>
+        <div class="game_turn_info bot_info_mobile unavalable">
+            <!-- <div class="bot_title">DEFEATED</div> -->
+            <div class="bot_info_name_mobile">Master</div>
+        </div>
+    </div>
     <div class="board"></div>
-
+    <div class="game_turn game_turn-player mobile_active">
+        <div class="player_avatar">T</div>
+        <div class="game_turn_info player_info_mobile">
+            <!-- <div class="player_title">VICTORY</div> -->
+            <div class="player_info_name">tlv23</div>
+        </div>
+    </div>
     <canvas></canvas>
 
     <div class="rate">
@@ -56,8 +66,8 @@
                     </div>
                 </ul>
                 <div class="spacing"></div>
-                <ul class="detail">
-                </ul>
+                <!-- <ul class="detail">
+                </ul> -->
             </div>
             <div class="ske_loading">
                 <ul class="ske_loading-overview">
@@ -76,14 +86,17 @@
         </div>
     </div>
 
+    <input type="checkbox" name="" id="open_game_result" hidden style="position: fixed;">
+
     <div class="game_result">
+        <label for="open_game_result" class="game_result_nav"><i class="fa-solid fa-angles-up arrow_up"></i><i class="fa-solid fa-angles-down arrow_down"></i></label>
         <div class="game_status">Game on...</div>
         <a href="{{ url_for('menu') }}" class="menu_btn">Menu</a>
         <div style="display: none;" class="rate_btn">Xem đánh giá</div>
         <div class="play_again_btn">Play again</div>
     </div>
 
-    <div class="overflow">
+    <div style="display: none;" class="overflow">
         <div class="choose_bot_model">
             <div class="choose_bot_model-title">Chọn bot</div>
             <div class="bot_list">

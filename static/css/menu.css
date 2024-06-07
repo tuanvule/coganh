@@ -1,3 +1,12 @@
+html {
+    height: 100vh;
+}
+
+body {
+    height: 100%;
+    overflow: hidden;
+}
+
 a {
     cursor: pointer;
 }
@@ -71,7 +80,7 @@ a {
 }
 
 .content {
-
+    height: 100%;
     /* position: absolute;
     top: 50%;
     left: 50%; */
@@ -117,16 +126,76 @@ a {
     border: 1px solid rgba(255, 255, 255, 0.125);
     /* width: 40%; */
     height: 50%;
-}
-
-/* .non_code .btn {
-    margin: 16px;
-} */
-
-@media (max-width: 400px) {
-    .btn {
-    font-size: 16px;
-    padding: 10px 30px;
-    margin: 20px 10px 20px;
     }
+    
+    /* .non_code .btn {
+        margin: 16px;
+        } */
+        
+        .sign {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            width: 80%;
+            height: 360px;
+            background-color: #000;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .sign_content {
+            font-size: 20px;
+        }
+        
+        .sign_btn {
+            margin: auto 0 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            border-radius: 5px;
+        }
+@media (max-width: 500px) {
+    /* .btn {
+        font-size: 16px;
+        padding: 10px 30px;
+        margin: 20px 10px 20px;
+    } */
+    body {
+        overflow: auto;
+    }
+
+    .main {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .main_nav_module {
+        width: 100%;
+        margin: 0;
+    }
+
+    .main_img {
+        width: 100%;
+        height: auto;
+    }
+
+    .code_require,
+    .non_code {
+        width: 100%;
+    }
+    
+    .code_require {
+        margin: 20px 0 10px;
+    }
+
+    .non_code {
+        margin: 10px 0 10px;
+    }
+
+
 }

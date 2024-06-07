@@ -25,18 +25,25 @@
       <div class="main_nav_module">
         <div class="code_require">
           <h2>Lập trình</h2>
-          <a class="btn" href="{{ url_for('create_bot') }}">Tạo bot</a>
+          <a class="btn create_bot">Tạo bot</a>
           <a class="btn bot_bot">Đấu bot</a>
         </div>
         <div class="non_code">
           <h2>Chơi game</h2>
           <a class="btn" href="{{ url_for('human_bot') }}">Đấu với bot</a>
-          <a class="btn" href="{{ url_for('room_manager') }}">Đấu với người</a>
+          <a style="display: none;" class="btn" href="{{ url_for('room_manager') }}">Đấu với người</a>
         </div>
       </div>
     </div>
     <div class="detail_module">
       
+    </div>
+    <div class="sign">
+      <div class="sign_content">
+        Chức năng này phù hợp với dạng thiết bị: máy tính, laptop,...
+        Chúng tôi khuyên bạn nên sử dụng thiết bị như trên để có trải nghiệm tốt nhất
+      </div>
+      <div class="sign_btn">OK</div>
     </div>
     <!-- <a class="btn" href="{{ url_for('challenge_mode') }}">Thử thách</a> -->
   </div>
@@ -45,24 +52,37 @@
   const fightBotDir = document.querySelector(".bot_bot")
   const notification = document.querySelector(".notification")
   const backBtn = document.querySelector(".notification_directional--back")
+  const sign = document.querySelector(".sign")
+  const sign_btn = document.querySelector(".sign_btn")
+  const create_bot_btn = document.querySelector(".create_bot")
   const fightBotBtn = document.querySelector(".bot_bot")
   let fightable = '{{current_user.fightable}}'
+
+  const isMobile = ( window.innerWidth <= 500)
 
   window.addEventListener("pageshow", function ( event ) {
     var historyTraversal = event.persisted || ( typeof window.performance != "undefined" && window.performance.navigation.type === 2 );
     if ( historyTraversal ) {
-      console.log("reload()")
       window.location.reload();
-
     }
 });
   fightBotBtn.onclick = () => {
     if(fightable === "False") {
       notification.style.display = "block"
+    } else if(isMobile) {
+      sign.style.display = "flex"
     } else {
       window.location.href = "{{ url_for('bot_bot') }}"
     }
   }
+  create_bot_btn.onclick = () => {
+    if(isMobile) {
+      sign.style.display = "flex"
+    } else {
+      window.location.href = "{{ url_for('create_bot') }}"
+    }
+  }
+  sign_btn.onclick = () => sign.style.display = "none"
   backBtn.onclick = () => notification.style.display = "none"
 </script>
 {% endblock %}

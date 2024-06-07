@@ -424,19 +424,19 @@ def out_room():
         return 'Error', 400
 
 
-@sio.event
-def connect(sid, eviron):
-    print(f"Client connected: {sid}")
+# @sio.event
+# def connect(sid, eviron):
+#     print(f"Client connected: {sid}")
 
-@sio.event
-def join_room(sid, room_id, type, state, user_info):
-    doc_ref = doc_ref_room.document(room_id)
-    doc_ref.set({type: state}, merge=True)
-    sio.emit(f"join_room_{room_id}", {
-        "type": type,
-        "user_info": user_info,
-    })
-    print(f"Client connected: {sid}")
+# @sio.event
+# def join_room(sid, room_id, type, state, user_info):
+#     doc_ref = doc_ref_room.document(room_id)
+#     doc_ref.set({type: state}, merge=True)
+#     sio.emit(f"join_room_{room_id}", {
+#         "type": type,
+#         "user_info": user_info,
+#     })
+#     print(f"Client connected: {sid}")
 
 # @sio.event
 # def out_room(sid, room_id, type, state):
@@ -446,26 +446,26 @@ def join_room(sid, room_id, type, state, user_info):
 #     print(f"Client disconnected: {sid}")
 
 # Xử lý ngắt kết nối từ client
-@sio.event
-def disconnect(sid):
-    print(f"Client disconnected: {sid}")
+# @sio.event
+# def disconnect(sid):
+#     print(f"Client disconnected: {sid}")
 
-# Xử lý sự kiện 'message' từ client
-@sio.event
-def message(sid, data):
-    print(f"Message from {sid}: {data}")
-    sio.send("Hello from server!")
+# # Xử lý sự kiện 'message' từ client
+# @sio.event
+# def message(sid, data):
+#     print(f"Message from {sid}: {data}")
+#     sio.send("Hello from server!")
 
-@sio.event
-def check_user(data, environ):
-    # sio.emit('check_user', environ)
-    sio.emit(f'check_user_{environ}', environ)
+# @sio.event
+# def check_user(data, environ):
+#     # sio.emit('check_user', environ)
+#     sio.emit(f'check_user_{environ}', environ)
 
-@sio.event
-def get_move(data, room, environ):
-    sio.emit(f'get_move_{room}', environ)
+# @sio.event
+# def get_move(data, room, environ):
+#     sio.emit(f'get_move_{room}', environ)
 
-if __name__ == '__main__':
-    open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
-    Timer(1, open_browser).start()
-    app.run(port=5000, debug=True, use_reloader=False)
+# if __name__ == '__main__':
+#     open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
+#     Timer(1, open_browser).start()
+#     app.run(port=5000, debug=True, use_reloader=False)

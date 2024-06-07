@@ -17,7 +17,7 @@ body {
     transform: translate(-50%,-50%); */
     width: 20%;
 }
-
+    
 canvas {
     position: fixed;
     /* top: 50%;
@@ -34,6 +34,10 @@ canvas {
     height: 100px;
     display: flex;
     transition: all .2s linear;
+}
+
+.mobile_active {
+    display: none;
 }
 
 .game_turn_info.unavalable {
@@ -57,7 +61,8 @@ canvas {
     margin: auto 100px;
 }
 
-.bot_avatar img,
+.bot_avatar_pc img,
+.bot_avatar_mobile img,
 .player_avatar {
     width: 80px;
     height: 100%;
@@ -66,8 +71,10 @@ canvas {
     border-bottom-left-radius: 5px;
 }
 
-.player_info,
-.bot_info {
+.player_info_pc,
+.bot_info_pc,
+.player_info_mobile,
+.bot_info_mobile {
     /* width: 100%; */
     flex: 1;
     display: flex;
@@ -78,12 +85,14 @@ canvas {
     border-bottom-right-radius: 5px;
 }
 
-.bot_info {
+.bot_info_pc,
+.bot_info_mobile {
     color: red;
     background-color: rgba(255, 0, 0, .3);
 }
 
-.player_info {
+.player_info_pc,
+.player_info_mobile {
     color: #007BFF;
     background-color: rgba(0, 123, 255, .3);
 }
@@ -101,6 +110,10 @@ canvas {
     top: 50%;
     right: 20%;
     transform: translate(-50%,-50%); */
+}
+
+.game_result_nav {
+    display: none;
 }
 
 .game_status {
@@ -399,6 +412,10 @@ canvas {
     filter: brightness(90%);
 }
 @media (max-width: 500px) {
+    .mobile_active {
+        display: flex;
+    }
+
     html {
         height: 100vh;
     }
@@ -410,43 +427,103 @@ canvas {
         align-items: center;
     }
 
-    .game_turn {
-        padding: 15px 70px;
-        margin: 80px 0;
-        border-radius: 10px;
-        font-size: 30px;
-        transition: all .2s linear;
+    .game_state.pc {
         display: none;
     }
-    
-    .game_turn.unavalable {
-        background-color: #333;
+
+    .game_turn {
+        height: 60px;
+        width: 150px;
     }
-    
-    .game_turn-bot {
-        background-color: #FF0000;
+
+    .bot_avatar_mobile img,
+    .player_avatar {
+        width: 50px;
+        height: 100%;
+        background-color: #DCF9FF;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
     }
-    
-    .game_turn-player {
-        background-color: #007BFF;
+
+    .player_info_mobile,
+    .bot_info_mobile {
+        /* width: 60px; */
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        padding: 10px 20px;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+
+    .choose_bot_model {
+        width: 90%;
+    }
+
+    .bot_item {
+        width: 100px;
+        height: 100px;
     }
     
     .game_result {
-        /* position: absolute;
-        top: 50%;
-        right: 20%;
-        transform: translate(-50%,-50%); */
+        position: fixed;
+        bottom: calc(-260px + 37.8px);
+        width: 100%;
+        padding: 0 0 20px;
+        background-color: #242527;
+        transition: .3s all;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 10000000000;
+    }
+
+    .game_result_nav {
+        display: grid;
+        place-content: center;
+        padding: 10px 0;
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+        margin: 0 0 20px;
+        width: 100%;
+        border-radius: 2px;
+    }
+
+    .game_result_nav:active {
+        background-color: #007BFF;
     }
     
+    #open_game_result:checked ~ .game_result {
+        bottom: 0;
+    }
+
+    .arrow_down {
+        display: none;
+    }
+
+    .arrow_up {
+        display: none;
+    }
+
+    #open_game_result:checked ~ .game_result > .game_result_nav > .arrow_down  {
+        display: block;
+    }
+
+    #open_game_result:not(:checked) ~ .game_result > .game_result_nav > .arrow_up  {
+        display: block;
+    }
+
     .game_status {
         font-size: 30px;
         padding: 10px 40px;
         margin-bottom: 40px;
         background-color: #007BFF;
         border-radius: 10px;
-        width: 214px;
+        width: 80%;
+        margin: 0 ;
         text-align: center;
-        display: none;
+        /* display: none; */
     }
     
     .menu_btn {
@@ -454,14 +531,15 @@ canvas {
         text-decoration: none;
         color: #fff;
         font-size: 20px;
+        width: 80%;
         padding: 10px 40px;
-        margin-bottom: 40px;
+        margin: 20px 0;
         border: 1px solid #007BFF;
         border-radius: 5px;
         text-align: center;
         cursor: pointer;
         transition: all .2s linear;
-        display: none;
+        /* display: none; */
     }
     
     .menu_btn:hover {
@@ -473,10 +551,11 @@ canvas {
         padding: 10px 40px;
         border: 1px solid #007BFF;
         border-radius: 5px;
+        width: 80%;
         text-align: center;
         cursor: pointer;
         transition: all .2s linear;
-        display: none;
+        /* display: none; */
     }
     
     .play_again_btn:hover {
@@ -561,10 +640,6 @@ canvas {
     .box[data-choosable="false"] {
         cursor: default;
         background-color: none;
-    }
-    
-    .box:hover {
-        /* background-color: rgba(0, 0, 0, .2); */
     }
     
     .chess {

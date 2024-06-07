@@ -1,6 +1,8 @@
 // const $ = document.querySelector.bind(document)
 // const $$ = document.querySelectorAll.bind(document)
 
+const isMobile = ( window.innerWidth <= 500)
+
 let board = $(".board")
 let boardValue = board.getBoundingClientRect()
 let chessGrapX = boardValue.width / 4
@@ -122,8 +124,8 @@ let choosen_bot
 const bot_items = $$(".bot_item")
 const fight_btn = $(".fight_btn")
 const overflow = $(".overflow")
-const bot_avatar_img = $(".bot_avatar img")
-const bot_info_name = $(".bot_info_name")
+const bot_avatar_img = $(`.bot_avatar_${isMobile ? "mobile" : "pc"} img`)
+const bot_info_name = $(`.bot_info_name_${isMobile ? "mobile" : "pc"}`)
 
 bot_items.forEach(item => {
     item.onclick = (e) => {
@@ -352,10 +354,10 @@ function isReady(bol) {
     const chesses = $$(".chess")
     if(bol) {
         chesses.forEach(chess => chess.classList.remove("not_ready"))
-        changeTurn(".bot_info", ".player_info")
+        changeTurn(`.bot_info_${isMobile ? "mobile" : "pc"}`, `.player_info_${isMobile ? "mobile" : "pc"}`)
     } else {
         chesses.forEach(chess => chess.classList.add("not_ready"))
-        changeTurn(".player_info", ".bot_info")
+        changeTurn(`.player_info_${isMobile ? "mobile" : "pc"}`, `.bot_info_${isMobile ? "mobile" : "pc"}`)
     }
     ready = bol
 }
@@ -526,10 +528,10 @@ window.addEventListener('resize', function(event) {
     // console.log(event)
     if(window.outerWidth <= 500) {
         rs = 0.5
-        radius = radius / 2
+        radius = 8
     } else {
         rs = 1
-        radius = radius * 2
+        radius = 16
     }
     resetBoard()
     boxes = $$(".box")
