@@ -231,7 +231,9 @@ function run() {
             debugArrowRight.style.opacity = "1"
             const a = data.output.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
                 terminal.innerHTML = `
+                <br>
                 [debug output] <br>
+                <br>
             `
             terminal.innerHTML += `${a}`
             if(isEnableVideo.checked) uploadCode(request_data)
@@ -273,7 +275,9 @@ function uploadCode(request) {
         if(data.code === 200) {
             gameResult = data
             terminal.innerHTML += `
+                <br>
                 [video output] <br>
+                <br>
             `
             terminal.innerHTML += `${a}`
         } else {

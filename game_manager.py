@@ -1,3 +1,4 @@
+
 import requests
 from copy import deepcopy
 from importlib import reload
@@ -133,6 +134,7 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
     while not winner:
 
         current_turn = game_state["current_turn"]
+        print(f"__________{move_counter}__________")
 
         # get old board
         if current_turn == 1:
@@ -142,14 +144,10 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
 
         if player1.your_side == current_turn:
             move = UserBot.main(deepcopy(player1))
-            Raise_exception(move, current_turn, game_state["board"])
-            if debugNum:
-                inp_oup.append(deepcopy(move))
         else:
             move = Bot2.main(deepcopy(player2))
-            if debugNum:
-                inp_oup.append(deepcopy(move))
-            Raise_exception(move, current_turn, game_state["board"])
+        Raise_exception(move, current_turn, game_state["board"])
+        if debugNum: inp_oup.append(move)
 
         move_new_pos = move["new_pos"]
         move_selected_pos = move["selected_pos"]
@@ -197,7 +195,4 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
 
     new_url = requests.post("http://tlv23.pythonanywhere.com//generate_video", json=body).text
 
-    print("-----------------------------------------------------------------------------------")
-
-    print(winner, move_counter, new_url)
     return winner, move_counter-1, new_url

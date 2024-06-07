@@ -67,7 +67,7 @@ def check_pos_point(your_board, opp_board):
 
     sum = 0
     for i in range(25):
-        sub = max(your_cm[i]) - max(opp_cm[i])
+        sub = max(your_cm[i], default="0") - max(opp_cm[i], default="0")
         if sub > 0: sum += board_pointF[i]
         elif sub < 0: sum -= board_pointF[i]
 
