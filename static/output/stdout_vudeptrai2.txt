@@ -1,2 +1,26 @@
+{'selected_pos': (2, 4), 'new_pos': (2, 3)}
+{'selected_pos': (0, 2), 'new_pos': (1, 1)}
+{'selected_pos': (2, 3), 'new_pos': (2, 2)}
+{'selected_pos': (0, 3), 'new_pos': (1, 3)}
+{'selected_pos': (1, 3), 'new_pos': (0, 3)}
+{'selected_pos': (2, 2), 'new_pos': (3, 1)}
+{'selected_pos': (1, 1), 'new_pos': (1, 2)}
+{'selected_pos': (4, 3), 'new_pos': (4, 2)}
+{'selected_pos': (4, 2), 'new_pos': (3, 3)}
+{'selected_pos': (0, 3), 'new_pos': (0, 2)}
+{'selected_pos': (1, 4), 'new_pos': (1, 3)}
+{'selected_pos': (0, 4), 'new_pos': (1, 4)}
+{'selected_pos': (0, 2), 'new_pos': (0, 1)}
+{'selected_pos': (3, 3), 'new_pos': (4, 2)}
+{'selected_pos': (3, 1), 'new_pos': (2, 1)}
+{'selected_pos': (3, 4), 'new_pos': (2, 4)}
+{'selected_pos': (0, 1), 'new_pos': (1, 1)}
+{'selected_pos': (4, 4), 'new_pos': (3, 4)}
+{'selected_pos': (2, 4), 'new_pos': (3, 3)}
+{'selected_pos': (3, 3), 'new_pos': (4, 4)}
+{'selected_pos': (1, 3), 'new_pos': (2, 4)}
+{'selected_pos': (4, 4), 'new_pos': (4, 3)}
+{'selected_pos': (4, 2), 'new_pos': (3, 1)}
+{'selected_pos': (4, 3), 'new_pos': (4, 2)}
 -----------------------------------------------------------------------------------
-lost 99 https://storage.googleapis.com/coganh-6ab73.appspot.com/videos/video_vudeptrai2.mp4?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=firebase-adminsdk-354yy%40coganh-6ab73.iam.gserviceaccount.com%2F20240606%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20240606T011709Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=19d2cd9b7a361b9df8ab5f792f835323cea8c13053f3ac6d2787a9f29818fda717bbc12c5e57bca5653742f434635c3cc82485653358c8dd880e602d47cb11def088ab8cfd961ec8e52d573b1ae7048aeb1e5b699051ee9e0f2bc3727f3db8cc5c96018c72d70a967262922750bafee83891f82f820f2fda0628ed7d1fc7cce05a1abda62b338e36d4b6daf067806196d0c91396c208364ccc6e3d199df87285e70606ae60476e404cc2fc5ad0fec197b8a365a7b0823e2369a4960df0e19a56d03c90f330ac1707523c056c327952e36c5338f1500bf71947a41134ed14865d6fb1ee08675b9da98811a630297d0af5c2cca832ad0c9252f269fd25f7c9f804
+win 48 https://storage.googleapis.com/coganh-6ab73.appspot.com/videos/video_vudeptrai2.mp4?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=firebase-adminsdk-354yy%40coganh-6ab73.iam.gserviceaccount.com%2F20240607%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20240607T122220Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=4642044c78ef396d5e4858b6d0952b1451f93d7f824a235a5da1ad5133af5090fbb70e2e59707896155006e418858631184f4fa42babb6f9abd06e2dc7ad2ff87c9db9abe5dd48018bfa4a3952bbf29fec189f089df80973b0aeb9cac0100708e7bc6182b067ced26f2b634a1589daf32a4aaf153c108e9a7e697c746e7725f7c04e7574383df7615379fb760cad387da49485a40e6e101a59f79b39af47879a8b5f1e3aa4710e1fb8f0aaddbdb4884e21d5725f9922f0c78818ca7601009b63a10130a681cda9eeac418e11bb9082816cf9169106f3177cbc9bc78ca3d6b72a869c2b55e73b84ea1776ea13dff5254c2c6109582d02f4b9a02102d6e31db82a

@@ -67,11 +67,11 @@
     }
 });
   fightBotBtn.onclick = () => {
-    if(fightable === "False") {
-      notification.style.display = "block"
-    } else if(isMobile) {
+    if(isMobile) {
       sign.style.display = "flex"
-    } else {
+    } else if(fightable === "False") {
+      notification.style.display = "block"
+    }  else {
       window.location.href = "{{ url_for('bot_bot') }}"
     }
   }

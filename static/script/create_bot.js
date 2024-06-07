@@ -206,8 +206,8 @@ function run() {
             runBtn.style.display = "block"
         }
         if(data.code === 200) {
+            console.log(data.img_url)
             img_url = JSON.parse(data.img_url)
-            console.log(img_url)
             debugImageList.innerHTML = ""
             img_url.forEach((url, index) => {
                 debugImageList.innerHTML += `
