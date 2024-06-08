@@ -1,66 +1,16 @@
-import random
-
-# Remember that board[y][x] is the tile at (x, y) when printing
-def is_valid_move(move, current_side, board): # HÀM HỖ TRỢ: KIỂM TRA NƯỚC ĐI HỢP LỆ
-    current_x = move["selected_pos"][0]
-    current_y = move["selected_pos"][1]
-    new_x = move["new_pos"][0]
-    new_y = move["new_pos"][1]
-
-    if (current_x%1==0 and current_y%1==0 and new_x%1==0 and new_y%1==0 and # Checking if pos is integer
-        0 <= current_x <= 4 and 0 <= current_y <= 4 and # Checking if move is out of bounds
-        0 <= new_x     <= 4 and 0 <= new_y     <= 4 and
-
-        board[new_y][new_x] == 0 and board[current_y][current_x] == current_side): # Checking if selected position and new position is legal
-
-        dx = abs(new_x-current_x)
-
-        dy = abs(new_y-current_y)
-
-        if (dx + dy == 1): return True # Checking if the piece has moved one position away
-
-        return (current_x+current_y)%2==0 and (dx * dy == 1)
-
-    return False
-
-    
-
-def main(player):
-
-
-
-    while True:
-
-        selected_pos = random.choice(player.your_pos)
-
-        board = player.board
-
-        new_pos_select = random_move(selected_pos)
-
-        new_pos = (new_pos_select[0], new_pos_select[1])
-
-        move = {"selected_pos": selected_pos, "new_pos": new_pos}
-
-        if is_valid_move(move, player.your_side, board):
-
-            print(move)
-
-            return move
-
-
-
-# Function of the game manager
-
-def random_move(position): # ĐIỀU CHỈNH THUẬT TOÁN TẠI ĐÂY
-
-    movement = [(0, -1), (0, 1), (1, 0), (-1, 0), (-1, 1), (1, -1), (1, 1), (-1, -1)]  #possible moves
-
-    movement_select = random.choice(movement)  #Randomize movement
-
-    new_pos_x = position[0] + movement_select[1]
-
-    new_pos_y = position[1] + movement_select[0]
-
-    new_pos = (new_pos_x, new_pos_y)
-
-    return new_pos
+from tool import valid_move, distance
+# NOTE: tool
+# valid_move(x, y, board): trả về các nước đi hợp lệ của một quân cờ - ((x, y), ...)
+# distance(x1, y1, x2, y2): trả về số nước đi ít nhất từ (x1, y1) đến (x2, y2) - n
+
+# NOTE: player
+# player.your_pos: vị trí tất cả quân cờ của bản thân - [(x, y), ...]
+# player.opp_pos: vị trí tất cả quân cờ của đối thủ - [(x, y), ...]
+# player.your_side: màu quân cờ của bản thân - 1:🔵
+# player.board: bàn cờ - -1:🔴 / 1:🔵 / 0:∅
+
+def main(player):
+    for x, y in player.your_pos:
+		    moves = valid_move(x, y, player.board)
+		    if moves != ():
+		        return {"selected_pos": (x,y), "new_pos": moves[0]}
