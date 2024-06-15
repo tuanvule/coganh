@@ -1,0 +1,94 @@
+* {
+    text-decoration: none;
+    color: #fff;
+}
+
+body {
+    background-color: #191B26;
+    display: flex;
+}
+
+nav {
+    background-color: #191B26;
+}
+
+.user_avatar {
+    background-color: #fff;
+}
+
+.container {
+    width: 50%;
+    margin: 100px auto 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.task_title {
+    width: 100%;
+    display: flex;
+    color: #ccc;
+    font-size: 17px;
+    padding: 0 10px;
+}
+
+.tsk_status {
+    flex: 1;
+}
+
+.tsk_name {
+    flex: 2;
+}
+
+.tsk_acceptance {
+    flex: 1;
+}
+
+.tsk_difficult {
+    flex: 1;
+}
+
+.task_item {
+    display: flex;
+    padding: 10px 10px;
+    border-radius: 2px;
+}
+
+.task_item:nth-child(even) {
+    background-color: #333;
+}
+
+.task_status {
+    flex: 1;
+    font-size: 18px;
+}
+
+.task_status.accpeted {
+    color: #007BFF;
+}
+
+.task_status.err {
+    color: red;
+}
+
+.task_name {
+    flex: 2;
+}
+
+.task_acceptance {
+    flex: 1;
+}
+
+.task_difficult {
+    flex: 1;
+}
+
+.task_difficult.easy {
+    color: rgb(0, 177, 0);
+}
+
+.task_difficult.medium {
+    color: #007BFF;
+}
+
+.task_difficult.hard {
+    color: red;
+}

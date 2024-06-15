@@ -96,7 +96,7 @@ body {
 }
 
 .bot_display {
-    background: #1E1E1E;
+    background: #262626;
     margin: 0 5px 0 20px;
     display: flex;
     flex-direction: column;
@@ -622,7 +622,7 @@ body {
 }
 
 .coding_module-nav {
-    background: #1E1E1E;
+    background: #262626;
     width: 100%;
     height: 7%;
     padding: 5px 10px;
@@ -779,7 +779,7 @@ body {
 .coding_module-bot_list {
     width: 100%;
     height: 22%;
-    background-color: #1E1E1E;
+    background-color: #262626;
     margin-top: auto;
     display: flex;
     padding: 10px 0;
@@ -934,7 +934,7 @@ body {
     min-width: 200px;
     bottom: 120%;
     font-size: 14px;
-    background-color: #1E1E1E;
+    background-color: #262626;
     color: snow;
     border-radius: 5px;
     padding: 10px;

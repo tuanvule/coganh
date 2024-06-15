@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="../static/css/style.css">
+    <!-- <link rel="stylesheet" href="../static/css/style.css"> -->
     <link rel="stylesheet" href="../static/css/animation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../static/css/challenge_mode.css">
@@ -47,39 +47,44 @@
                 </div>
             </div>
     
-            <div style="display: none;" class="bot_display-item bot_display-task">
-                <div class="bot_display-task--title">1. Blank</div>
+            <div style="display: block;" class="bot_display-item bot_display-task">
+                <!-- {{task}} -->
+                <div class="bot_display-task--title">{{task.task_name}}</div>
                 <ul class="bot_display-task--class_list">
-                    <li class="bot_display-task--class_item medium">easy</li>
+                    <li class="bot_display-task--class_item {{task.tag.difficult}}">{{task.tag.difficult}}</li>
                     <li class="bot_display-task--class_item">beginner</li>
                     <li class="bot_display-task--class_item">100</li>
                 </ul>
 
-                <div class="bot_display-task--board">
-                    <img class="bot_display-task--image" src="../static/img/chessboard.png" alt="">
-                </div>
                 <!-- <video class="bot_display-video-item bot_display-video--result" controls>
                     <source src="{{ url_for('static', filename='upload_video/demo.mp4') }}" type="video/mp4">
                     Your browser does not support the video tag.
-                </video> -->
-                <div class="bot_display-task--rule">
-                    Input: grid = [[0,1,-1],[1,0,-1],[1,1,1]]
-                    Output: 5
-                    Explanation: The player started at (0, 0) and went down, down, right right to reach (2, 2).
-                    4 cherries were picked up during this single trip, and the matrix becomes [[0,1,-1],[0,0,-1],[0,0,0]].
-                    Then, the player went left, up, up, left to return home, picking up one more cherry.
-                    The total number of cherries picked up is 5, and this is the maximum possible.
-                </div>
+                    </video> -->
+                <pre class="bot_display-task--rule">
+<!-- <div class="bot_display-task--board">
+    <img class="bot_display-task--image" src="../static/img/chessboard.png" alt="">
+</div>
+[ĐỀ BÀI J ĐÓ Ở ĐÂY]
+
+input: []
+
+output: []
+
+[ĐỀ BÀI J ĐÓ Ở ĐÂY] -->
+                    <code>
+                        {{task.content | safe}}
+                    </code>
+                </pre>
 
                 <div class="bot_display-task--status">
-                    <div class="bot_display-task--status_item tallent">Tallent <div class="num">100</div></div>
-                    <div class="bot_display-task--status_item good">good <div class="num">21</div></div>
-                    <div class="bot_display-task--status_item submissions">submissions <div class="num">213</div></div>
+                    <div class="bot_display-task--status_item tallent">accepted <div class="num">{{task.accepted_count}}</div></div>
+                    <div class="bot_display-task--status_item good">failed <div class="num">{{task.failed}}</div></div>
+                    <div class="bot_display-task--status_item submissions">submissions <div class="num">{{task.failed + task.failed}}</div></div>
                 </div>
             </div>
 
-            <div class="bot_display-item bot_display-result">
-                <div class="rate">
+            <div style="display: none;" class="bot_display-item bot_display-result">
+                <!-- <div class="rate">
                     <div class="type">excellent</div>
                     <div class="moves">
                         <div class="moves_max-move">moves: 20</div>
@@ -115,45 +120,82 @@
                             excellent
                         </div>
                     </div>
+                </div> -->
+                <div class="type accepted">
+                    <div class="user">
+                        <div class="user_avatar">{{user.username[0].upper()}}</div>
+                        <div class="user_name">{{user.username}}</div>
+                    </div>
+                    <div class="status accepted">accepted</div>
+                </div>
+                <div class="display_result accepted">
+                    <div class="test_case_result">
+                        <ul class="test_case_result_list">
+                            <li tabindex="0" class="test_case_result_item accepted">
+                                Test 1
+                                <div class="text_case_InOu accepted">
+                                    <div class="text_case_oup_title">output =</div>
+                                    <div class="test_case_oup">[[1,2],[3,1],[5,1],[3,5],[1,2],[3,1],[5,1],[3,5],[1,2],[3,1],[5,1],[3,5]]</div>
+                                    <hr style="width: 100%; border: 1px solid #007BFF; margin-top: 14px">
+                                    <div class="user_oup_title">your output =</div>
+                                    <div class="user_oup">[1,2,3,4]</div>
+                                </div>
+                            </li>
+                            <li tabindex="0" class="test_case_result_item err">
+                                Test 5
+                                <div class="text_case_InOu accepted">
+                                    <div class="text_case_oup_title">output =</div>
+                                    <div class="test_case_oup">[[1,2],[3,1],[5,1],[3,5],[1,2],[3,1],[5,1],[3,5],[1,2],[3,1],[5,1],[3,5]]</div>
+                                    <hr style="width: 100%; border: 1px solid #007BFF; margin-top: 14px">
+                                    <div class="user_oup_title">your output =</div>
+                                    <div class="user_oup">[1,2,3,4]</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="change_task_block">
+                        <div class="pre_task">back</div>
+                        <div class="next_task available">next</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="bot_display-item bot_display-submissions">
-
+            <div style="display: none;" class="bot_display-item bot_display-submissions">
+                <div class="submissions_title">
+                    <div class="sbum_status">Status</div>
+                    <div class="sbum_submit_time">Submit time</div>
+                    <div class="sbum_test_finished">Test finished</div>
+                    <div style="flex: 2;"></div>
+                </div>
+                <ul class="submissions_list">
+                    <li class="submissions_item">
+                        <div class="submissions_status accpeted">Accepted</div>
+                        <div class="submissions_time">6/12/2024</div>
+                        <div class="submissions_test_finished">10/10</div>
+                        <div class="view_code_btn">view code</div>
+                    </li>
+                    <li class="submissions_item">
+                        <div class="submissions_status err">Wrong answer</div>
+                        <div class="submissions_time">6/12/2024</div>
+                        <div class="submissions_test_finished">10/10</div>
+                        <div class="view_code_btn">view code</div>
+                    </li>
+                    <li class="submissions_item">
+                        <div class="submissions_status err">Compile error</div>
+                        <div class="submissions_time">6/12/2024</div>
+                        <div class="submissions_test_finished">10/10</div>
+                        <div class="view_code_btn">view code</div>
+                    </li>
+                </ul>
             </div>
-            <!-- <div class="utility">
-                <div class="utility_nav">
-                    <div class="utility_nav-block">
-                        <div class="utility_nav-block--item rule">RULE</div>
-                        <div class="utility_nav-block--item terminal">TERMINAL</div>
-                        <div class="utility_nav-block--item result">RESULT</div>
-                        <div class="animation">
-                            <div class="children"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="utility_block">
-                    <div class="utility_block-element rule">
-                    </div>
-                    <div class="utility_block-element terminal">>>> </div>
-                    <div class="utility_block-element result">
-                        <div class="status">Winner</div>
-                        <div class="info">
-                            <div class="info_move-count">moves: 100</div>
-                            <div class="player">you: <hr> <div style="width: 40px; height: 40px; border-radius: 50%; background-color: blue;"></div></div>
-                            <div class="enemy">bot: <hr> <div style="width: 40px; height: 40px; border-radius: 50%; background-color: red;"></div></div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
         </div>
         <div class="container_element coding_module">
             <div class="coding_module-nav">
                 <a href="{{ url_for('menu') }}" class="coding_module-nav--backBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-                <div class="coding_module-nav--saveBtn btn" data-saved="false">save</div>
-                <div class="coding_module-nav--runBtn loader" style="display: none; animation: none;"><div class="coding_module-nav--loading"></div></div>
-                <div class="coding_module-nav--runBtn btn">run</div>
-                <div class="coding_module-nav--setting">
+                <div class="coding_module-nav--runBtn btn">Run</div>
+                <div class="coding_module-nav--submitBtn loader" style="display: none; animation: none;"><div class="coding_module-nav--loading"></div></div>
+                <div class="coding_module-nav--submitBtn btn">Submit</div>
+                <!-- <div class="coding_module-nav--setting">
                     <label for="check"><i class="fa-solid fa-gear setting_icon"></i></label>
                     <input type="checkbox" name="check" id="check" hidden>
                     <ul class="setting_list">
@@ -166,9 +208,9 @@
                             <input type="checkbox" name="video" id="video" checked>
                         </label>
                     </ul>
-                </div>
+                </div> -->
             </div>
-            <div class="a" style="height: 100%; position: relative;">
+            <div class="a" style="height: 100%; position: relative; display: flex; flex-direction: column;">
                 <div id="coding_module-coding_block"></div>
                 <div class="guide_box--nav" style="z-index: 2000; display: none;">
                     <div class="left">&#11164;</div>
@@ -178,10 +220,55 @@
                     <div class="guide_box--content">hellohellohellohellellohellohellohelloellohellohellohellohellohellohelloello</div>
                     <div class="guide_box--arrow"></div>
                 </div> -->
+                <div class="test_cases_block">
+                    <div class="title">Test case</div>
+                    <ul class="test_case_nav_list">
+                        <li class="test_case_nav_item choosen">
+                            <div class="test_case_nav_title">
+                                Case 1
+                            </div>
+                            <div class="test_case_item_loader">
+                                <div class="test_case_item_loading"></div>
+                            </div>
+                        </li>
+                        <li class="test_case_nav_item">
+                            <div class="test_case_nav_title">
+                                Case 2
+                            </div>
+                            <div class="test_case_item_loader">
+                                <div class="test_case_item_loading"></div>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul class="test_case_list">
+                        <!-- {{task}} -->
+                        {% set inp_oup = task.inp_oup | parse_json %}
+                        {% for i in range(0, 2) %}
+                            <li class="test_case_item {{'appear' if i == 0 else ''}}">
+                                {% for j in range(inp_oup[i].input | length) %}
+                                    <div class="inp_title">input {{j + 1}} =</div>
+                                    <textarea name="" id="" class="inp">{{inp_oup[i].input[j]}}</textarea>
+                                {% endfor %}
+                                <!-- <div class="oup_title">output =</div>
+                                <textarea rows="1" name="" id="" class="oup">{{task.inp_oup[i].output}}</textarea> -->
+                            </li>
+                        {% endfor %}
+                        <!-- <li class="test_case_item">
+                            <div class="inp_title">input =</div>
+                            <textarea rows="1" name="" id="" class="inp"></textarea>
+                            <div class="oup_title">output =</div>
+                            <textarea rows="1" name="" id="" class="oup"></textarea>
+                        </li> -->
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="demo_code" hidden>{{task.demo_code}}</div>
+    <div class="task_inp_oup" hidden>{{task.inp_oup}}</div>
+    <div id="task_id" hidden>{{id}}</div>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.min.js"></script>
     <script src="../static/script/challenge_mode.js"></script>
 </body>

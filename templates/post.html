@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link rel="stylesheet" href="../static/css/style.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/post.css">
+    <link rel="stylesheet" href="../static/css/text_editor.css" type="text/css">
+</head>
+<body>
+    <nav>
+        <div class="left_block">
+            <div class="logo">Co ganh</div>
+            <div class="back_btn">quay lại</div>
+        </div>
+
+        <div class="right_block">
+            <div class="menu_btn">menu</div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="title">{{data["title"]}}</h1>
+        <div class="user">
+            <div class="user_avatar">{{data["author"][0].upper()}}</div>
+            <div class="user_info">
+                <div class="user_name">{{data["author"]}}</div>
+                <div class="time">thời gian gì đó</div>
+            </div>
+            <div class="selection">
+                <div class="copy_link"><i class="fa-solid fa-link"></i></div>
+            </div>
+        </div>
+        <pre>
+            <code>
+                {{data["content"] | safe}}
+            </code>
+        </pre>
+    </div>
+    <script src="../static/script/post.js"></script>
+</body>
+</html>

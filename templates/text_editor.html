@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- <link rel="stylesheet" href="../static/css/style.css"> -->
+    <link rel="stylesheet" href="../static/css/animation.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 16px 20px;
+            background-color: #fff;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #ccc;
+            user-select: none;
+        }
+
+        .left_block {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            margin-right: 20px;
+        }
+
+        .back_btn {
+            color: #808990;
+        }
+
+        .right_block {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu_btn {
+            padding: 6px 20px;
+            border-radius: 3px;
+            background-color: #007BFF;
+            color: #fff;
+            transition: .1s all;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .menu_btn:hover {
+            background-color: #1184ff;
+        }
+
+        .user_avatar {
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 30px;
+            background-origin: content-box;
+            border-radius: 50%;
+            background-color: #fff;
+            color: #007BFF;
+            margin-right: 10px;
+            background-color: #121121;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .user_avatar:hover {
+            filter: brightness(86%);
+        }
+
+        header {
+            font-size: 50px;
+            font-weight: bold;
+            margin: 20px 0 40px;
+        }
+
+        .title {
+            width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .title_input {
+            padding: 10px 20px;
+            flex: 1;
+            margin-right: 10px;
+            outline-color: #007BFF;
+            border: 1px solid #ccc;
+        }
+
+        .description_input {
+            width: 1000px;
+            margin-top: 10px;
+            height: 150px;
+            padding: 20px;
+            resize: none;
+            border: 1px solid #ccc;
+            outline-color: #007BFF;
+        }
+
+        .difficult_list {
+            width: 10%;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            padding: 0 10px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .difficult_list:hover {
+            border-color: #007BFF;
+        }
+
+        .tag_list {
+            border: 1px solid #ccc;
+            width: 18%;
+            padding: 0 10px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .tag_list:hover {
+            border-color: #007BFF;
+        }
+
+        .tag_item {
+            padding: 10px;
+        }
+
+        #container {
+            width: 1000px;
+            margin: 0 auto;
+        }
+        .ck-editor__editable[role="textbox"] {
+            /* Editing area */
+            min-height: 200px;
+        }
+        .ck-content .image {
+            /* Block images */
+            max-width: 80%;
+            margin: 20px auto;
+        }
+
+        .demo_code_title {
+            font-size: 30px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .demo_code {
+            width: 1000px;
+            margin-top: 10px;
+            height: 150px;
+            padding: 20px;
+            resize: none;
+            border: 1px solid #ccc;
+            outline-color: #007BFF;
+        }
+
+        .btns {
+            display: flex;
+        }
+
+        .post_btn,
+        .cancel_btn {
+            font-size: 24px;
+            padding: 10px 20px;
+            margin: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .post_btn:hover,
+        .cancel_btn:hover {
+            filter: brightness(90%);
+        }
+
+        .post_btn {
+            background-color: #007BFF;
+        }
+
+        .cancel_btn {
+            background-color: #ccc;
+        }
+        
+        .test_case_control {
+            width: 1000px;
+            /* display: flex; */
+        }
+
+        .test_case_block {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .test_case_list {
+            width: 70%;
+        }
+
+        .test_case_title {
+            margin-top: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .test_case_item {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .inp_oup_title {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .inp_title,
+        .oup_title {
+            width: 49%;
+            font-size: 20px;
+            color: #333;
+            margin: 10px 0 6px;
+        }
+
+        .input_list {
+            width: 46%;
+        }
+
+        
+        .oup {
+            font-size: 18px;
+            width: 46%;
+            outline: none;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            resize: none;
+            overflow: hidden;
+            height: 34px;
+        }
+
+        .inp {
+            width: 100%;
+            outline: none;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            resize: none;
+            overflow: hidden;
+            height: 34px;
+            font-size: 18px;
+        }
+
+        .inp:focus,
+        .oup:focus {
+            border-color: #007BFF;
+        }
+
+        .oup_title {
+
+        }
+
+        .oup {
+
+        }
+
+        .controller {
+            height: fit-content;
+            margin-top: 16px;
+            width: 28%;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 20px;
+        }
+
+        .add_test_case_btn,
+        .remove_test_case_btn {
+            display: grid;
+            place-content: center;
+            width: 100%;
+            height: 40px;
+            margin: 10px 0;
+            border-radius: 6px;
+            background-color: #ddd;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .remove_test_case_btn.unactive {
+            cursor: not-allowed;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+
+        .add_test_case_btn:hover {
+            background-color: #ccc;
+        }
+
+        .overflow {
+            position: fixed;
+            display: grid;
+            place-content: center;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,.1);
+            z-index: 10000;
+        }
+
+        .notification {
+            width: 600px;
+            height: 500px;
+            background-color: #F2F3F4;
+            border-radius: 10px;
+            padding: 100px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .loadder {
+            font-size: 30px;
+            width: 100px;
+            height: 100px;
+        }
+
+        .loading {
+            width: 100%;
+            height: 100%;
+            border: 4px solid #ccc; 
+            border-top: 4px solid #000; 
+            border-radius: 100%;
+            animation: spin 2s linear infinite;  
+        }
+
+        .noti_content {
+            font-size: 40px;
+        }
+
+        .noti_content.success {
+            color: #007BFF;
+        }
+
+        .noti_content.err {
+            color: red;
+        }
+
+        .ok_btn {
+            font-size: 20px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: #fff;
+            background-color: #007BFF;
+            margin-top: auto;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .ok_btn:hover {
+            filter: brightness(90%);
+        }
+    </style>
+</head>
+<body>
+
+    <div style="display: none;" class="overflow">
+        <div class="notification">
+            <div class="loadder">
+                <div class="loading"></div>
+            </div>
+            <div style="display: none;" class="noti_content success">Thành công</div>
+            <div class="ok_btn">OK</div>
+        </div>
+    </div>
+
+    <nav>
+        <div class="left_block">
+            <div class="logo">Co ganh</div>
+            <a href="{{ url_for('task_list') }}" class="back_btn">quay lại</a>
+        </div>
+
+        <div class="right_block">
+            <!-- <a href="{{ url_for('text_editor') }}" class="create_post">Viết bài</a> -->
+            <div class="user_avatar">{{user.username[0].upper()}}</div>
+            <!-- <div class="login_btn">Đăng nhập</div> -->
+        </div>
+    </nav>
+
+    <header>
+        Tạo post
+    </header>
+
+    <div class="title">
+        <input placeholder="nhập tiêu đề" type="text" class="title_input">
+        <select style="display: none;" name="" id="" class="difficult_list">
+            <option selected disabled>Độ khó</option>
+            <option value="easy" class="difficult_item">Dễ</option>
+            <option value="medium" class="difficult_item">Vừa</option>
+            <option value="hard" class="difficult_item">Khó</option>
+        </select>
+        <select name="" id="" class="tag_list">
+            <option value="post" class="tag_item">post</option>
+            <option value="task" class="tag_item">task</option>
+        </select>
+    </div>
+
+    <textarea placeholder="nhập mô tả" class="description_input"></textarea>
+
+    <pre id="container">
+        <!-- <code id="editor">
+        </code> -->
+        <textarea name="editor1" id="editor" rows="10" cols="80">
+            Đây là nội dung mặc định của CKEditor.
+        </textarea>
+    </pre>
+
+    <div style="display: none;" class="demo_code_block">
+        <div class="demo_code_title">demo code</div>
+        <textarea spellCheck="false" class="demo_code">
+def your_title (params1, params2, ...):
+    """
+    params1: <type>
+    params2: <type>
+    """
+    return output
+        </textarea>
+    </div>
+
+    <div style="display: none;" class="test_case_control">
+        <div class="test_case_title">Test case</div>
+        <div class="test_case_block">
+            <div class="test_case_list">
+                <div class="inp_oup_title">
+                    <div class="inp_title">input</div>
+                    <div class="oup_title">output</div>
+                </div>
+                <div class="test_case_item">
+                    <div class="input_list">
+                        <textarea rows="1" type="text" class="input_item inp"></textarea>
+                        <textarea rows="1" type="text" class="input_item inp"></textarea>
+                        <textarea rows="1" type="text" class="input_item inp"></textarea>
+                    </div>
+                    <textarea rows="1" type="text" class="oup"></textarea>
+                    <input type="checkbox" style="width: 20px; height: 20px;" class="check_box" data-index="0">
+                </div>
+                <div class="test_case_item">
+                    <div class="input_list">
+                        <textarea rows="1" type="text" class="input_item inp"></textarea>
+                        <textarea rows="1" type="text" class="input_item inp"></textarea>
+                        <textarea rows="1" type="text" class="input_item inp"></textarea>
+                    </div>
+                    <textarea rows="1" type="text" class="oup"></textarea>
+                    <input type="checkbox" style="width: 20px; height: 20px;" class="check_box" data-index="1">
+                </div>
+            </div>
+            <div class="controller">
+                <div class="add_test_case_btn">add more</div>
+                <div class="remove_test_case_btn">remove</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="btns">
+        <div class="cancel_btn">cancel</div>
+        <div class="post_btn">post</div>
+    </div>
+
+    <div class="username" hidden>{{user.username}}</div>
+
+    <!--
+        The "superbuild" of CKEditor&nbsp;5 served via CDN contains a large set of plugins and multiple editor types.
+        See https://ckeditor.com/docs/ckeditor5/latest/installation/getting-started/quick-start.html#running-a-full-featured-editor-from-cdn
+    -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/super-build/ckeditor.js"></script>
+    <!--
+        Uncomment to load the Spanish translation
+        <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/super-build/translations/es.js"></script>
+    -->
+    <script>
+        var editor
+        // This sample still does not showcase all CKEditor&nbsp;5 features (!)
+        // Visit https://ckeditor.com/docs/ckeditor5/latest/features/index.html to browse all the features.
+        CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
+            // https://ckeditor.com/docs/ckeditor5/latest/features/toolbar/toolbar.html#extended-toolbar-configuration-format
+            toolbar: {
+                items: [
+                    // 'exportPDF','exportWord', '|',
+                    'findAndReplace', 'selectAll', '|',
+                    'heading', '|',
+                    'bold', 'italic', 'strikethrough', 'underline', 'code', 'subscript', 'superscript', 'removeFormat', '|',
+                    'bulletedList', 'numberedList', 'todoList', '|',
+                    'outdent', 'indent', '|',
+                    'undo', 'redo',
+                    '-',
+                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
+                    'alignment', '|',
+                    'link', 'uploadImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
+                    'specialCharacters', 'horizontalLine', 'pageBreak', '|',
+                    // 'textPartLanguage', '|',
+                    // 'sourceEditing'
+                ],
+                shouldNotGroupWhenFull: true
+            },
+            // Changing the language of the interface requires loading the language file using the <script> tag.
+            // language: 'es',
+            list: {
+                properties: {
+                    styles: true,
+                    startIndex: true,
+                    reversed: true
+                }
+            },
+            // https://ckeditor.com/docs/ckeditor5/latest/features/headings.html#configuration
+            heading: {
+                options: [
+                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                    { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                    { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                    { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+                    { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' },
+                    { model: 'heading5', view: 'h5', title: 'Heading 5', class: 'ck-heading_heading5' },
+                    { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
+                ]
+            },
+            // https://ckeditor.com/docs/ckeditor5/latest/features/editor-placeholder.html#using-the-editor-configuration
+            placeholder: 'Tạo post của bạn tại đây',
+            // https://ckeditor.com/docs/ckeditor5/latest/features/font.html#configuring-the-font-family-feature
+            fontFamily: {
+                options: [
+                    'default',
+                    'Arial, Helvetica, sans-serif',
+                    'Courier New, Courier, monospace',
+                    'Georgia, serif',
+                    'Lucida Sans Unicode, Lucida Grande, sans-serif',
+                    'Tahoma, Geneva, sans-serif',
+                    'Times New Roman, Times, serif',
+                    'Trebuchet MS, Helvetica, sans-serif',
+                    'Verdana, Geneva, sans-serif'
+                ],
+                supportAllValues: true
+            },
+            // https://ckeditor.com/docs/ckeditor5/latest/features/font.html#configuring-the-font-size-feature
+            fontSize: {
+                options: [ 10, 12, 14, 'default', 18, 20, 22 ],
+                supportAllValues: true
+            },
+            // Be careful with the setting below. It instructs CKEditor to accept ALL HTML markup.
+            // https://ckeditor.com/docs/ckeditor5/latest/features/general-html-support.html#enabling-all-html-features
+            htmlSupport: {
+                allow: [
+                    {
+                        name: /.*/,
+                        attributes: true,
+                        classes: true,
+                        styles: true
+                    }
+                ]
+            },
+            // Be careful with enabling previews
+            // https://ckeditor.com/docs/ckeditor5/latest/features/html-embed.html#content-previews
+            htmlEmbed: {
+                showPreviews: true
+            },
+            // https://ckeditor.com/docs/ckeditor5/latest/features/link.html#custom-link-attributes-decorators
+            link: {
+                decorators: {
+                    addTargetToExternalLinks: true,
+                    defaultProtocol: 'https://',
+                    toggleDownloadable: {
+                        mode: 'manual',
+                        label: 'Downloadable',
+                        attributes: {
+                            download: 'file'
+                        }
+                    }
+                }
+            },
+            // https://ckeditor.com/docs/ckeditor5/latest/features/mentions.html#configuration
+            mention: {
+                feeds: [
+                    {
+                        marker: '@',
+                        feed: [
+                            '@apple', '@bears', '@brownie', '@cake', '@cake', '@candy', '@canes', '@chocolate', '@cookie', '@cotton', '@cream',
+                            '@cupcake', '@danish', '@donut', '@dragée', '@fruitcake', '@gingerbread', '@gummi', '@ice', '@jelly-o',
+                            '@liquorice', '@macaroon', '@marzipan', '@oat', '@pie', '@plum', '@pudding', '@sesame', '@snaps', '@soufflé',
+                            '@sugar', '@sweet', '@topping', '@wafer'
+                        ],
+                        minimumCharacters: 1
+                    }
+                ]
+            },
+            // The "superbuild" contains more premium features that require additional configuration, disable them below.
+            // Do not turn them on unless you read the documentation and know how to configure them and setup the editor.
+            removePlugins: [
+                // These two are commercial, but you can try them out without registering to a trial.
+                // 'ExportPdf',
+                // 'ExportWord',
+                'AIAssistant',
+                'CKBox',
+                'CKFinder',
+                'EasyImage',
+
+                // This sample uses the Base64UploadAdapter to handle image uploads as it requires no configuration.
+                // https://ckeditor.com/docs/ckeditor5/latest/features/images/image-upload/base64-upload-adapter.html
+                // Storing images as Base64 is usually a very bad idea.
+                // Replace it on production website with other solutions:
+                // https://ckeditor.com/docs/ckeditor5/latest/features/images/image-upload/image-upload.html
+                // 'Base64UploadAdapter',
+                'MultiLevelList',
+                'RealTimeCollaborativeComments',
+                'RealTimeCollaborativeTrackChanges',
+                'RealTimeCollaborativeRevisionHistory',
+                'PresenceList',
+                'Comments',
+                'TrackChanges',
+                'TrackChangesData',
+                'RevisionHistory',
+                'Pagination',
+                'WProofreader',
+                // Careful, with the Mathtype plugin CKEditor will not load when loading this sample
+                // from a local file system (file://) - load this site via HTTP server if you enable MathType.
+                'MathType',
+                // The following features are part of the Productivity Pack and require additional license.
+                'SlashCommand',
+                'Template',
+                'DocumentOutline',
+                'FormatPainter',
+                'TableOfContents',
+                'PasteFromOfficeEnhanced',
+                'CaseChange',
+                // 'image'
+            ],
+            // extraPlugins: 'image2',
+            // Cấu hình plugin 'image2'
+            image_alignClasses: [ 'image-align-left', 'image-align-center', 'image-align-right' ],
+            image_disableResizer: true,
+        }).then( newEditor => {
+            editor = newEditor;
+        })
+        .catch( error => {
+            console.error( error );
+        });;
+    </script>
+    <link rel="stylesheet" href="../static/css/text_editor.css" type="text/css">
+    <script type="module" src="../static/fdb_fontend/firestore_config.js"></script>
+    <script type="module" src="../static/fdb_fontend/upload.js"></script>
+    <script type="module" src="../static/script/text_editor.js"></script>
+</body>
+</html>

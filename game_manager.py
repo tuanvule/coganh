@@ -1,4 +1,3 @@
-
 import requests
 from copy import deepcopy
 from importlib import reload
@@ -6,6 +5,7 @@ import traceback
 from fdb.firestore_config import fdb
 import sys
 import trainAI.MasterUser
+from io import StringIO
 # from fdb.uti.upload import upload_video_to_storage
 
 class Player:
@@ -53,7 +53,7 @@ def Raise_exception(move, current_side, board):
         raise Exception("new_pos must be empty")
     elif board[current_y][current_x] != current_side:
         raise Exception("selected_pos should be your position")
-    elif {(dx := abs(new_x-current_x)), (dy := abs(new_y-current_y))} - {1, 0} != set() or dx==dy==0:
+    elif abs(current_x - new_x)|abs(current_y - new_y)!=1 or (current_x+current_y+new_x+new_y)%2==0:
         raise Exception("Can only move into adjacent cells")
 
 def ganh_chet(move, opp_pos, side, opp_side):
@@ -95,28 +95,21 @@ def vay(opp_pos):
 
 # System
 def activation(option, session_name, debugNum):
-    global org_stdout
-
-    open(f"static/output/stdout_{session_name}.txt", mode="w", encoding="utf-8")
+    f = StringIO()
     org_stdout = sys.stdout
-    f = open(f"static/output/stdout_{session_name}.txt", mode="a", encoding="utf-8")
     sys.stdout = f
 
     try:
-        UserBot = __import__("static.botfiles.botfile_"+session_name, fromlist=[None])
-        reload(UserBot)
-        Bot2 = __import__(option, fromlist=[None])
-        reload(Bot2)
-        temp = run_game(UserBot, Bot2, session_name, debugNum)
+        UserBot = reload(__import__("static.botfiles.botfile_"+session_name, fromlist=[None]))
+        Bot2 = reload(__import__(option, fromlist=[None]))
+        game_res = run_game(UserBot, Bot2, session_name, debugNum)
 
         sys.stdout = org_stdout
-        f.close()
-        return temp
-    except Exception:
-        f.write(traceback.format_exc())
+        return False, game_res, f.getvalue()
+    except:
+        print(traceback.format_exc())
         sys.stdout = org_stdout
-        f.close()
-        raise Exception()
+        return True, None, f.getvalue()
 def run_game(UserBot, Bot2, session_name, debugNum): # Main
 
     declare()

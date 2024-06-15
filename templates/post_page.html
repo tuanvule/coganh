@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/post_page.css">
+</head>
+<body>
+    <nav>
+        <div class="left_block">
+            <div class="logo">Co ganh</div>
+            <a href="{{ url_for('menu') }}" class="back_btn">quay lại</a>
+        </div>
+
+        <div class="right_block">
+            <a href="{{ url_for('text_editor') }}" class="create_post">Viết bài</a>
+            <div class="user_avatar">{{user.username[0].upper()}}</div>
+            <!-- <div class="login_btn">Đăng nhập</div> -->
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="code_guide">
+            <h1 class="code_guide_title">Hướng dẫn cơ bản</h1>
+            <div class="code_guide_list">
+                <div class="code_guide_item">
+                    <div class="review_info">
+                        <div class="author">
+                            <div class="author_avatar">C</div>
+                            <div class="author_name">Co ganh</div>
+                        </div>
+                        <div class="review_title">Kiểm tra nước đi hợp lệ</div>
+                        <div class="review_decription">
+                            Xin chào mọi người và anh Sơn. Em tên là Lý Cao Nguyên Vào năm 2022 em có vô tình lướt thấy những video dạy học của anh trên...
+                        </div>
+                    </div>
+                    <div class="review_img">
+                        <img src="https://www.vietnamworks.com/hrinsider/wp-content/uploads/2023/12/hinh-nen-dien-thoai-1.jpg" alt="">
+                    </div>
+                </div>
+                <div class="code_guide_item">
+                    <div class="review_info">
+                        <div class="author">
+                            <div class="author_avatar">C</div>
+                            <div class="author_name">Co ganh</div>
+                        </div>
+                        <div class="review_title">Kiểm tra gánh chẹt</div>
+                        <div class="review_decription">
+                            Xin chào mọi người và anh Sơn. Em tên là Lý Cao Nguyên Vào năm 2022 em có vô tình lướt thấy những video dạy học của anh trên...
+                        </div>
+                    </div>
+                    <div class="review_img">
+                        <img src="https://www.vietnamworks.com/hrinsider/wp-content/uploads/2023/12/hinh-nen-dien-thoai-1.jpg" alt="">
+                    </div>
+                </div>
+                <div class="code_guide_item">
+                    <div class="review_info">
+                        <div class="author">
+                            <div class="author_avatar">C</div>
+                            <div class="author_name">Co ganh</div>
+                        </div>
+                        <div class="review_title">Kiểm tra vây</div>
+                        <div class="review_decription">
+                            Xin chào mọi người và anh Sơn. Em tên là Lý Cao Nguyên Vào năm 2022 em có vô tình lướt thấy những video dạy học của anh trên...
+                        </div>
+                    </div>
+                    <div class="review_img">
+                        <img src="https://www.vietnamworks.com/hrinsider/wp-content/uploads/2023/12/hinh-nen-dien-thoai-1.jpg" alt="">
+                    </div>
+                </div>
+                <div class="code_guide_item">
+                    <div class="review_info">
+                        <div class="author">
+                            <div class="author_avatar">C</div>
+                            <div class="author_name">Co ganh</div>
+                        </div>
+                        <div class="review_title">Tính điểm quân số</div>
+                        <div class="review_decription">
+                            Xin chào mọi người và anh Sơn. Em tên là Lý Cao Nguyên Vào năm 2022 em có vô tình lướt thấy những video dạy học của anh trên...
+                        </div>
+                    </div>
+                    <div class="review_img">
+                        <img src="https://www.vietnamworks.com/hrinsider/wp-content/uploads/2023/12/hinh-nen-dien-thoai-1.jpg" alt="">
+                    </div>
+                </div>                
+                <div class="code_guide_item">
+                    <div class="review_info">
+                        <div class="author">
+                            <div class="author_avatar">C</div>
+                            <div class="author_name">Co ganh</div>
+                        </div>
+                        <div class="review_title">Tính điểm vị trí</div>
+                        <div class="review_decription">
+                            Xin chào mọi người và anh Sơn. Em tên là Lý Cao Nguyên Vào năm 2022 em có vô tình lướt thấy những video dạy học của anh trên...
+                        </div>
+                    </div>
+                    <div class="review_img">
+                        <img src="https://www.vietnamworks.com/hrinsider/wp-content/uploads/2023/12/hinh-nen-dien-thoai-1.jpg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="posts">
+            <div class="posts_title">Bài đăng nổi bật</div>
+            <div class="posts_list">
+                {% for post in posts %}
+                    <div class="posts_item">
+                        <div class="review_info">
+                            <div class="author">
+                                <div class="author_avatar">{{post["author"][0].upper()}}</div>
+                                <div class="author_name">{{post["author"]}}</div>
+                            </div>
+                            <a href="{{url_for('post', post_id = post['post_id'])}}" class="review_title">{{post["title"]}}</a>
+                            <div class="review_decription">
+                                {{post["description"]}}
+                            </div>
+                        </div>
+                        <div class="review_img">
+                            <img src="{{post['image_url'][0]}}" alt="">
+                        </div>
+                    </div>
+                {%endfor%}
+            </div>
+        </div>
+    </div>
+    <script src="../static/script/post_page.js"></script>
+    </body>
+</html>

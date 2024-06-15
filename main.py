@@ -11,12 +11,21 @@ import webbrowser
 from threading import Timer
 import json
 import secrets
+from firebase_admin import firestore
 from fdb.firestore_config import fdb
 import socketio
 import trainAI.MasterUser
 import requests
+from importlib import reload
+from io import StringIO
+import traceback
+import datetime
+import sys
+import time
 
 doc_ref_room = fdb.collection("room")
+doc_ref_post = fdb.collection("post")
+doc_ref_task = fdb.collection("task")
 
 # doc = doc_ref.get()
 
@@ -87,6 +96,10 @@ class RegisterForm(FlaskForm):
         if User.query.filter_by(username=username_to_check.data).first(): #_existing_user_username
             raise ValidationError('Tên đăng nhập đã được sử dụng')
 
+
+@app.template_filter('parse_json')
+def parse_json(json_string):
+    return json.loads(json_string)
 
 @app.route('/')
 def home_page():
@@ -179,33 +192,24 @@ def upload_code():
     user = User.query.filter_by(username=current_user.username).first()
     with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
         f.write(data["code"])
-    try: 
-        winner, max_move_win, new_url = activation(f"trainAI.{bot}", name, 0) # người thắng / số lượng lượt chơi
-        with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
-            txt = f.read()
-        user.fightable = True
-        db.session.commit()
-        data = {
-            "code": 200,
-            "status": winner,
-            "max_move_win": max_move_win,
-            "new_url": new_url,
-            "output": txt,
-        }
-        return json.dumps(data)
-    except Exception:
-        with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
-            txt = f.read()
-        user.fightable = False
-        db.session.commit()
+    err, game_res, output = activation(f"trainAI.{bot}", name, 0) # người thắng / số lượng lượt chơi
+    user.fightable = not err
+    db.session.commit()
+    if err:
         data = {
             "code": 400,
-            "output": txt
+            "output": output
         }
-        return json.dumps(data) # Giá trị Trackback Error
-    
+    else:
+        data = {
+            "code": 200,
+            "status": game_res[0],
+            "max_move_win": game_res[1],
+            "new_url": game_res[2],
+            "output": output
+        }
 
-    
+    return json.dumps(data) # Giá trị Trackback Error
     
 @app.route('/debug_code', methods=['POST'])
 @login_required
@@ -217,29 +221,23 @@ def debug_code():
     user = User.query.filter_by(username=name).first()
     with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
         f.write(data["code"])
-    try: 
-        img_url, inp_oup, rate = activation(f"trainAI.{bot}", name, res["debugNum"]) # người thắng / số lượng lượt chơi
-
-        with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
-            txt = f.read()
-        data = {
-            "code": 200,
-            "img_url": img_url,
-            "output": txt,
-            "inp_oup": inp_oup,
-            "rate": rate,
-        }
-        return json.dumps(data)
-    except Exception:
-        with open(f"static/output/stdout_{name}.txt", encoding="utf-8") as f:
-            txt = f.read()
-        user.fightable = False
-        db.session.commit()
+    err, game_res, output = activation(f"trainAI.{bot}", name, res['debugNum']) # người thắng / số lượng lượt chơi
+    user.fightable = not err
+    db.session.commit()
+    if err:
         data = {
             "code": 400,
-            "output": txt,
+            "output": output
         }
-        return json.dumps(data) # Giá trị Trackback Error
+    else:
+        data = {
+            "code": 200,
+            "img_url": game_res[0],
+            "inp_oup": game_res[1],
+            "rate": game_res[2],
+            "output": output
+        }
+    return json.dumps(data) # Giá trị Trackback Error
     
 @app.route('/save_code', methods=['POST'])
 @login_required
@@ -262,13 +260,16 @@ def create_bot():
             logout_user()
         return redirect(url_for('login'))
     
-@app.route('/challenge_mode')
+@app.route('/challenge_mode/<id>')
 @login_required
-def challenge_mode():
+def challenge_mode(id):
     if 'secret_key' in session:
         user = User.query.where(User.username == session['username']).first()
         login_user(user)
-        return render_template('challenge_mode.html')
+        
+        task = doc_ref_task.document(id).get().to_dict()
+
+        return render_template('challenge_mode.html', user=current_user, task = task, id = id)
     else:
         if current_user:
             logout_user()
@@ -316,6 +317,135 @@ def human_human():
 def room_manager():
     return render_template('room_manager.html', user = current_user)
 
+@app.route('/text_editor')
+@login_required
+def text_editor():
+    return render_template('text_editor.html', user = current_user)
+
+@app.route('/post/<post_id>')
+@login_required
+def post(post_id):
+    print(post_id)
+    data = ""
+    docs = doc_ref_post.where("post_id", "==", post_id).stream()
+    for doc in docs:
+        data = doc.to_dict()
+        print(data)
+    return render_template('post.html', user = current_user, data = data)
+
+@app.route('/task_list')
+@login_required
+def task_list():
+    res = doc_ref_task.stream()
+    
+    tasks = []
+
+    for doc in res:
+        task = doc.to_dict()
+        task["id"] = doc.id
+        tasks.append(task)
+
+    return render_template('task_list.html', user = current_user, tasks = tasks)
+
+@app.route('/run_task', methods=["POST"])
+@login_required
+def run_task():
+    res = request.get_json()
+    code = res["code"]
+    inp_oup = res["inp_oup"] # input, output của đề
+    
+    return_data = {
+        "code": 200,
+        "output": [data["output"] for data in inp_oup], # cái này khỏi đổi
+        "user_output": [
+            {
+                "output_status": "", # nếu trùng với output của đề thì accepted, không thì wrong answer
+                "output": "", # output của user
+            },
+            # {
+            #    output 2
+            # },
+            # {
+            #    output ...
+            # }
+        ],
+    }
+
+    return return_data
+
+@app.route('/submit', methods=['POST'])
+@login_required
+def submit():
+    res = request.get_json()
+    code = res["code"]
+    inp_oup = res["inp_oup"]
+    task = doc_ref_task.document(res["id"])
+    org_stdout = sys.stdout
+
+    user_output = []
+    for i in inp_oup:
+        f = StringIO()
+        sys.stdout = f
+        try:
+            ldict = {}
+            start = time.time()
+            exec(code, {}, ldict)
+            end = time.time()
+            inp = [json.loads(item) for item in i["input"]]
+
+            if eval(i["output"]) == ldict["main"](*inp):
+                user_output.append({
+                    "output_status" : "AC",
+                    "output" : f.getvalue(),
+                    "runtime" : (end-start) * 10**3
+                }) 
+            else:
+                user_output.append({
+                    "output_status" : "WA",
+                    "output" : f.getvalue()
+                })
+        except:
+            print(traceback.format_exc())
+            user_output.append({
+                "output_status" : "SE",
+                "output" : f.getvalue()
+            })
+    sys.stdout = org_stdout
+
+    status = all(i["output_status"]=="AC" for i in user_output)
+    # update_data = {
+    #     "code": code,
+    #     "status": status,
+    #     "submit_time": datetime.datetime.now()
+    # }
+
+    # task.update({
+    #     f"challenger.{current_user.username}.submissions": firestore.ArrayUnion([update_data]),
+    #     f"challenger.{current_user.username}.current_submit": update_data
+    # })
+
+    return_date = {
+        "status": status,
+        "output": [i["output"] for i in inp_oup],
+        "user_output": user_output
+    }
+
+    return return_date
+
+# @app.route('/get_task')
+# @login_required
+# def get_task():
+
+
+@app.route('/post_page')
+@login_required
+def post_page():
+    posts = []
+    docs = doc_ref_post.stream()
+    for doc in docs:
+        posts.append(doc.to_dict())
+    return render_template('post_page.html', user = current_user, posts = posts)
+
 @app.route('/get_pos_of_playing_chess', methods=['POST'])
 @login_required
 def get_pos_of_playing_chess():
@@ -358,7 +488,7 @@ def get_rate():
 def fighting():
     name = current_user.username
     player = request.get_json()
-    winner, max_move_win, new_url = activation("static.botfiles.botfile_"+player['name'], name, 0)
+    winner, max_move_win, new_url = activation("static.botfiles.botfile_"+player['name'], name, 0)[1]
     
     data = {
         "status": winner,
@@ -424,46 +554,46 @@ def out_room():
         return 'Error', 400
 
 
-# @sio.event
-# def connect(sid, eviron):
-#     print(f"Client connected: {sid}")
+@sio.event
+def connect(sid, eviron):
+    print(f"Client connected: {sid}")
 
-# @sio.event
-# def join_room(sid, room_id, type, state, user_info):
-#     doc_ref = doc_ref_room.document(room_id)
-#     doc_ref.set({type: state}, merge=True)
-#     sio.emit(f"join_room_{room_id}", {
-#         "type": type,
-#         "user_info": user_info,
-#     })
-#     print(f"Client connected: {sid}")
+@sio.event
+def join_room(sid, room_id, type, state, user_info):
+    doc_ref = doc_ref_room.document(room_id)
+    doc_ref.set({type: state}, merge=True)
+    sio.emit(f"join_room_{room_id}", {
+        "type": type,
+        "user_info": user_info,
+    })
+    print(f"Client connected: {sid}")
 
-# @sio.event
-# def out_room(sid, room_id, type, state):
-#     doc_ref = doc_ref_room.document(room_id)
-#     doc_ref.set({type: state}, merge=True)
-#     sio.emit(f"out_room_{room_id}")
-#     print(f"Client disconnected: {sid}")
+@sio.event
+def out_room(sid, room_id, type, state):
+    doc_ref = doc_ref_room.document(room_id)
+    doc_ref.set({type: state}, merge=True)
+    sio.emit(f"out_room_{room_id}")
+    print(f"Client disconnected: {sid}")
 
 # Xử lý ngắt kết nối từ client
-# @sio.event
-# def disconnect(sid):
-#     print(f"Client disconnected: {sid}")
+@sio.event
+def disconnect(sid):
+    print(f"Client disconnected: {sid}")
 
-# # Xử lý sự kiện 'message' từ client
-# @sio.event
-# def message(sid, data):
-#     print(f"Message from {sid}: {data}")
-#     sio.send("Hello from server!")
+# Xử lý sự kiện 'message' từ client
+@sio.event
+def message(sid, data):
+    print(f"Message from {sid}: {data}")
+    sio.send("Hello from server!")
 
-# @sio.event
-# def check_user(data, environ):
-#     # sio.emit('check_user', environ)
-#     sio.emit(f'check_user_{environ}', environ)
+@sio.event
+def check_user(data, environ):
+    # sio.emit('check_user', environ)
+    sio.emit(f'check_user_{environ}', environ)
 
-# @sio.event
-# def get_move(data, room, environ):
-#     sio.emit(f'get_move_{room}', environ)
+@sio.event
+def get_move(data, room, environ):
+    sio.emit(f'get_move_{room}', environ)
 
 if __name__ == '__main__':
     open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")

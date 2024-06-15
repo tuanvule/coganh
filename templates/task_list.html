@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/task_list.css">
+</head>
+<body>
+    
+    <nav>
+        <div class="left_block">
+            <div class="logo">Co ganh</div>
+            <a href="{{ url_for('menu') }}" class="back_btn">quay lại</a>
+        </div>
+
+        <div class="right_block">
+            <!-- <a href="{{ url_for('text_editor') }}" class="create_post">Viết bài</a> -->
+            <div class="user_avatar">{{user.username[0].upper()}}</div>
+            <!-- <div class="login_btn">Đăng nhập</div> -->
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="task_title">
+            <div class="tsk_status">Trạng thái</div>
+            <div class="tsk_name">Tên</div>
+            <div class="tsk_acceptance">Số lượng accept</div>
+            <div class="tsk_difficult">Độ khó</div>
+        </div>
+        <hr style="margin: 10px 0; border: 1px solid #ccc; width: 100%;">
+        <ul class="task_list">
+            <!-- <li class="task_item">
+                <div class="task_status accpeted">Accepted</div>
+                <div class="task_name">task 1 or something link that</div>
+                <div class="task_acceptance">0</div>
+                <div class="task_difficult">Dễ</div>
+            </li>
+            <li class="task_item">
+                <div class="task_status err">Wrong answer</div>
+                <div class="task_name">task 1 or something link that</div>
+                <div class="task_acceptance">0</div>
+                <div class="task_difficult">Dễ</div>
+            </li>
+            <li class="task_item">
+                <div class="task_status err">Compile error</div>
+                <div class="task_name">task 1 or something link that</div>
+                <div class="task_acceptance">0</div>
+                <div class="task_difficult">Dễ</div>
+            </li> -->
+            {% for task in tasks %}
+                <li class="task_item">
+                    {% if (user.username in task.challenger.submissions): %}
+                        <div class="task_status {{accepted if task.challenger[user.username].current_submission.status == 'AC' else 'err'}}">{{task.challenger[user.username].current_submission.status}}</div>
+                    {% else %}
+                        <div class="task_status"></div>
+                    {% endif %}
+                    <a href="{{url_for('challenge_mode', id=task.id)}}" class="task_name">{{task.task_name}}</a>
+                    <div class="task_acceptance">{{task.accepted_count}}</div>
+                    <div class="task_difficult {{task.tag.difficult}}">{{task.tag.difficult}}</div>
+                </li>
+            {%endfor%}
+        </ul>
+    </div>
+
+    <script src="../static/script/task_list.js"></script>
+</body>
+</html>
