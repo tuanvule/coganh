@@ -320,7 +320,14 @@ def room_manager():
 @app.route('/text_editor')
 @login_required
 def text_editor():
-    return render_template('text_editor.html', user = current_user)
+    if 'secret_key' in session:
+        user = User.query.where(User.username == session['username']).first()
+        login_user(user)
+        return render_template('text_editor.html', user = current_user)
+    else:
+        if current_user:
+            logout_user()
+        return redirect(url_for('login'))
 
 @app.route('/post/<post_id>')
 @login_required
@@ -336,16 +343,23 @@ def post(post_id):
 @app.route('/task_list')
 @login_required
 def task_list():
-    res = doc_ref_task.stream()
-    
-    tasks = []
+    if 'secret_key' in session:
+        user = User.query.where(User.username == session['username']).first()
+        login_user(user)
+        res = doc_ref_task.stream()
+        
+        tasks = []
 
-    for doc in res:
-        task = doc.to_dict()
-        task["id"] = doc.id
-        tasks.append(task)
+        for doc in res:
+            task = doc.to_dict()
+            task["id"] = doc.id
+            tasks.append(task)
 
-    return render_template('task_list.html', user = current_user, tasks = tasks)
+        return render_template('task_list.html', user = current_user, tasks = tasks)
+    else:
+        if current_user:
+            logout_user()
+        return redirect(url_for('login'))
 
 @app.route('/run_task', methods=["POST"])
 @login_required
@@ -668,7 +682,7 @@ def out_room():
 # def get_move(data, room, environ):
 #     sio.emit(f'get_move_{room}', environ)
 
-# if __name__ == '__main__':
-#     open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
-#     Timer(1, open_browser).start()
-#     app.run(port=5000, debug=True, use_reloader=False)
+if __name__ == '__main__':
+    open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
+    Timer(1, open_browser).start()
+    app.run(port=5000, debug=True, use_reloader=False)
