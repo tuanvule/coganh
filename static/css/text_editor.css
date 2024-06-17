@@ -50,6 +50,10 @@ h6 {
     font-weight: normal;
 }
 
+.ck-editor__editable[role="textbox"] {
+    min-height: 40px;
+}
+
 /* @ckeditor/ckeditor5-table/theme/tablecolumnresize.css */
 .ck-content .table .ck-table-resizeds {
     table-layout: fixed;
