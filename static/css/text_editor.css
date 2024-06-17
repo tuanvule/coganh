@@ -51,7 +51,7 @@ h6 {
 }
 
 .ck-editor__editable[role="textbox"] {
-    min-height: 40px;
+    min-height: 200px;
 }
 
 /* @ckeditor/ckeditor5-table/theme/tablecolumnresize.css */
