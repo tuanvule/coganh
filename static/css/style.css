@@ -112,6 +112,14 @@ nav {
     margin-right: 20px;
 }
 
+.create_post {
+    margin-right: 20px;
+}
+
+.create_post:hover {
+    color: #ccc;
+}
+
 .back_btn {
     color: #808990;
     cursor: pointer;

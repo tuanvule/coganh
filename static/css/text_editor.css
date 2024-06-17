@@ -41,8 +41,17 @@
     --ck-todo-list-checkmark-size: 16px;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: normal;
+}
+
 /* @ckeditor/ckeditor5-table/theme/tablecolumnresize.css */
-.ck-content .table .ck-table-resized {
+.ck-content .table .ck-table-resizeds {
     table-layout: fixed;
 }
 /* @ckeditor/ckeditor5-table/theme/tablecolumnresize.css */

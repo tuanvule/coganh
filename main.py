@@ -352,35 +352,9 @@ def task_list():
 def run_task():
     res = request.get_json()
     code = res["code"]
-    inp_oup = res["inp_oup"] # input, output của đề
-    
-    return_data = {
-        "code": 200,
-        "output": [data["output"] for data in inp_oup], # cái này khỏi đổi
-        "user_output": [
-            {
-                "output_status": "", # nếu trùng với output của đề thì accepted, không thì wrong answer
-                "output": "", # output của user
-            },
-            # {
-            #    output 2
-            # },
-            # {
-            #    output ...
-            # }
-        ],
-    }
-
-    return return_data
-
-@app.route('/submit', methods=['POST'])
-@login_required
-def submit():
-    res = request.get_json()
-    code = res["code"]
     inp_oup = res["inp_oup"]
-    task = doc_ref_task.document(res["id"])
     org_stdout = sys.stdout
+    err = ""
 
     user_output = []
     for i in inp_oup:
@@ -391,46 +365,145 @@ def submit():
             start = time.time()
             exec(code, {}, ldict)
             end = time.time()
-            inp = [json.loads(item) for item in i["input"]]
+            Uoutput = ldict["main"](*i["input"])
 
-            if eval(i["output"]) == ldict["main"](*inp):
+            if i["output"] == Uoutput:
                 user_output.append({
+                    "log": f.getvalue(),
                     "output_status" : "AC",
-                    "output" : f.getvalue(),
+                    "output" : Uoutput,
                     "runtime" : (end-start) * 10**3
-                }) 
+                })
             else:
                 user_output.append({
+                    "log": f.getvalue(),
                     "output_status" : "WA",
-                    "output" : f.getvalue()
+                    "output" : Uoutput
                 })
         except:
-            print(traceback.format_exc())
+            err = traceback.format_exc()
             user_output.append({
+                "log": f.getvalue(),
                 "output_status" : "SE",
-                "output" : f.getvalue()
             })
     sys.stdout = org_stdout
 
-    status = all(i["output_status"]=="AC" for i in user_output)
-    # update_data = {
-    #     "code": code,
-    #     "status": status,
-    #     "submit_time": datetime.datetime.now()
-    # }
+    if any(i["output_status"]=="SE" for i in user_output):
+        status = "SE"
+    elif any(i["output_status"]=="WA" for i in user_output):
+        status = "WA"
+    else:
+        status = "AC"
 
-    # task.update({
-    #     f"challenger.{current_user.username}.submissions": firestore.ArrayUnion([update_data]),
-    #     f"challenger.{current_user.username}.current_submit": update_data
-    # })
+    if err:
+        return_data = {
+            "status": "SE",
+            "output": [i["output"] for i in inp_oup],
+            "err": err,
+        }
+    else:
+        return_data = {
+            "status": status,
+            "output": [i["output"] for i in inp_oup],
+            "user_output": user_output,
+        }
 
-    return_date = {
+    return return_data
+
+@app.route('/submit', methods=['POST'])
+@login_required
+def submit():
+    res = request.get_json()
+    code = res["code"]
+    inp_oup = res["inp_oup"]
+    print(inp_oup)
+    task = doc_ref_task.document(res["id"])
+    org_stdout = sys.stdout
+    soAc = 0
+    err = ""
+
+    user_output = []
+    start = time.time()
+    for i in inp_oup:
+        f = StringIO()
+        sys.stdout = f
+        try:
+            ldict = {}
+            exec(code, {}, ldict)
+            Uoutput = ldict["main"](*i["input"])
+
+            if i["output"] == Uoutput:
+                user_output.append({
+                    "log": f.getvalue(),
+                    "output_status" : "AC",
+                    "output" : Uoutput,
+                }) 
+                soAc+=1
+            else:
+                user_output.append({
+                    "log": f.getvalue(),
+                    "output_status" : "WA",
+                    "output" : Uoutput
+                })
+        except:
+            err = traceback.format_exc()
+            user_output.append({
+                "log": f.getvalue(),
+                "output_status" : "SE",
+            })
+    end = time.time()
+    sys.stdout = org_stdout
+
+    if any(i["output_status"]=="SE" for i in user_output):
+        status = "SE"
+    elif any(i["output_status"]=="WA" for i in user_output):
+        status = "WA"
+    else:
+        status = "AC"
+
+    now = datetime.datetime.now()
+
+    # Cách 2: Định dạng thành chuỗi
+    date_string = now.strftime("%d/%m/%Y")
+
+    update_data = {
+        "code": code,
         "status": status,
-        "output": [i["output"] for i in inp_oup],
-        "user_output": user_output
+        "test_finished": f"{soAc}/{len(user_output)}",
+        "submit_time": date_string,
+        "run_time": (end-start) * 10**3,
     }
 
-    return return_date
+    if status == "AC":
+        task.update({
+            f"challenger.{current_user.username}.submissions": firestore.ArrayUnion([update_data]),
+            f"challenger.{current_user.username}.current_submit": update_data,
+            "submission_count": firestore.Increment(1),
+            "accepted_count": firestore.Increment(1),
+        })
+    else:
+        task.update({
+            f"challenger.{current_user.username}.submissions": firestore.ArrayUnion([update_data]),
+            f"challenger.{current_user.username}.current_submit": update_data,
+            "submission_count": firestore.Increment(1),
+        })
+
+    if err:
+        return_data = {
+            "status": "SE",
+            "output": [i["output"] for i in inp_oup],
+            "err": err,
+        }
+    else:
+        return_data = {
+            "status": status,
+            "output": [i["output"] for i in inp_oup],
+            "user_output": user_output,
+            "test_finished": f"{soAc}/{len(user_output)}",
+            "run_time": (end-start) * 10**3,
+        }
+
+    return return_data
 
 # @app.route('/get_task')
 # @login_required

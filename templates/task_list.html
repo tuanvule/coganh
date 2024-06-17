@@ -16,7 +16,7 @@
         </div>
 
         <div class="right_block">
-            <!-- <a href="{{ url_for('text_editor') }}" class="create_post">Viết bài</a> -->
+            <a href="{{ url_for('text_editor') }}" class="create_post">Tạo task</a>
             <div class="user_avatar">{{user.username[0].upper()}}</div>
             <!-- <div class="login_btn">Đăng nhập</div> -->
         </div>
@@ -51,8 +51,8 @@
             </li> -->
             {% for task in tasks %}
                 <li class="task_item">
-                    {% if (user.username in task.challenger.submissions): %}
-                        <div class="task_status {{accepted if task.challenger[user.username].current_submission.status == 'AC' else 'err'}}">{{task.challenger[user.username].current_submission.status}}</div>
+                    {% if (user.username in task.challenger): %}
+                        <div class="task_status {{accepted if task.challenger[user.username].current_submit.status == 'AC' else 'err'}}">{{task.challenger[user.username].current_submit.status}}</div>
                     {% else %}
                         <div class="task_status"></div>
                     {% endif %}

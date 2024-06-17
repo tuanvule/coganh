@@ -78,8 +78,8 @@ output: []
 
                 <div class="bot_display-task--status">
                     <div class="bot_display-task--status_item tallent">accepted <div class="num">{{task.accepted_count}}</div></div>
-                    <div class="bot_display-task--status_item good">failed <div class="num">{{task.failed}}</div></div>
-                    <div class="bot_display-task--status_item submissions">submissions <div class="num">{{task.failed + task.failed}}</div></div>
+                    <div class="bot_display-task--status_item good">submissions <div class="num">{{task.submission_count}}</div></div>
+                    <div class="bot_display-task--status_item submissions">accepted rate <div class="num">{{(task.accepted_count / (task.submission_count if task.submission_count > 0 else 1) * 100)|round(1)}} %</div></div>
                 </div>
             </div>
 
@@ -126,12 +126,12 @@ output: []
                         <div class="user_avatar">{{user.username[0].upper()}}</div>
                         <div class="user_name">{{user.username}}</div>
                     </div>
-                    <div class="status accepted">accepted</div>
+                    <div class="status accepted">chưa có kết quả</div>
                 </div>
                 <div class="display_result accepted">
                     <div class="test_case_result">
                         <ul class="test_case_result_list">
-                            <li tabindex="0" class="test_case_result_item accepted">
+                            <!-- <li tabindex="0" class="test_case_result_item accepted">
                                 Test 1
                                 <div class="text_case_InOu accepted">
                                     <div class="text_case_oup_title">output =</div>
@@ -150,8 +150,11 @@ output: []
                                     <div class="user_oup_title">your output =</div>
                                     <div class="user_oup">[1,2,3,4]</div>
                                 </div>
-                            </li>
+                            </li> -->
                         </ul>
+                        <div style="display: none;" class="test_case_result_err">
+
+                        </div>
                     </div>
                     <div class="change_task_block">
                         <div class="pre_task">back</div>
@@ -168,7 +171,7 @@ output: []
                     <div style="flex: 2;"></div>
                 </div>
                 <ul class="submissions_list">
-                    <li class="submissions_item">
+                    <!-- <li class="submissions_item">
                         <div class="submissions_status accpeted">Accepted</div>
                         <div class="submissions_time">6/12/2024</div>
                         <div class="submissions_test_finished">10/10</div>
@@ -179,13 +182,7 @@ output: []
                         <div class="submissions_time">6/12/2024</div>
                         <div class="submissions_test_finished">10/10</div>
                         <div class="view_code_btn">view code</div>
-                    </li>
-                    <li class="submissions_item">
-                        <div class="submissions_status err">Compile error</div>
-                        <div class="submissions_time">6/12/2024</div>
-                        <div class="submissions_test_finished">10/10</div>
-                        <div class="view_code_btn">view code</div>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </div>
@@ -246,8 +243,8 @@ output: []
                         {% for i in range(0, 2) %}
                             <li class="test_case_item {{'appear' if i == 0 else ''}}">
                                 {% for j in range(inp_oup[i].input | length) %}
-                                    <div class="inp_title">input {{j + 1}} =</div>
-                                    <textarea name="" id="" class="inp">{{inp_oup[i].input[j]}}</textarea>
+                                    <div class="inp_title">{{task.input_title[j]}} =</div>
+                                    <div class="inp">{{inp_oup[i].input[j]}}</div>
                                 {% endfor %}
                                 <!-- <div class="oup_title">output =</div>
                                 <textarea rows="1" name="" id="" class="oup">{{task.inp_oup[i].output}}</textarea> -->
@@ -265,11 +262,13 @@ output: []
         </div>
     </div>
 
+    <div class="username">{{user.username}}</div>
     <div class="demo_code" hidden>{{task.demo_code}}</div>
     <div class="task_inp_oup" hidden>{{task.inp_oup}}</div>
     <div id="task_id" hidden>{{id}}</div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.min.js"></script>
-    <script src="../static/script/challenge_mode.js"></script>
+    <script type="module" src="../static/fdb_fontend/firestore_config.js"></script>
+    <script type="module" src="../static/script/challenge_mode.js"></script>
 </body>
 </html>

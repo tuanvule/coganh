@@ -53,7 +53,7 @@ def Raise_exception(move, current_side, board):
         raise Exception("new_pos must be empty")
     elif board[current_y][current_x] != current_side:
         raise Exception("selected_pos should be your position")
-    elif abs(current_x - new_x)|abs(current_y - new_y)!=1 or (current_x+current_y+new_x+new_y)%2==0:
+    elif abs(current_x - new_x)|abs(current_y - new_y)!=1 or (current_x+current_y)%2 & (new_x+new_y)%2:
         raise Exception("Can only move into adjacent cells")
 
 def ganh_chet(move, opp_pos, side, opp_side):

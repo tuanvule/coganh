@@ -16,19 +16,29 @@ const difficult_list = $(".difficult_list")
 const tag_list = $(".tag_list")
 const test_case_control = $(".test_case_control")
 const demo_code_block = $(".demo_code_block")
+const test_case_block = $(".test_case_block")
+
+// test case config
+
+const input_num_config = $(".input_num_config")
+const title_input_config_list = $(".title_input_config_list")
+const create_btn = $(".create_btn")
+const test_case_config = $(".test_case_config")
+
+// ---------------
 
 const overflow = $(".overflow")
 const loadder = $(".loadder")
 const noti_content = $(".noti_content")
 const ok_btn = $(".ok_btn")
 
-let inp_list = $$(".input_list")
+// let inp_list = $$(".input_list")
 let oup = $$(".oup")
-
+let input_title = []
 
 // let url = []
 let text
-let dem = 1
+let dem = 0
 
 function dataURLtoBlob(dataurl) {
     let arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
@@ -40,6 +50,8 @@ function dataURLtoBlob(dataurl) {
 }
 
 function getInOupValue() {
+    let inp_list = $$(".input_list")
+    let oup = $$(".oup")
     let inp_oup = []
     let input_list = []
     let input_value = []
@@ -48,13 +60,15 @@ function getInOupValue() {
     inp_list.forEach((item) => {
         input_value = []
         item.querySelectorAll(".inp").forEach((i) => {
-            input_value.push(i.value.replaceAll("(","[").replaceAll(")","]"))
+            console.log(i.value.replaceAll("(","[").replaceAll(")","]"))
+            input_value.push(JSON.parse(i.value.replaceAll("(","[").replaceAll(")","]")))
         })
         input_list.push(input_value)
     })
 
     oup.forEach((item) => {
-        output_value.push(item.value.replaceAll("(","[").replaceAll(")","]"))
+        console.log(JSON.parse(item.value.replaceAll("(","[").replaceAll(")","]").replaceAll("True", "true").replaceAll("False","false")))
+        output_value.push(JSON.parse(item.value.replaceAll("(","[").replaceAll(")","]").replaceAll("True", "true").replaceAll("False","false")))
     })
 
     for(let i = 0; i < output_value.length; i++) {
@@ -63,6 +77,8 @@ function getInOupValue() {
             output: output_value[i],
         })
     }
+
+    console.log(inp_oup)
 
     return JSON.stringify(inp_oup)
 }
@@ -117,6 +133,20 @@ function toggle_mode(mode) {
 }
 
 post_btn.onclick = () => {
+    // console.log({
+    //     task_name: title_input.value,
+    //     accepted_count: 0,
+    //     challenger: [],
+    //     content: text,
+    //     failed: 0,
+    //     inp_oup: getInOupValue(),
+    //     tag: {
+    //         difficult: difficult_list.value,
+    //     },
+    //     // demo_code: JSON.stringify(demo_code),
+    //     input_title: input_title,
+    // })
+    // return
     let url = []
     text = editor.getData()
     let default_url = []
@@ -161,8 +191,8 @@ post_btn.onclick = () => {
                         tag: {
                             difficult: difficult_list.value,
                         },
-                        demo_code: JSON.stringify(demo_code)
-                        
+                        demo_code: JSON.stringify(demo_code),
+                        input_title: input_title,
                     })
                 }
             }
@@ -195,8 +225,8 @@ post_btn.onclick = () => {
                                 tag: {
                                     difficult: difficult_list.value,
                                 },
-                                demo_code: JSON.stringify(demo_code)
-                                
+                                demo_code: JSON.stringify(demo_code),
+                                input_title: input_title,
                             })
                         }
                     }
@@ -225,7 +255,8 @@ post_btn.onclick = () => {
                     tag: {
                         difficult: difficult_list.value,
                     },
-                    demo_code: JSON.stringify(demo_code)
+                    demo_code: JSON.stringify(demo_code),
+                    input_title: input_title,
                 })
             }
         }
@@ -243,17 +274,35 @@ post_btn.onclick = () => {
     }
 }
 
+create_btn.onclick = () => {
+    input_title = []
+    const title_input_config_items = $$(".title_input_config_item")
+    title_input_config_items.forEach(item => {
+        input_title.push(item.value)
+    })
+    test_case_block.style.display = "flex"
+    test_case_config.style.display = "none"
+}
+
 ok_btn.onclick = () => {
     overflow.style.display = "none"
 }
 
 add_test_case_btn.onclick = () => {
-    dem++
     let block = document.createElement('div')
     block.classList = "test_case_item"
-    let inp = document.createElement('textarea')
-    inp.classList = "inp"
-    inp.setAttribute("row", "1")
+
+    let input_list = document.createElement('input_list')
+    input_list.classList = "input_list"
+
+    input_title.forEach(item => {
+        let inp = document.createElement('textarea')
+        inp.classList = "input_item inp"
+        inp.placeholder = item
+        inp.setAttribute("row", "1")
+        input_list.appendChild(inp)
+    })
+
     let oup = document.createElement('textarea')
     oup.classList = "oup"
     oup.setAttribute("row", "1")
@@ -263,18 +312,23 @@ add_test_case_btn.onclick = () => {
     check_box.classList = "check_box"
     check_box.dataset.index = dem
 
-    block.appendChild(inp)
+    block.appendChild(input_list)
     block.appendChild(oup)
     block.appendChild(check_box)
     test_case_list.appendChild(block)
+    dem++
 
-    // reset_oninput()
+    console.log(input_title)
 
     // test_case_list.innerHTML += `
     //     <div class="test_case_item">
-    //         <input type="text" class="inp">
+    //         <div class="input_list">
+    //             ${(input_title.map(item => `
+    //                 <textarea placeholder="${item}" rows="1" type="text" class="input_item inp"></textarea>    
+    //             `)).join("")}
+    //         </div>
     //         <input type="text" class="oup">
-    //         <input type="checkbox" style="width: 20px; height: 20px;" class="check_box" data-index="${c}">
+    //         <input type="checkbox" style="width: 20px; height: 20px;" class="check_box" data-index="${dem}">
     //     </div>
     // `
 }
@@ -282,7 +336,8 @@ add_test_case_btn.onclick = () => {
 remove_test_case_btn.onclick = () => {
     
     const checked_box = $$(".check_box:checked")
-    if(inp.length - checked_box.length < 2) return
+    const input_lists = $$(".input_list")
+    if(input_lists.length - checked_box.length < 2) return
     let test_case_item = $$(".test_case_item")
     console.log(checked_box)
 
@@ -303,4 +358,16 @@ remove_test_case_btn.onclick = () => {
 tag_list.onchange = (e) => {
     toggle_mode(e.target.value)
     // console.log(e.target.value)
+}
+
+input_num_config.oninput = (e) => {
+    let item = []
+    console.log(e.target.value)
+    for(let  i = 0; i < e.target.value; i++) {
+        item.push(`
+            <input placeholder="Enter input name" type="text" class="title_input_config_item">
+        `.replaceAll(" , ", ""))
+    }
+
+    title_input_config_list.innerHTML = (item.map(a => a)).join("")
 }

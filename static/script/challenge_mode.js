@@ -1,5 +1,5 @@
-// import { firebaseApp, firestore } from "../fdb_fontend/firestore_config.js"
-// import { addDoc, collection } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'
+import { firebaseApp, firestore } from "../fdb_fontend/firestore_config.js"
+import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'
 
 const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
@@ -7,6 +7,8 @@ const $$ = document.querySelectorAll.bind(document)
 const demo_code = $(".demo_code").innerHTML
 const task_inp_oup = $(".task_inp_oup").innerHTML
 const task_id = $("#task_id").innerHTML
+const username = $(".username").innerHTML
+// const challenger = $(".challenger").innerHTML
 
 const submitBtn = $(".coding_module-nav--submitBtn.btn")
 const runBtn = $(".coding_module-nav--runBtn")
@@ -29,6 +31,13 @@ const display_result = $(".display_result")
 const test_case_result_list = $(".test_case_result_list")
 let test_case_result_item = $$(".test_case_result_item")
 let text_case_InOu = $$(".text_case_InOu")
+const test_case_result_err = $(".test_case_result_err")
+
+// --------------
+
+// submissions block
+
+const submissions_list = $(".submissions_list")
 
 // --------------
 
@@ -46,7 +55,6 @@ const animationChild = $(".utility_nav-block .animation .children")
 const bDAnimation = $(".bot_display_nav-block .animation")
 const bDAnimationChild = $(".bot_display_nav-block .animation .children")
 const botDisplayBlock = $$(".bot_display-video-item")
-
 
 var editor = ace.edit("coding_module-coding_block");
 
@@ -70,17 +78,34 @@ runBtn.onclick = () => {
         },
         body: JSON.stringify({
             code: code,
-            inp_oup: JSON.parse(task_inp_oup),
+            inp_oup: JSON.parse(task_inp_oup).slice(0, 2),
         }),
     })
     .then(res => res.json())
     .then(data => {
+        console.log(data)
+        $$(".output_block").forEach(item => item.remove())
+        if(data.status === "SE") {
+            render_result(data, data.status)
+            return
+        }
         data.user_output.forEach((oup, i) => {
             if(oup.output_status === "AC") {
                 test_case_nav_item[i].className = "test_case_nav_item accepted"
             } else {
                 test_case_nav_item[i].className = "test_case_nav_item err"
             }
+        })
+        test_case_item.forEach((item,i) => {
+            item.innerHTML += `
+                <div class="output_block">
+                    <hr style="width: 100%; margin: 10px 0;">
+                    <div class="oup_title">output</div>
+                    <div contenteditable="" name="" id="" class="oup">${data.output[i]}</div>
+                    <div class="user_oup_title">your_output</div>
+                    <div contenteditable="" name="" id="" class="your_oup ${data.user_output[i].output_status === "AC" ? "accepted" : "err"}">${data.user_output[i].output}</div>
+                </div>
+            `
         })
     })
     test_case_nav_item.forEach(item => {
@@ -95,12 +120,6 @@ submitBtn.onclick = () => {
 
 
 function submitCode(code) {
-    console.log({
-        code: code,
-        inp_oup: JSON.parse(task_inp_oup),
-        id: task_id
-    })
-
     fetch("/submit", {
         method: "POST",
         headers: {
@@ -115,7 +134,7 @@ function submitCode(code) {
     .then(res => res.json())
     .then(data => {
         console.log(data)
-        render_result(data)
+        render_result(data, data.status)
     })
     .catch(err => console.log(err))
     .finally(() => {
@@ -132,6 +151,8 @@ editor.getSession().on('change', function() {
     // }
 });
 
+
+
 session.setValue(JSON.parse(demo_code))
 
 // fetch("/get_code")
@@ -141,7 +162,12 @@ session.setValue(JSON.parse(demo_code))
 // })
 // .catch(err => console.error(err))
 
-function render_result(data) {
+function capitalize(s)
+{
+    return s && s[0].toUpperCase() + s.slice(1);
+}
+
+function render_result(data, status) {
     // const result_type = $(".type")
     // const status = $(".status")
     // const display_result = $(".display_result")
@@ -153,30 +179,37 @@ function render_result(data) {
     result_status.innerHTML = data.status === "AC" ? "Accepted": data.status === "WA" ? "Wrong answer" : "Syntax error"
     test_case_result_list.innerHTML = ""
 
-    data.user_output.forEach((oup, i) => {
-        test_case_result_list.innerHTML += `
-            <li tabindex="0" class="test_case_result_item ${oup.output_status === "AC" ? "accepted" : "err"}">
-                Test ${i+1}
-                <div class="text_case_InOu ${oup.output_status === "AC" ? "accepted" : "err"}">
-                    <div class="text_case_oup_title">output =</div>
-                    <div class="test_case_oup">${data.output[i]}</div>
-                    <hr style="width: 100%; border: 1px solid #007BFF; margin-top: 14px">
-                    <div class="user_oup_title">your output =</div>
-                    <div class="user_oup">${oup.output}</div>
-                </div>
-            </li>
-        `
-    })
-
-    reset_result_item()
-
+    if(status === "SE") {
+        test_case_result_err.style.display = "block"
+        test_case_result_err.innerHTML = data.err
+        test_case_result_list.style.display = "none"
+    } else {
+        test_case_result_err.style.display = "none"
+        test_case_result_list.style.display = "grid"
+        data.user_output.forEach((oup, i) => {
+            test_case_result_list.innerHTML += `
+                <li tabindex="0" class="test_case_result_item ${oup.output_status === "AC" ? "accepted" : "err"}">
+                    Test ${i+1}
+                    <div class="text_case_InOu ${oup.output_status === "AC" ? "accepted" : "err"}">
+                        <div class="text_case_oup_title">output =</div>
+                        <div class="test_case_oup">${data.output[i]}</div>
+                        <hr style="width: 100%; border: 1px solid #007BFF; margin-top: 14px">
+                        <div class="user_oup_title">your output =</div>
+                        <div class="user_oup">${typeof oup.output === 'boolean' ? capitalize(`${oup.output}`) : oup.output}</div>
+                    </div>
+                </li>
+            `
+        })
+        reset_result_item()
+    }
+    changeAnimation(resulttBtn, taskBtn.clientWidth + 5 + "%", resulttBtn.clientWidth + "px", "result", bDAnimationChild)
+    
 }
 
 function reset_result_item() {
     test_case_result_item = $$(".test_case_result_item")
     test_case_result_item.forEach(item => {
         item.onblur = () => {
-            console.log(123)
             item.querySelector(".text_case_InOu").classList.remove("appear")
         }
         
@@ -188,6 +221,50 @@ function reset_result_item() {
     })
 }
 
+function hangle_view_code(code_history) {
+    const submissions_items = $$(".submissions_item")
+    submissions_items.forEach((item,i) => {
+        item.querySelector(".view_code_btn").onclick = () => {
+            submissions_items.forEach(item => {
+                console.log(123)
+                item.classList.remove("choosen")
+            })
+            item.classList.add("choosen")
+            session.setValue(code_history[i])
+        }
+    })
+}
+
+async function render_summissions(isfirstRender = false) {
+    const task_ref = doc(firestore, "task", task_id);
+    const task_doc = await getDoc(task_ref)
+    const task_data = task_doc.data()
+    console.log(task_data)
+    let code_history = []
+
+    if(task_data.challenger.hasOwnProperty(username)) {
+        const user_submissions = task_data.challenger[username].submissions
+        user_submissions.reverse().forEach(submissions => {
+            code_history.push(submissions.code)
+            submissions_list.innerHTML += `
+                <li class="submissions_item">
+                    <div class="submissions_status ${submissions.status === "AC" ? "accepted": "err"}">${submissions.status === "AC" ? "Accepted": submissions.status === "WA" ? "Wrong answer" : "Syntax error"}</div>
+                    <div class="submissions_time">${submissions.submit_time}</div>
+                    <div class="submissions_test_finished">${submissions.test_finished}</div>
+                    <div class="view_code_btn">view code</div>
+                </li>
+            `
+        })
+        hangle_view_code(code_history)
+        if(isfirstRender) {
+            session.setValue(task_data.challenger[username].current_submit.code)
+        }
+    }
+
+}
+
+render_summissions(true)
+
 function toggleMode(mode) {
     all_block.forEach(item => item.style.display = "none")
     console.log(mode)
@@ -196,6 +273,7 @@ function toggleMode(mode) {
             task_block.style.display = "block"
             break
         case "result":
+            console.log("Result")
             result_block.style.display = "block"
             break
         case "submissions":

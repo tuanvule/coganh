@@ -19,7 +19,7 @@
             position: fixed;
             top: 0;
             width: 100%;
-            padding: 16px 20px;
+            padding: 14px 20px;
             background-color: #fff;
             display: flex;
             justify-content: space-between;
@@ -84,7 +84,7 @@
         header {
             font-size: 50px;
             font-weight: bold;
-            margin: 20px 0 40px;
+            margin: 100px 0 40px;
         }
 
         .title {
@@ -380,6 +380,79 @@
         .ok_btn:hover {
             filter: brightness(90%);
         }
+
+        .test_case_config {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #007BFF;
+            border-radius: 2px;
+            padding: 10px;
+        } 
+
+        .config {
+            display: flex;
+            width: 100%;
+            align-items: start;
+            justify-content: space-between;
+        }
+
+        .input_config {
+            display: flex;
+            width: 48%;
+            align-items: center;
+        }
+
+        .title_input_config_list {
+            display: flex;
+            flex-direction: column;
+            width: 48%;
+            align-items: center;
+        }
+
+        .title_input_config_item {
+            width: 100%;
+            padding: 10px 20px;
+            outline-color: #007BFF;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .input_num_title {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .input_num_config {
+            padding: 10px 20px;
+            flex: 1;
+            outline-color: #007BFF;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            font-size: 20px;
+        }
+
+        .create_btn {
+            margin: 20px;
+            width: fit-content;
+            padding: 6px 20px;
+            font-size: 24px;
+            border-radius: 2px;
+            border: 1px solid #007BFF;
+            cursor: pointer;
+            user-select: none;
+            transform: .2s all;
+        }
+
+        .create_btn:hover {
+            color: #fff;
+            background-color: #007BFF;
+        }
+
+
     </style>
 </head>
 <body>
@@ -438,7 +511,7 @@
     <div style="display: none;" class="demo_code_block">
         <div class="demo_code_title">demo code</div>
         <textarea spellCheck="false" class="demo_code">
-def your_title (params1, params2, ...):
+def main (params1, params2, ...):
     """
     params1: <type>
     params2: <type>
@@ -449,13 +522,28 @@ def your_title (params1, params2, ...):
 
     <div style="display: none;" class="test_case_control">
         <div class="test_case_title">Test case</div>
-        <div class="test_case_block">
+        <div class="test_case_config">
+            <div class="config">
+                <div class="input_config">
+                    <input type="number" placeholder="Nhập số input muốn tạo" class="input_num_config" type="text">
+                </div>
+                <div class="title_input_config_list">
+                    <!-- <input type="text" class="title_input_config_item">
+                    <input type="text" class="title_input_config_item">
+                    <input type="text" class="title_input_config_item"> -->
+                </div>
+            </div>
+            <div class="config_btn">
+                <div class="create_btn">Tạo</div>
+            </div>
+        </div>
+        <div style="display: none;" class="test_case_block">
             <div class="test_case_list">
                 <div class="inp_oup_title">
                     <div class="inp_title">input</div>
                     <div class="oup_title">output</div>
                 </div>
-                <div class="test_case_item">
+                <!-- <div class="test_case_item">
                     <div class="input_list">
                         <textarea rows="1" type="text" class="input_item inp"></textarea>
                         <textarea rows="1" type="text" class="input_item inp"></textarea>
@@ -472,7 +560,7 @@ def your_title (params1, params2, ...):
                     </div>
                     <textarea rows="1" type="text" class="oup"></textarea>
                     <input type="checkbox" style="width: 20px; height: 20px;" class="check_box" data-index="1">
-                </div>
+                </div> -->
             </div>
             <div class="controller">
                 <div class="add_test_case_btn">add more</div>
