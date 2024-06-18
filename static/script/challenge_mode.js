@@ -260,8 +260,9 @@ async function render_summissions(isfirstRender = false) {
             session.setValue(task_data.challenger[username].current_submit.code)
         }
     }
-
+    
 }
+console.log(demo_code)
 
 render_summissions(true)
 
