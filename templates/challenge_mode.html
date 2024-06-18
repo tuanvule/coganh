@@ -52,15 +52,15 @@
                 <div class="bot_display-task--title">{{task.task_name}}</div>
                 <ul class="bot_display-task--class_list">
                     <li class="bot_display-task--class_item {{task.tag.difficult}}">{{task.tag.difficult}}</li>
-                    <li class="bot_display-task--class_item">beginner</li>
-                    <li class="bot_display-task--class_item">100</li>
+                    <!-- <li class="bot_display-task--class_item">beginner</li>
+                    <li class="bot_display-task--class_item">100</li> -->
                 </ul>
 
                 <!-- <video class="bot_display-video-item bot_display-video--result" controls>
                     <source src="{{ url_for('static', filename='upload_video/demo.mp4') }}" type="video/mp4">
                     Your browser does not support the video tag.
                     </video> -->
-                <pre class="bot_display-task--rule">
+                <!-- <pre class="bot_display-task--rule"> -->
 <!-- <div class="bot_display-task--board">
     <img class="bot_display-task--image" src="../static/img/chessboard.png" alt="">
 </div>
@@ -74,7 +74,7 @@ output: []
                     <code>
                         {{task.content | safe}}
                     </code>
-                </pre>
+                <!-- </pre> -->
 
                 <div class="bot_display-task--status">
                     <div class="bot_display-task--status_item tallent">accepted <div class="num">{{task.accepted_count}}</div></div>

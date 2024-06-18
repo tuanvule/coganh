@@ -5,7 +5,7 @@
     border: 0;
     list-style: none;
     box-sizing: border-box;
-    word-wrap: break-word;
+    /* word-wrap: break-word; */
 }
 
 h1,
@@ -15,10 +15,12 @@ h4,
 h5,
 h6 {
     font-weight: normal;
+    /* word-wrap: break-word;
+    height: fit-content; */
 }
 
 blockquote {
-    overflow: hidden;
+    /* overflow: hidden; */
     padding-right: 1.5em;
     padding-left: 1.5em;
     margin-left: 0;

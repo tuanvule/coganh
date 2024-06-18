@@ -388,6 +388,10 @@ def run_task():
             exec(code, {}, ldict)
             end = time.time()
             Uoutput = ldict["main"](*i["input"])
+            Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
+
+            # print("Uoutput", json.dumps(Uoutput).replace("(","[").replace(")","]"))
+            # print('i["output"]', i["output"])
 
             if i["output"] == Uoutput:
                 user_output.append({
@@ -438,7 +442,7 @@ def submit():
     res = request.get_json()
     code = res["code"]
     inp_oup = res["inp_oup"]
-    print(inp_oup)
+    # print(inp_oup)
     task = doc_ref_task.document(res["id"])
     org_stdout = sys.stdout
     soAc = 0
@@ -453,13 +457,23 @@ def submit():
             ldict = {}
             exec(code, {}, ldict)
             Uoutput = ldict["main"](*i["input"])
+            Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
+            # print("Uoutput", Uoutput)
+            # print('i["output"]', i["output"])
+            # print(Uoutput is list)
+            if type(Uoutput) is list:
+                # print(set(i["output"]))
+                # print(set(Uoutput))
+                comparision = sorted(i["output"]) == sorted(Uoutput)
+            else:
+                comparision = i["output"] == Uoutput
 
-            if i["output"] == Uoutput:
+            if comparision:
                 user_output.append({
                     "log": f.getvalue(),
                     "output_status" : "AC",
                     "output" : Uoutput,
-                }) 
+                })
                 soAc+=1
             else:
                 user_output.append({

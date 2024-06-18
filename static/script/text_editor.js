@@ -138,7 +138,7 @@ post_btn.onclick = () => {
     //     accepted_count: 0,
     //     challenger: [],
     //     content: text,
-    //     failed: 0,
+    //     submission_count: 0,
     //     inp_oup: getInOupValue(),
     //     tag: {
     //         difficult: difficult_list.value,
@@ -160,8 +160,11 @@ post_btn.onclick = () => {
     try {
         if(editor_url) {
             editor_url.forEach((url) => {
-                if(!url.indexOf("http")) {
-                    default_url.push(dataURLtoBlob(url.replace("src=\"","").replace("\"","").replaceAll("amp;", "")))
+                // console.log(url)
+                // console.log(url.indexOf("http") === -1)
+                if(url.indexOf("http") === -1) {
+                    default_url.push(url.replace("src=\"","").replace("\"","").replaceAll("amp;", ""))
+                    // default_url.push(dataURLtoBlob(url.replace("src=\"","").replace("\"","").replaceAll("amp;", "")))
                     isTDU = true
                 }
             })
@@ -169,6 +172,7 @@ post_btn.onclick = () => {
             if(!isTDU) {
                 url.push(editor_url[0].replace("src=\"","").replace("\"","").replaceAll("amp;", ""))
                 console.log(editor_url[0].replace("src=\"","").replace("\"","").replaceAll("amp;", ""))
+                console.log(text)
                 if(tag_list.value === "post") {
                     const docRef = addDoc(collection(firestore, "post"), {
                         author: username,
@@ -186,7 +190,7 @@ post_btn.onclick = () => {
                         accepted_count: 0,
                         challenger: [],
                         content: text,
-                        failed: 0,
+                        submission_count: 0,
                         inp_oup: getInOupValue(),
                         tag: {
                             difficult: difficult_list.value,
@@ -195,43 +199,43 @@ post_btn.onclick = () => {
                         input_title: input_title,
                     })
                 }
-            }
-    
-            default_url.forEach((item, i) => {
-                uploadImage(item).then(new_url => {
-                    if(i === editor_url.length - 1) {
-                        url.forEach((u,j) => {
-                            text = text.replace(editor_url[j], ` src="${u}"`)
-                        })
-                        if(tag_list.value === "post") {
-                            const docRef = addDoc(collection(firestore, "post"), {
-                                author: username,
-                                content: text,
-                                image_url: url,
-                                title: title_input.value,
-                                description: description_input.value,
-                                post_id: `${new Date().getTime()}`,
-                                upload_time: `${new Date().getTime()}`
-                            })
-                        } else if(tag_list.value === "task") {
-                            console.log(getInOupValue())
-                            const docRef = addDoc(collection(firestore, "task"), {
-                                task_name: title_input.value,
-                                accepted_count: 0,
-                                challenger: [],
-                                content: text,
-                                failed: 0,
-                                inp_oup: getInOupValue(),
-                                tag: {
-                                    difficult: difficult_list.value,
-                                },
-                                demo_code: JSON.stringify(demo_code),
-                                input_title: input_title,
-                            })
+            } else {
+                default_url.forEach((item, i) => {
+                    uploadImage(dataURLtoBlob(item)).then(new_url => {
+                        text = text.replace(item, new_url)
+                        if(i === editor_url.length - 1) {
+                            if(tag_list.value === "post") {
+                                const docRef = addDoc(collection(firestore, "post"), {
+                                    author: username,
+                                    content: text,
+                                    image_url: url,
+                                    title: title_input.value,
+                                    description: description_input.value,
+                                    post_id: `${new Date().getTime()}`,
+                                    upload_time: `${new Date().getTime()}`
+                                })
+                            } else if(tag_list.value === "task") {
+                                console.log(getInOupValue())
+                                const docRef = addDoc(collection(firestore, "task"), {
+                                    task_name: title_input.value,
+                                    accepted_count: 0,
+                                    challenger: [],
+                                    content: text,
+                                    submission_count: 0,
+                                    inp_oup: getInOupValue(),
+                                    tag: {
+                                        difficult: difficult_list.value,
+                                    },
+                                    demo_code: JSON.stringify(demo_code),
+                                    input_title: input_title,
+                                })
+                            }
                         }
-                    }
+                    })
+                    console.log(text)
+
                 })
-            })
+            }
         } else {
             if(tag_list.value === "post") {
                 const docRef = addDoc(collection(firestore, "post"), {
@@ -250,7 +254,7 @@ post_btn.onclick = () => {
                     accepted_count: 0,
                     challenger: [],
                     content: text,
-                    failed: 0,
+                    submission_count: 0,
                     inp_oup: getInOupValue(),
                     tag: {
                         difficult: difficult_list.value,

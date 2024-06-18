@@ -101,9 +101,9 @@ runBtn.onclick = () => {
                 <div class="output_block">
                     <hr style="width: 100%; margin: 10px 0;">
                     <div class="oup_title">output</div>
-                    <div contenteditable="" name="" id="" class="oup">${data.output[i]}</div>
+                    <div contenteditable="" name="" id="" class="oup">${JSON.stringify(data.output[i])}</div>
                     <div class="user_oup_title">your_output</div>
-                    <div contenteditable="" name="" id="" class="your_oup ${data.user_output[i].output_status === "AC" ? "accepted" : "err"}">${data.user_output[i].output}</div>
+                    <div contenteditable="" name="" id="" class="your_oup ${data.user_output[i].output_status === "AC" ? "accepted" : "err"}">${JSON.stringify(data.user_output[i].output)}</div>
                 </div>
             `
         })
@@ -192,10 +192,10 @@ function render_result(data, status) {
                     Test ${i+1}
                     <div class="text_case_InOu ${oup.output_status === "AC" ? "accepted" : "err"}">
                         <div class="text_case_oup_title">output =</div>
-                        <div class="test_case_oup">${data.output[i]}</div>
+                        <div class="test_case_oup">${JSON.stringify(data.output[i])}</div>
                         <hr style="width: 100%; border: 1px solid #007BFF; margin-top: 14px">
                         <div class="user_oup_title">your output =</div>
-                        <div class="user_oup">${typeof oup.output === 'boolean' ? capitalize(`${oup.output}`) : oup.output}</div>
+                        <div class="user_oup">${typeof oup.output === 'boolean' ? capitalize(`${oup.output}`) : JSON.stringify(oup.output)}</div>
                     </div>
                 </li>
             `
