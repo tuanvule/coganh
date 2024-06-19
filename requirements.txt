@@ -26,3 +26,4 @@ moviepy==1.0.3
 gunicorn==21.2.0
 firebase-admin==6.5.0
 python-socketio==5.11.2
+python-dotenv==1.0.1
