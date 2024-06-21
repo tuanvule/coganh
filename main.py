@@ -18,11 +18,11 @@ import socketio
 import trainAI.MasterUser
 import requests
 from importlib import reload
-from io import StringIO
-import traceback
-import datetime
-import sys
-import time
+# from io import StringIO
+# import traceback
+# import datetime
+# import sys
+# import time
 
 doc_ref_room = fdb.collection("room")
 doc_ref_post = fdb.collection("post")
@@ -366,142 +366,25 @@ def simulation():
     return render_template('simulation.html', user = current_user, tasks = tasks)
 
 @app.route('/run_task', methods=["POST"])
-@login_required
+# @login_required
 def run_task():
     res = request.get_json()
-    code = res["code"]
-    inp_oup = res["inp_oup"]
-    org_stdout = sys.stdout
-    err = ""
-
-    user_output = []
-    for i in inp_oup:
-        f = StringIO()
-        sys.stdout = f
-        try:
-            ldict = {}
-            start = time.time()
-            exec(code, {}, ldict)
-            end = time.time()
-            Uoutput = ldict["main"](*i["input"])
-            Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
-            if type(Uoutput) is list:
-                comparision = sorted(i["output"]) == sorted(Uoutput)
-            else:
-                comparision = i["output"] == Uoutput
-            if comparision:
-                user_output.append({
-                    # "log": f.getvalue(),
-                    "output_status" : "AC",
-                    "output" : Uoutput,
-                    "runtime" : (end-start) * 10**3
-                })
-            else:
-                user_output.append({
-                    # "log": f.getvalue(),
-                    "output_status" : "WA",
-                    "output" : Uoutput
-                })
-        except:
-            err = traceback.format_exc()
-            user_output.append({
-                # "log": f.getvalue(),
-                "output_status" : "SE",
-            })
-    sys.stdout = org_stdout
-
-    if any(i["output_status"]=="SE" for i in user_output):
-        status = "SE"
-    elif any(i["output_status"]=="WA" for i in user_output):
-        status = "WA"
-    else:
-        status = "AC"
-
-    if err:
-        return_data = {
-            "status": "SE",
-            "output": [i["output"] for i in inp_oup],
-            "err": err,
-        }
-    else:
-        return_data = {
-            "status": status,
-            "output": [i["output"] for i in inp_oup],
-            "user_output": user_output,
-        }
-
+    return_data = requests.post("https://upload-vd-kv3a.vercel.app/run_compile", json=res).text
+    print(return_data)
     return return_data
 
 @app.route('/submit', methods=['POST'])
 @login_required
 def submit():
     res = request.get_json()
-    code = res["code"]
-    inp_oup = res["inp_oup"]
-    # print(inp_oup)
+    compile_data = json.loads(requests.post("https://upload-vd-kv3a.vercel.app/submit_compile", json=res).text)
+    print(type(compile_data))
     task = doc_ref_task.document(res["id"])
-    org_stdout = sys.stdout
-    soAc = 0
-    err = ""
 
-    user_output = []
-    start = time.time()
-    for i in inp_oup:
-        f = StringIO()
-        sys.stdout = f
-        try:
-            ldict = {}
-            exec(code, {}, ldict)
-            Uoutput = ldict["main"](*i["input"])
-            Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
-            if type(Uoutput) is list:
-                comparision = sorted(i["output"]) == sorted(Uoutput)
-            else:
-                comparision = i["output"] == Uoutput
+    update_data = compile_data["update_data"]
+    return_data = compile_data["return_data"]
 
-            if comparision:
-                user_output.append({
-                    # "log": f.getvalue(),
-                    "output_status" : "AC",
-                    "output" : Uoutput,
-                })
-                soAc+=1
-            else:
-                user_output.append({
-                    # "log": f.getvalue(),
-                    "output_status" : "WA",
-                    "output" : Uoutput
-                })
-        except:
-            err = traceback.format_exc()
-            user_output.append({
-                # "log": f.getvalue(),
-                "output_status" : "SE",
-            })
-    end = time.time()
-    sys.stdout = org_stdout
-
-    if any(i["output_status"]=="SE" for i in user_output):
-        status = "SE"
-    elif any(i["output_status"]=="WA" for i in user_output):
-        status = "WA"
-    else:
-        status = "AC"
-
-    now = datetime.datetime.now()
-
-    # Cách 2: Định dạng thành chuỗi
-    date_string = now.strftime("%d/%m/%Y")
-
-    update_data = {
-        "code": code,
-        "status": status,
-        "test_finished": f"{soAc}/{len(user_output)}",
-        "submit_time": date_string,
-        "run_time": (end-start) * 10**3,
-    }
-
-    if status == "AC":
+    if return_data["status"] == "AC":
         task.update({
             f"challenger.{current_user.username}.submissions": firestore.ArrayUnion([update_data]),
             f"challenger.{current_user.username}.current_submit": update_data,
@@ -514,21 +397,6 @@ def submit():
             f"challenger.{current_user.username}.current_submit": update_data,
             "submission_count": firestore.Increment(1),
         })
-
-    if err:
-        return_data = {
-            "status": "SE",
-            "output": [i["output"] for i in inp_oup],
-            "err": err,
-        }
-    else:
-        return_data = {
-            "status": status,
-            "output": [i["output"] for i in inp_oup],
-            "user_output": user_output,
-            "test_finished": f"{soAc}/{len(user_output)}",
-            "run_time": (end-start) * 10**3,
-        }
 
     return return_data
 
