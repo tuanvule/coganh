@@ -258,11 +258,12 @@ def save_code():
         f.write(code)
     return json.dumps("succeed")
 
-# @app.route('/create_bot')
-# @login_required
-# @session_required
-# def create_bot():
-#     return render_template('create_bot.html', user = current_user)
+@app.route('/create_bot')
+@login_required
+@session_required
+def create_bot():
+    # return render_template('create_bot.html', user = current_user)
+    return ""
     
 @app.route('/challenge_mode/<id>')
 @login_required
