@@ -63,7 +63,7 @@ let options = {
     hour: 'numeric',
     minute: 'numeric',
     second: 'numeric',
-}
+  }
 
 var editor = ace.edit("coding_module-coding_block");
 
@@ -80,7 +80,7 @@ runBtn.onclick = () => {
         item.querySelector(".test_case_nav_title").classList.toggle("appear")
     })
 
-    formatter = new Intl.DateTimeFormat([], options);
+    let formatter = new Intl.DateTimeFormat([], options);
     
     // console.log();
 
@@ -133,7 +133,7 @@ submitBtn.onclick = () => {
 
 
 function submitCode(code) {
-    formatter = new Intl.DateTimeFormat([], options);
+    let formatter = new Intl.DateTimeFormat([], options);
     fetch("/submit", {
         method: "POST",
         headers: {
