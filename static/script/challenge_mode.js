@@ -55,6 +55,15 @@ const animationChild = $(".utility_nav-block .animation .children")
 const bDAnimation = $(".bot_display_nav-block .animation")
 const bDAnimationChild = $(".bot_display_nav-block .animation .children")
 const botDisplayBlock = $$(".bot_display-video-item")
+let options = {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+}
 
 var editor = ace.edit("coding_module-coding_block");
 
@@ -71,16 +80,7 @@ runBtn.onclick = () => {
         item.querySelector(".test_case_nav_title").classList.toggle("appear")
     })
 
-    let options = {
-        timeZone: 'Asia/Ho_Chi_Minh',
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-      },
-      formatter = new Intl.DateTimeFormat([], options);
+    formatter = new Intl.DateTimeFormat([], options);
     
     // console.log();
 
@@ -133,6 +133,7 @@ submitBtn.onclick = () => {
 
 
 function submitCode(code) {
+    formatter = new Intl.DateTimeFormat([], options);
     fetch("/submit", {
         method: "POST",
         headers: {
