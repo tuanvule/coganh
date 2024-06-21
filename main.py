@@ -1,6 +1,7 @@
 from flask import Flask, flash, request, redirect, url_for, render_template, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from functools import wraps
 from flask_wtf import FlaskForm 
 from wtforms import SubmitField, PasswordField, StringField
 from wtforms.validators import Length, ValidationError, EqualTo, DataRequired
@@ -97,6 +98,22 @@ class RegisterForm(FlaskForm):
             raise ValidationError('Tên đăng nhập đã được sử dụng')
 
 
+def checkSession():
+    if 'secret_key' in session:
+        user = User.query.where(User.username == session['username']).first()
+        login_user(user)
+    else:
+        if current_user:
+            logout_user()
+        return redirect(url_for('login'))
+    
+def session_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        checkSession()
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.template_filter('parse_json')
 def parse_json(json_string):
     return json.loads(json_string)
@@ -171,16 +188,9 @@ def logout():
 
 @app.route('/menu')
 @login_required
+@session_required
 def menu():
-    if 'secret_key' in session:
-        # print(session['secret_key'])
-        user = User.query.where(User.username == session['username']).first()
-        login_user(user)
-        return render_template('menu.html', current_user=current_user)
-    else:
-        if current_user:
-            logout_user()
-        return redirect(url_for('login'))
+    return render_template('menu.html', current_user=current_user)
         
 
 @app.route('/upload_code', methods=['POST'])
@@ -248,32 +258,19 @@ def save_code():
         f.write(code)
     return json.dumps("succeed")
 
-@app.route('/create_bot')
-@login_required
-def create_bot():
-    if 'secret_key' in session:
-        user = User.query.where(User.username == session['username']).first()
-        login_user(user)
-        return render_template('create_bot.html', user = current_user)
-    else:
-        if current_user:
-            logout_user()
-        return redirect(url_for('login'))
+# @app.route('/create_bot')
+# @login_required
+# @session_required
+# def create_bot():
+#     return render_template('create_bot.html', user = current_user)
     
 @app.route('/challenge_mode/<id>')
 @login_required
+@session_required
 def challenge_mode(id):
-    if 'secret_key' in session:
-        user = User.query.where(User.username == session['username']).first()
-        login_user(user)
-        
-        task = doc_ref_task.document(id).get().to_dict()
+    task = doc_ref_task.document(id).get().to_dict()
 
-        return render_template('challenge_mode.html', user=current_user, task = task, id = id)
-    else:
-        if current_user:
-            logout_user()
-        return redirect(url_for('login'))
+    return render_template('challenge_mode.html', user=current_user, task = task, id = id)
         
 @app.route('/get_code')
 @login_required
@@ -290,43 +287,34 @@ def get_users():
 
 @app.route('/bot_bot')
 @login_required
+@session_required
 def bot_bot():
-    if 'secret_key' in session:
-        user = User.query.where(User.username == session['username']).first()
-        login_user(user)
-        users = [(i.username, i.elo) for i in User.query.filter(User.username != current_user.username, User.fightable == True).order_by(User.elo.desc()).limit(10).all()]
-        rank_board = [(i.username, i.elo) for i in User.query.filter(User.fightable == True).order_by(User.elo.desc()).limit(5).all()]
-        return render_template('bot_bot.html', users = users, rank_board = rank_board)
-    else:
-        if current_user:
-            logout_user()
-        return redirect(url_for('login'))
+    users = [(i.username, i.elo) for i in User.query.filter(User.username != current_user.username, User.fightable == True).order_by(User.elo.desc()).limit(10).all()]
+    rank_board = [(i.username, i.elo) for i in User.query.filter(User.fightable == True).order_by(User.elo.desc()).limit(5).all()]
+    return render_template('bot_bot.html', users = users, rank_board = rank_board)
 
 @app.route('/human_bot')
 @login_required
+@session_required
 def human_bot():
-    if 'secret_key' in session:
-        user = User.query.where(User.username == session['username']).first()
-        login_user(user)
-        return render_template('human_bot.html', user = current_user)
-    else:
-        if current_user:
-            logout_user()
-        return redirect(url_for('login'))
+    return render_template('human_bot.html', user = current_user)
 
 
 @app.route('/human_human')
 @login_required
+@session_required
 def human_human():
     return render_template('human_human.html', user = current_user)
 
 @app.route('/room_manager')
 @login_required
+@session_required
 def room_manager():
     return render_template('room_manager.html', user = current_user)
 
 @app.route('/text_editor')
 @login_required
+@session_required
 def text_editor():
     if 'secret_key' in session:
         user = User.query.where(User.username == session['username']).first()
@@ -338,36 +326,43 @@ def text_editor():
         return redirect(url_for('login'))
 
 @app.route('/post/<post_id>')
-@login_required
+# @login_required
 def post(post_id):
-    print(post_id)
     data = ""
     docs = doc_ref_post.where("post_id", "==", post_id).stream()
     for doc in docs:
         data = doc.to_dict()
-        print(data)
     return render_template('post.html', user = current_user, data = data)
 
 @app.route('/task_list')
 @login_required
+@session_required
 def task_list():
-    if 'secret_key' in session:
-        user = User.query.where(User.username == session['username']).first()
-        login_user(user)
-        res = doc_ref_task.stream()
-        
-        tasks = []
+    res = doc_ref_task.stream()
+    
+    tasks = []
 
-        for doc in res:
-            task = doc.to_dict()
-            task["id"] = doc.id
-            tasks.append(task)
+    for doc in res:
+        task = doc.to_dict()
+        task["id"] = doc.id
+        tasks.append(task)
 
-        return render_template('task_list.html', user = current_user, tasks = tasks)
-    else:
-        if current_user:
-            logout_user()
-        return redirect(url_for('login'))
+    return render_template('task_list.html', user = current_user, tasks = tasks)
+    
+@app.route('/simulation')
+@login_required
+@session_required
+def simulation():
+    res = doc_ref_task.stream()
+    
+    tasks = []
+
+    for doc in res:
+        task = doc.to_dict()
+        task["id"] = doc.id
+        tasks.append(task)
+
+    return render_template('simulation.html', user = current_user, tasks = tasks)
 
 @app.route('/run_task', methods=["POST"])
 @login_required
@@ -395,21 +390,21 @@ def run_task():
                 comparision = i["output"] == Uoutput
             if comparision:
                 user_output.append({
-                    "log": f.getvalue(),
+                    # "log": f.getvalue(),
                     "output_status" : "AC",
                     "output" : Uoutput,
                     "runtime" : (end-start) * 10**3
                 })
             else:
                 user_output.append({
-                    "log": f.getvalue(),
+                    # "log": f.getvalue(),
                     "output_status" : "WA",
                     "output" : Uoutput
                 })
         except:
             err = traceback.format_exc()
             user_output.append({
-                "log": f.getvalue(),
+                # "log": f.getvalue(),
                 "output_status" : "SE",
             })
     sys.stdout = org_stdout
@@ -465,21 +460,21 @@ def submit():
 
             if comparision:
                 user_output.append({
-                    "log": f.getvalue(),
+                    # "log": f.getvalue(),
                     "output_status" : "AC",
                     "output" : Uoutput,
                 })
                 soAc+=1
             else:
                 user_output.append({
-                    "log": f.getvalue(),
+                    # "log": f.getvalue(),
                     "output_status" : "WA",
                     "output" : Uoutput
                 })
         except:
             err = traceback.format_exc()
             user_output.append({
-                "log": f.getvalue(),
+                # "log": f.getvalue(),
                 "output_status" : "SE",
             })
     end = time.time()
@@ -542,7 +537,7 @@ def submit():
 
 
 @app.route('/post_page')
-@login_required
+# @login_required
 def post_page():
     posts = []
     docs = doc_ref_post.stream()

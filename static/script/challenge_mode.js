@@ -83,7 +83,6 @@ runBtn.onclick = () => {
     })
     .then(res => res.json())
     .then(data => {
-        console.log(data)
         $$(".output_block").forEach(item => item.remove())
         if(data.status === "SE") {
             render_result(data, data.status)
@@ -133,7 +132,6 @@ function submitCode(code) {
     })
     .then(res => res.json())
     .then(data => {
-        console.log(data)
         render_result(data, data.status)
     })
     .catch(err => console.log(err))
@@ -214,7 +212,6 @@ function reset_result_item() {
         }
         
         item.onclick = () => {
-            console.log("Asd")
             text_case_InOu.forEach(i => i.classList.remove("appear"))
             item.querySelector(".text_case_InOu").classList.add("appear")
         }
@@ -226,7 +223,6 @@ function hangle_view_code(code_history) {
     submissions_items.forEach((item,i) => {
         item.querySelector(".view_code_btn").onclick = () => {
             submissions_items.forEach(item => {
-                console.log(123)
                 item.classList.remove("choosen")
             })
             item.classList.add("choosen")
@@ -239,7 +235,7 @@ async function render_summissions(isfirstRender = false) {
     const task_ref = doc(firestore, "task", task_id);
     const task_doc = await getDoc(task_ref)
     const task_data = task_doc.data()
-    console.log(task_data)
+    // console.log(task_data)
     let code_history = []
 
     if(task_data.challenger.hasOwnProperty(username)) {
@@ -262,13 +258,13 @@ async function render_summissions(isfirstRender = false) {
     }
     
 }
-console.log(demo_code)
+// console.log(demo_code)
 
 render_summissions(true)
 
 function toggleMode(mode) {
     all_block.forEach(item => item.style.display = "none")
-    console.log(mode)
+    // console.log(mode)
     switch (mode) {
         case "task":
             task_block.style.display = "block"
@@ -304,7 +300,6 @@ function scrollToView(element) {
 }
 
 taskBtn.onclick = (e) => {
-    // console.log("Asdadss")
     changeAnimation(taskBtn, `${100 - (e.target.clientWidth / bDAnimation.clientWidth * 100)}%`, e.target.clientWidth + "px", "task", bDAnimationChild)
 }
 
@@ -318,7 +313,6 @@ submissionsBtn.onclick = (e) => {
 
 inp.forEach(item => {
     item.oninput = () => {
-        console.log("adss")
         item.style.height = "5px";
         item.style.height = (item.scrollHeight) + "px";
     }

@@ -4,12 +4,6 @@ from firebase_admin import firestore
 from dotenv import load_dotenv
 import os
 
-# # Use the application default credentials.
-# cred = credentials.ApplicationDefault()
-
-# firebase_admin.initialize_app(cred)
-# db = firestore.client()
-
 load_dotenv()
 
 cred = credentials.Certificate({
@@ -29,5 +23,3 @@ cred = credentials.Certificate({
 firebase_admin.initialize_app(cred)
 
 fdb = firestore.client()
-
-# print(db)

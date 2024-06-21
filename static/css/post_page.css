@@ -97,7 +97,7 @@ nav {
 }
 
 .container {    
-    margin-top: 64px;
+    margin-top: 50px;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -106,12 +106,18 @@ nav {
 }
 
 .code_guide {
-    margin-bottom: 60px;
+    /* margin-bottom: 60px; */
 }
 
 .code_guide_title,
 .posts_title {
     font-size: 40px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.cod_guide_description {
+    font-size: 18px;
 }
 
 .code_guide_list,
