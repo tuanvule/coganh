@@ -27,6 +27,7 @@ from importlib import reload
 doc_ref_room = fdb.collection("room")
 doc_ref_post = fdb.collection("post")
 doc_ref_task = fdb.collection("task")
+doc_ref_code = fdb.collection("code")
 
 # doc = doc_ref.get()
 
@@ -369,9 +370,9 @@ def simulation():
 # @login_required
 def run_task():
     res = request.get_json()
-    return_data = requests.post("https://upload-vd-kv3a.vercel.app/run_compile", json=res).text
-    print(return_data)
-    return return_data
+    dd = json.loads( requests.post("https://upload-vd-kv3a.vercel.app/run_compile", json=res).text)
+    doc_ref_code.document().set(dd["code"])
+    return dd["return_data"]
 
 @app.route('/submit', methods=['POST'])
 @login_required
@@ -400,11 +401,6 @@ def submit():
 
     return return_data
 
-# @app.route('/get_task')
-# @login_required
-# def get_task():
-
-
 @app.route('/post_page')
 # @login_required
 def post_page():
@@ -424,7 +420,6 @@ def get_pos_of_playing_chess():
     player.opp_pos = [tuple(i) for i in player.opp_pos]
     player.your_pos, player.opp_pos = player.opp_pos, player.your_pos
     move = __import__(f"trainAI.{choosen_bot}", fromlist=[None]).main(player)
-    # move = trainAI.Master.main(player)
     move['selected_pos'] = tuple(reversed(list(move['selected_pos'])))
     move['new_pos'] = tuple(reversed(list(move['new_pos'])))
     return move
@@ -563,7 +558,7 @@ def out_room():
 # def get_move(data, room, environ):
 #     sio.emit(f'get_move_{room}', environ)
 
-# if __name__ == '__main__':
-#     open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
-#     Timer(1, open_browser).start()
-#     app.run(port=5000, debug=True, use_reloader=False)
+if __name__ == '__main__':
+    open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
+    Timer(1, open_browser).start()
+    app.run(port=5000, debug=True, use_reloader=False)
