@@ -20,7 +20,7 @@ import requests
 from importlib import reload
 # from io import StringIO
 # import traceback
-# import datetime
+import datetime
 # import sys
 # import time
 
@@ -371,7 +371,15 @@ def simulation():
 def run_task():
     res = request.get_json()
     dd = json.loads( requests.post("https://upload-vd-kv3a.vercel.app/run_compile", json=res).text)
-    doc_ref_code.document().set(dd["code"])
+    print(dd)
+    # now = datetime.datetime.now()
+
+    # date_string = now.strftime("%d/%m/%Y")
+    code = {
+        "time": res["time"],
+        "code": dd["code"]
+    }
+    doc_ref_code.add(code)
     return dd["return_data"]
 
 @app.route('/submit', methods=['POST'])

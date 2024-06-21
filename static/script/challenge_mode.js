@@ -71,6 +71,19 @@ runBtn.onclick = () => {
         item.querySelector(".test_case_nav_title").classList.toggle("appear")
     })
 
+    let options = {
+        timeZone: 'Asia/Ho_Chi_Minh',
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+      },
+      formatter = new Intl.DateTimeFormat([], options);
+    
+    // console.log();
+
     fetch("/run_task", {
         method: "POST",
         headers: {
@@ -79,6 +92,7 @@ runBtn.onclick = () => {
         body: JSON.stringify({
             code: code,
             inp_oup: JSON.parse(task_inp_oup).slice(0, 2),
+            time: formatter.format(new Date()),
         }),
     })
     .then(res => res.json())
@@ -127,7 +141,8 @@ function submitCode(code) {
         body: JSON.stringify({
             code: code,
             inp_oup: JSON.parse(task_inp_oup),
-            id: task_id
+            id: task_id,
+            time: formatter.format(new Date()),
         }),
     })
     .then(res => res.json())
