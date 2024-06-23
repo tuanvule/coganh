@@ -5,11 +5,222 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <link rel="stylesheet" href="../static/css/animation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../static/css/simulation.css">
 </head>
 <body>
-    <img class="board_img" src="../static/img/chessboard.png" alt="" hidden>
-    <canvas width="400" height="400"></canvas>
+    <nav>
+        <div class="left_block">
+            <div class="logo">Co ganh</div>
+            <a href="{{ url_for('menu') }}" class="back_btn">quay lại</a>
+        </div>
+
+        <div class="right_block">
+            <!-- <a href="{{ url_for('text_editor') }}" class="create_post">Tạo task</a> -->
+            <div class="user_avatar">{{user.username[0].upper()}}</div>
+            <!-- <div class="login_btn">Đăng nhập</div> -->
+        </div>
+    </nav>
+    <img class="board_img" src="../static/img/chessboard_simulation.png" alt="" hidden>
+
+    <div class="container">
+        <div class="show_simulation">
+            <div class="display_block">
+                <canvas width="400" height="400"></canvas>
+                <div class="grid_layer">
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (0,0)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (0,1)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (0,2)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (0,3)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (0,4)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (1,0)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (1,1)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (1,2)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (1,3)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (1,4)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (2,0)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (2,1)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (2,2)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (2,3)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (2,4)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (3,0)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (3,1)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (3,2)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (3,3)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (3,4)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (4,0)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (4,1)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (4,2)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (4,3)
+                        </div>
+                    </div>
+                    <div class="grid_item">
+                        <div class="show_info">
+                            (4,4)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="checkbox" name="" id="checkbox" style="position: fixed;" hidden>
+            <div class="warper">
+                <label for="checkbox" class="O_C_btn">
+                    <i class="fa-solid fa-chevron-left O_C_btn_O"></i>
+                    <i class="fa-solid fa-chevron-right O_C_btn_C"></i>
+                </label>
+                <div class="setting_block">
+                    <div class="board_title">board</div>
+                    <pre class="board" contenteditable="">
+[-1,-1,-1,-1,-1]
+[-1, 0, 0, 0,-1]
+[ 1, 0, 0, 0,-1]
+[ 1, 0, 0, 0, 1]
+[ 1, 1, 1, 1, 1]</pre>
+                    <div class="random_board_btn">
+                        <i class="fa-solid fa-dice"></i>
+                    </div>
+                    <div class="choose_your_pos_title">Chọn quân</div>
+                    <div class="your_pos_list">
+                        <div class="your_pos_item selected">(0,2)</div>
+                        <div class="your_pos_item" data-x="0" data-y="3">(0,3)</div>
+                        <div class="your_pos_item" data-x="0" data-y="4">(0,4)</div>
+                        <div class="your_pos_item" data-x="1" data-y="4">(1,4)</div>
+                        <div class="your_pos_item" data-x="2" data-y="4">(2,4)</div>
+                        <div class="your_pos_item" data-x="3" data-y="4">(3,4)</div>
+                        <div class="your_pos_item" data-x="4" data-y="4">(4,4)</div>
+                        <div class="your_pos_item" data-x="4" data-y="3">(4,3)</div>
+                    </div>
+                    <div class="random_your_pos_btn">
+                        <i class="fa-solid fa-dice"></i>
+                    </div>
+                    <div class="run_btn">Run</div>
+                </div>
+            </div>
+        </div>
+        <div class="action_block">
+            <div class="code_list">
+                <pre class="code_row code_1"><code>def main(board, your_pos, opp_pos):</code></pre>
+                <pre class="code_row code_2"><code>   return_m = []</code></pre>
+                <pre class="code_row code_3"><code>   for pos in your_pos:</code></pre>
+                <pre class="code_row code_4"><code>       if sum(pos)%2==0:</code></pre>
+                <pre class="code_row code_5"><code>           move_list = ((-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1))</code></pre>
+                <pre class="code_row code_6"><code>       else:</code></pre>
+                <pre class="code_row code_7"><code>           move_list = ((0,-1), (-1,0), (0,1), (1,0))</code></pre>
+                <pre class="code_row code_8"><code>       for move in move_list:</code></pre>
+                <pre class="code_row code_9"><code>           new_move = new_valid_x, new_valid_y = pos[0] + move[0], pos[1] + move[1]</code></pre>
+                <pre class="code_row code_10"><code>           if (0<=new_valid_x<=4 and 0<=new_valid_y<=4 </code></pre>
+                <pre class="code_row code_11"><code>               and board[new_valid_y][new_valid_x] == 0 </code></pre>
+                <pre class="code_row code_12"><code>               and new_move not in return_m</code></pre>
+                <pre class="code_row code_13"><code>               ):</code></pre>
+                <pre class="code_row code_14"><code>               return_m.append(new_move)</code></pre>
+                <pre class="code_row code_15"><code>   return return_m</code></pre>
+            </code>
+        </div>
+        <div class="return_value">
+            <div class="return_value_title">valid move</div>
+            <div class="return_value_ouput">[[1,2],[3,2],[2,4]]</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script> 
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
+    <script>hljs.highlightAll()</script>
     <script type="module" src="../static/script/simulation_model.js"></script>
     <script type="module" src="../static/script/simulation.js"></script>
 </body>

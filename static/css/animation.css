@@ -67,3 +67,25 @@
         transform: translateY(0px) scale(1);
     }
 }
+
+@keyframes appear {
+    0% {
+        scale: .2;
+    }
+    100% {
+        scale: 1;
+    }
+}
+
+@keyframes horizontal-shaking {
+    0% { transform: translateX(0) }
+    25% { transform: translateX(2px) }
+    50% { transform: translateX(-2px) }
+    75% { transform: translateX(2px) }
+    100% { transform: translateX(0) }
+}
+
+.horizontal-shaking {
+    transform: translateX(10px);
+    animation: horizontal-shaking .1s linear;
+}
