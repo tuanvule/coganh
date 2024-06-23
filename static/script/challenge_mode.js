@@ -102,6 +102,7 @@ runBtn.onclick = () => {
             render_result(data, data.status)
             return
         }
+        console.log(data)
         data.user_output.forEach((oup, i) => {
             if(oup.output_status === "AC") {
                 test_case_nav_item[i].className = "test_case_nav_item accepted"

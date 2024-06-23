@@ -18,11 +18,14 @@ import socketio
 import trainAI.MasterUser
 import requests
 from importlib import reload
-# from io import StringIO
-# import traceback
-import datetime
-# import sys
-# import time
+from tool import valid_move, distance
+from io import StringIO
+import traceback
+import sys
+import time
+import threading
+from timeout_decorator import timeout
+import builtins
 
 doc_ref_room = fdb.collection("room")
 doc_ref_post = fdb.collection("post")
@@ -98,6 +101,30 @@ class RegisterForm(FlaskForm):
         if User.query.filter_by(username=username_to_check.data).first(): #_existing_user_username
             raise ValidationError('Tên đăng nhập đã được sử dụng')
 
+@timeout(1)
+def safe_exec(code, input):
+    def wrapper():
+        global result
+
+        locals = {}
+        exec(code, {"valid_move": valid_move, "distance": distance}, locals)
+        func_to_del = ['eval', 'exec', 'input', '__import__', 'open']
+        backup_builtins = {func:__builtins__.__dict__[func] for func in func_to_del}
+
+        for func in func_to_del:
+            del __builtins__.__dict__[func]
+
+        result = locals["main"](*input)
+
+        for func, impl in backup_builtins.items():
+            __builtins__.__dict__[func] = impl
+
+    thread = threading.Thread(target=wrapper)
+    thread.start()
+    thread.join(5) # time_limit
+
+    if thread.is_alive(): raise Exception("RE")
+    return result
 
 def checkSession():
     if 'secret_key' in session:
@@ -370,24 +397,152 @@ def simulation():
 # @login_required
 def run_task():
     res = request.get_json()
-    dd = json.loads( requests.post("https://upload-vd-kv3a.vercel.app/run_compile", json=res).text)
-    print(dd)
-    # now = datetime.datetime.now()
-    # date_string = now.strftime("%d/%m/%Y")
-    code = {
-        "time": res["time"],
-        "code": dd["code"]
-    }
-    doc_ref_code.add(code)
-    return dd["return_data"]
+    inp_oup = res["inp_oup"]
+    code = res["code"]
+    org_stdout = sys.stdout
+    err = ""
+
+    user_output = []
+    for i in inp_oup:
+        f = StringIO()
+        sys.stdout = f
+        try:
+            start = time.time()
+            Uoutput = safe_exec(code, i["input"])
+            end = time.time()
+            Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
+            if type(Uoutput) is list:
+                comparision = sorted(i["output"]) == sorted(Uoutput)
+            else:
+                comparision = i["output"] == Uoutput
+            if comparision:
+                user_output.append({
+                    "log": f.getvalue(),
+                    "output_status" : "AC",
+                    "output" : Uoutput,
+                    "runtime" : (end-start) * 10**3
+                })
+            else:
+                user_output.append({
+                    "log": f.getvalue(),
+                    "output_status" : "WA",
+                    "output" : Uoutput
+                })
+        except:
+            err = traceback.format_exc()
+            user_output.append({
+                "log": f.getvalue(),
+                "output_status" : "SE",
+            })
+    sys.stdout = org_stdout
+
+    if any(i["output_status"]=="SE" for i in user_output):
+        status = "SE"
+    elif any(i["output_status"]=="WA" for i in user_output):
+        status = "WA"
+    else:
+        status = "AC"
+
+    if err:
+        return_data = {
+            "status": "SE",
+            "output": [i["output"] for i in inp_oup],
+            "err": err,
+        }
+    else:
+        return_data = {
+            "status": status,
+            "output": [i["output"] for i in inp_oup],
+            "user_output": user_output,
+        }
+
+    # print(return_data)
+
+    return return_data
 
 @app.route('/submit', methods=['POST'])
 @login_required
 def submit():
     res = request.get_json()
-    compile_data = json.loads(requests.post("https://upload-vd-kv3a.vercel.app/submit_compile", json=res).text)
-    print(type(compile_data))
     task = doc_ref_task.document(res["id"])
+    code = res["code"]
+    inp_oup = res["inp_oup"]
+    org_stdout = sys.stdout
+    soAc = 0
+    err = ""
+    compile_data = {
+        "update_data": {
+
+        },
+
+        "return_data": {
+
+        }
+    }
+    user_output = []
+    start = time.time()
+    for i in inp_oup:
+        f = StringIO()
+        sys.stdout = f
+        try:
+            Uoutput = safe_exec(code, i["input"])
+            Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
+            if type(Uoutput) is list:
+                comparision = sorted(i["output"]) == sorted(Uoutput)
+            else:
+                comparision = i["output"] == Uoutput
+
+            if comparision:
+                user_output.append({
+                    "log": f.getvalue(),
+                    "output_status" : "AC",
+                    "output" : Uoutput,
+                })
+                soAc+=1
+            else:
+                user_output.append({
+                    "log": f.getvalue(),
+                    "output_status" : "WA",
+                    "output" : Uoutput
+                })
+        except:
+            err = traceback.format_exc()
+            user_output.append({
+                "log": f.getvalue(),
+                "output_status" : "SE",
+            })
+    end = time.time()
+    sys.stdout = org_stdout
+
+    if any(i["output_status"]=="SE" for i in user_output):
+        status = "SE"
+    elif any(i["output_status"]=="WA" for i in user_output):
+        status = "WA"
+    else:
+        status = "AC"
+
+    compile_data["update_data"] = {
+        "code": code,
+        "status": status,
+        "test_finished": f"{soAc}/{len(user_output)}",
+        "submit_time": res["time"],
+        "run_time": (end-start) * 10**3,
+    }
+
+    if err:
+        compile_data["return_data"] = {
+            "status": "SE",
+            "output": [i["output"] for i in inp_oup],
+            "err": err,
+        }
+    else:
+        compile_data["return_data"] = {
+            "status": status,
+            "output": [i["output"] for i in inp_oup],
+            "user_output": user_output,
+            "test_finished": f"{soAc}/{len(user_output)}",
+            "run_time": (end-start) * 10**3,
+        }
 
     update_data = compile_data["update_data"]
     return_data = compile_data["return_data"]
@@ -565,7 +720,7 @@ def out_room():
 # def get_move(data, room, environ):
 #     sio.emit(f'get_move_{room}', environ)
 
-# if __name__ == '__main__':
-#     open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
-#     Timer(1, open_browser).start()
-#     app.run(port=5000, debug=True, use_reloader=False)
+if __name__ == '__main__':
+    open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
+    Timer(1, open_browser).start()
+    app.run(port=5000, debug=True, use_reloader=False)
