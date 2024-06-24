@@ -101,14 +101,14 @@ class RegisterForm(FlaskForm):
         if User.query.filter_by(username=username_to_check.data).first(): #_existing_user_username
             raise ValidationError('Tên đăng nhập đã được sử dụng')
 
-@timeout(1)
+# @timeout(1)
 def safe_exec(code, input):
     def wrapper():
         global result
 
         locals = {}
         exec(code, {"valid_move": valid_move, "distance": distance}, locals)
-        func_to_del = ['eval', 'exec', 'input', '__import__', 'open']
+        func_to_del = ['eval', 'exec', 'input', 'open']
         backup_builtins = {func:__builtins__.__dict__[func] for func in func_to_del}
 
         for func in func_to_del:
@@ -123,7 +123,7 @@ def safe_exec(code, input):
     thread.start()
     thread.join(5) # time_limit
 
-    if thread.is_alive(): raise Exception("RE")
+    if thread.is_alive(): raise Exception("TLE")
     return result
 
 def checkSession():
@@ -430,15 +430,11 @@ def run_task():
                 })
         except:
             err = traceback.format_exc()
-            user_output.append({
-                "log": f.getvalue(),
-                "output_status" : "SE",
-            })
+            status = "SE"
+            break
     sys.stdout = org_stdout
-
-    if any(i["output_status"]=="SE" for i in user_output):
-        status = "SE"
-    elif any(i["output_status"]=="WA" for i in user_output):
+    
+    if any(i["output_status"]=="WA" for i in user_output):
         status = "WA"
     else:
         status = "AC"
@@ -507,16 +503,12 @@ def submit():
                 })
         except:
             err = traceback.format_exc()
-            user_output.append({
-                "log": f.getvalue(),
-                "output_status" : "SE",
-            })
+            status = "SE"
+            break
     end = time.time()
     sys.stdout = org_stdout
 
-    if any(i["output_status"]=="SE" for i in user_output):
-        status = "SE"
-    elif any(i["output_status"]=="WA" for i in user_output):
+    if any(i["output_status"]=="WA" for i in user_output):
         status = "WA"
     else:
         status = "AC"

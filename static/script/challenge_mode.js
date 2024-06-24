@@ -32,6 +32,11 @@ const test_case_result_list = $(".test_case_result_list")
 let test_case_result_item = $$(".test_case_result_item")
 let text_case_InOu = $$(".text_case_InOu")
 const test_case_result_err = $(".test_case_result_err")
+const test_case_result_overview = $(".test_case_result_overview")
+const test_case_runtime = $(".test_case_runtime")
+const test_case_AC = $(".test_case_AC")
+const runtime = $(".runtime")
+const AC = $(".AC")
 
 // --------------
 
@@ -81,8 +86,6 @@ runBtn.onclick = () => {
     })
 
     let formatter = new Intl.DateTimeFormat([], options);
-    
-    // console.log();
 
     fetch("/run_task", {
         method: "POST",
@@ -102,7 +105,6 @@ runBtn.onclick = () => {
             render_result(data, data.status)
             return
         }
-        console.log(data)
         data.user_output.forEach((oup, i) => {
             if(oup.output_status === "AC") {
                 test_case_nav_item[i].className = "test_case_nav_item accepted"
@@ -194,11 +196,29 @@ function render_result(data, status) {
     result_status.innerHTML = data.status === "AC" ? "Accepted": data.status === "WA" ? "Wrong answer" : "Syntax error"
     test_case_result_list.innerHTML = ""
 
+    console.log(data)
+    console.log(typeof data.run_time)
+
     if(status === "SE") {
         test_case_result_err.style.display = "block"
         test_case_result_err.innerHTML = data.err
         test_case_result_list.style.display = "none"
     } else {
+        test_case_result_overview.style.display = "flex"
+        runtime.innerHTML = `${Math.round(data.run_time)}` + "ms"
+        if(data.run_time > 1000) {
+            test_case_runtime.classList.add("err")
+        }
+        else {
+            test_case_runtime.classList.remove("err")
+        }
+        const [left, right] = data.test_finished.split("/");
+        AC.innerHTML = data.test_finished
+        if(left != right) {
+            test_case_AC.classList.add("err")
+        } else {
+            test_case_AC.classList.remove("err")
+        }
         test_case_result_err.style.display = "none"
         test_case_result_list.style.display = "grid"
         data.user_output.forEach((oup, i) => {
