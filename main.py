@@ -274,8 +274,8 @@ def save_code():
 @login_required
 @session_required
 def create_bot():
-    # return render_template('create_bot.html', user = current_user)
-    return ""
+    return render_template('create_bot.html', user = current_user)
+    # return ""
     
 @app.route('/challenge_mode/<id>')
 @login_required
