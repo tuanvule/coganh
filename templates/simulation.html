@@ -194,33 +194,39 @@
         </div>
         <div class="action_block">
             <div class="code_list">
-                <pre class="code_row code_1"><code>def main(board, your_pos, opp_pos):</code></pre>
-                <pre class="code_row code_2"><code>   return_m = []</code></pre>
-                <pre class="code_row code_3"><code>   for pos in your_pos:</code></pre>
-                <pre class="code_row code_4"><code>       if sum(pos)%2==0:</code></pre>
-                <pre class="code_row code_5"><code>           move_list = ((-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1))</code></pre>
-                <pre class="code_row code_6"><code>       else:</code></pre>
-                <pre class="code_row code_7"><code>           move_list = ((0,-1), (-1,0), (0,1), (1,0))</code></pre>
-                <pre class="code_row code_8"><code>       for move in move_list:</code></pre>
-                <pre class="code_row code_9"><code>           new_move = new_valid_x, new_valid_y = pos[0] + move[0], pos[1] + move[1]</code></pre>
-                <pre class="code_row code_10"><code>           if (0<=new_valid_x<=4 and 0<=new_valid_y<=4 </code></pre>
-                <pre class="code_row code_11"><code>               and board[new_valid_y][new_valid_x] == 0 </code></pre>
-                <pre class="code_row code_12"><code>               and new_move not in return_m</code></pre>
-                <pre class="code_row code_13"><code>               ):</code></pre>
-                <pre class="code_row code_14"><code>               return_m.append(new_move)</code></pre>
-                <pre class="code_row code_15"><code>   return return_m</code></pre>
-            </code>
-        </div>
-        <div class="return_value">
-            <div class="return_value_title">valid move</div>
-            <div class="return_value_ouput">[[1,2],[3,2],[2,4]]</div>
+                <pre>
+                    <code>
+{{simulation.codes | safe}}
+                    </code>
+                </pre>
+                <div class="row_list">
+                    <div class="code_row"></div>
+                    <div class="code_row"></div>
+                    <div class="code_row"></div>
+                    <div class="code_row"></div>
+                    <div class="code_row"></div>
+                    <div class="code_row"></div>
+                    <div class="code_row"></div>
+                    <div class="code_row"></div>
+                    <div class="code_row"></div>
+                    <div class="code_row"></div>
+                    <div class="code_row"></div>
+                    <div class="code_row"></div>
+                </div>
+            </div>
+            <div class="return_value">
+                <div class="return_value_title">valid move</div>
+                <div class="return_value_ouput">[[1,2],[3,2],[2,4]]</div>
+            </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script> 
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
-    <script>hljs.highlightAll()</script>
+    <div class="action" hidden>{{simulation.action}}</div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/languages/python.min.js"></script>
+    <!-- <script>hljs.highlightAll()</script> -->
     <script type="module" src="../static/script/simulation_model.js"></script>
     <script type="module" src="../static/script/simulation.js"></script>
 </body>

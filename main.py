@@ -30,6 +30,7 @@ import builtins
 doc_ref_room = fdb.collection("room")
 doc_ref_post = fdb.collection("post")
 doc_ref_task = fdb.collection("task")
+doc_ref_simulation = fdb.collection("simulation")
 doc_ref_code = fdb.collection("code")
 
 # doc = doc_ref.get()
@@ -103,28 +104,11 @@ class RegisterForm(FlaskForm):
 
 # @timeout(1)
 def safe_exec(code, input):
-    def wrapper():
-        global result
-
-        locals = {}
-        exec(code, {"valid_move": valid_move, "distance": distance}, locals)
-        func_to_del = ['eval', 'exec', 'input', 'open']
-        backup_builtins = {func:__builtins__.__dict__[func] for func in func_to_del}
-
-        for func in func_to_del:
-            del __builtins__.__dict__[func]
-
-        result = locals["main"](*input)
-
-        for func, impl in backup_builtins.items():
-            __builtins__.__dict__[func] = impl
-
-    thread = threading.Thread(target=wrapper)
-    thread.start()
-    thread.join(5) # time_limit
-
-    if thread.is_alive(): raise Exception("TLE")
-    return result
+    func_to_del = ['eval', 'exec', 'input', '__import__', 'open']
+    allowed_builtins = {k:v for k, v in builtins.__dict__.items() if k not in func_to_del}
+    locals = {}
+    exec(code, {"valid_move": valid_move, "distance": distance, '__builtins__': allowed_builtins}, locals)
+    return locals["main"](*input)
 
 def checkSession():
     if 'secret_key' in session:
@@ -378,20 +362,13 @@ def task_list():
 
     return render_template('task_list.html', user = current_user, tasks = tasks)
     
-@app.route('/simulation')
+@app.route('/simulation/<id>')
 @login_required
 @session_required
-def simulation():
-    res = doc_ref_task.stream()
-    
-    tasks = []
+def simulation(id):
+    simulation = doc_ref_simulation.document(id).get().to_dict()
 
-    for doc in res:
-        task = doc.to_dict()
-        task["id"] = doc.id
-        tasks.append(task)
-
-    return render_template('simulation.html', user = current_user, tasks = tasks)
+    return render_template('simulation.html', user = current_user, simulation = simulation)
 
 @app.route('/run_task', methods=["POST"])
 # @login_required

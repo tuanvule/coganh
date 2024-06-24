@@ -89,13 +89,13 @@ export function createSimulation(root) {
             return new Promise(resolve => {
                 setTimeout(() => {
                     if(row.length === 1) {
-                        row[0].classList.add("round_top", "round_bottom")
+                        code_rows[row[0]].classList.add("round_top", "round_bottom")
                     } else {
-                        row[0].classList.add("round_top")
-                        row[row.length-1].classList.add("round_bottom")
+                        code_rows[row[0]].classList.add("round_top")
+                        code_rows[row[row.length-1]].classList.add("round_bottom")
                     }
                     row.forEach(item => {
-                        item.classList.add(type)
+                        code_rows[item].classList.add(type)
                     })
                     resolve()
                 }, time)

@@ -152,13 +152,13 @@ body {
 
 .info_elo-fluc--pre {
     opacity: 0;
-    animation: appear 1s forwards;
+    animation: disappear_opa 1s forwards;
 }
 
 .info_elo-fluc--arrow {
     margin: 10px 0;
     opacity: 0;
-    animation: appear 1s forwards;
+    animation: disappear_opa 1s forwards;
     animation-delay: 1s;
 }
 

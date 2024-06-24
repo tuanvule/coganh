@@ -200,8 +200,9 @@ function render_result(data, status) {
     console.log(typeof data.run_time)
 
     if(status === "SE") {
+        test_case_result_overview.style.display = "none"
         test_case_result_err.style.display = "block"
-        test_case_result_err.innerHTML = data.err
+        test_case_result_err.innerHTML = data.err.replaceAll('\n', '<br>').replaceAll('    ', '&emsp;')
         test_case_result_list.style.display = "none"
     } else {
         test_case_result_overview.style.display = "flex"

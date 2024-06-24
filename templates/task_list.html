@@ -52,7 +52,7 @@
             {% for task in tasks %}
                 <li class="task_item">
                     {% if (user.username in task.challenger): %}
-                        <div class="task_status {{accepted if task.challenger[user.username].current_submit.status == 'AC' else 'err'}}">{{task.challenger[user.username].current_submit.status}}</div>
+                        <div class="task_status {{'accepted' if task.challenger[user.username].current_submit.status == 'AC' else 'err'}}">{{task.challenger[user.username].current_submit.status}}</div>
                     {% else %}
                         <div class="task_status"></div>
                     {% endif %}

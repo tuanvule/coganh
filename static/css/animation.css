@@ -26,7 +26,7 @@
     to {transform:rotate(360deg) translate(-50%,-50%);}
 }
 
-@keyframes disappear {
+@keyframes disappear_opa {
     from {opacity: 0;}
     to {opacity: 1;}
 }

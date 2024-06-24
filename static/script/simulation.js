@@ -10,6 +10,20 @@ const your_pos_list = $(".your_pos_list")
 const run_btn = $(".run_btn")
 const return_value_ouput = document.querySelector(".return_value_ouput")
 let your_pos_items = $$(".your_pos_item")
+const action = $(".action").innerHTML
+console.log(JSON.stringify(
+`def main(board, your_pos, opp_pos):
+    nuoc_di_hop_le = []
+    pos = quan_co_ban_chon #(x,y)
+        if quan_co_di_duoc_8_huong:
+            huong_di = ((-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1))
+        else:
+            huong_di = ((0,-1), (-1,0), (0,1), (1,0))
+        for move in huong_di:
+            vi_tri_moi = pos + move #(x,y)
+            if vi_tri_moi in board or vi_tri_moi not in your_pos:
+                nuoc_di_hop_le.append(vi_tri_moi)
+    return nuoc_di_hop_le`.replaceAll("\n","<br>")))
 
 const code_row = $$(".code_row")
 let new_board = [
@@ -162,26 +176,26 @@ run_btn.onclick = () => {
         simulation.action().check_valid_move([
             ["GM", "", 1000],
             ["hightlight", {
-                row: [code_row[2]],
+                row: [2],
                 type: "run"
             }, 0],
             ["RMH", "", 1000],
             ["RM", ["", "moves"], 1000],
             ["hightlight", {
-                row: [code_row[3],code_row[4],code_row[5],code_row[6]],
+                row: [3,4,5,6],
                 type: "run"
             }, 0],
             ["hightlight", {
-                row: [(x+y)%2==0 ? code_row[4] : code_row[6]],
+                row: [(x+y)%2==0 ? 4 : 6],
                 type: "true"
             }, 0],
             ["RMH", "", 1000],
             ["hightlight", {
-                row: [code_row[8],code_row[9],code_row[10],code_row[11],code_row[12]],
+                row: [9],
                 type: "run"
             }, 1000],
             ["hightlight", {
-                row: [code_row[8],code_row[9],code_row[10],code_row[11],code_row[12]],
+                row: [9],
                 type: "false"
             }, 1000],
             ["RM", ["invalid", "invalid_move"], 0],
@@ -190,22 +204,22 @@ run_btn.onclick = () => {
             ["CC", "", 0],
             ["RM", ["", "valid_move"], 0],
             ["hightlight", {
-                row: [code_row[8],code_row[9],code_row[10],code_row[11],code_row[12]],
+                row: [9],
                 type: "run"
             }, 1000],
             ["hightlight", {
-                row: [code_row[8],code_row[9],code_row[10],code_row[11],code_row[12]],
+                row: [9],
                 type: "true"
             }, 1000],
             ["RM", ["valid", "valid_move"], 0],
             ["RMH", "", 1000],
             ["hightlight", {
-                row: [code_row[13]],
+                row: [10],
                 type: "true"
             }, 0],
             ["RMH", "", 1000],
             ["hightlight", {
-                row: [code_row[14]],
+                row: [11],
                 type: "true"
             }, 0],
             ["return", "valid_move", 1000],

@@ -25,8 +25,8 @@
       <div class="main_nav_module">
         <div class="code_require">
           <h2>Lập trình</h2>
-          <!-- <a class="btn create_bot">Tạo bot</a> -->
-          <a class="btn bot_bot">Đấu bot</a>
+          <a class="btn create_bot">Tạo bot</a>
+          <!-- <a class="btn bot_bot">Đấu bot</a> -->
           <a href="{{ url_for('task_list') }}" class="btn challenge_mode">luyện tập</a>
         </div>
         <div class="non_code">
@@ -37,7 +37,31 @@
       </div>
     </div>
     <div class="detail_module">
-      
+      <div class="detail_module_title">Các chức năng khác</div>
+      <div class="detail_list">
+        <div class="detail_item">
+          <div class="detail_image">
+            <img src="../static/img/bot_bot.png" alt="">
+          </div>
+          <div class="detail_nav">
+            <div class="icon">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <a class="btn2 bot_bot">Đấu bot</a>
+          </div>
+        </div>
+        <div class="detail_item">
+          <div class="detail_nav">
+            <div class="icon">
+              <i class="fa-solid fa-book-open"></i>
+            </div>
+            <a href="{{ url_for('post_page') }}" class="btn2 pp">xem bài viết</a>
+          </div>
+          <div class="detail_image">
+            <img src="../static/img/post_page.png" alt="">
+          </div>
+        </div>
+      </div>
     </div>
     <div class="sign">
       <div class="sign_content">

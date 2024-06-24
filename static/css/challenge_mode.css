@@ -495,12 +495,16 @@ body {
     /* width: 100%; */
 }
 
+.warper_TCRL {
+    width: 100%;
+    max-height: 78%;
+}
+
 .test_case_result_list {
     display: grid;
     grid-template-columns: auto auto auto auto auto;
     column-gap: 20px;
     row-gap: 20px;
-    height: 78%;
 }
 
 .test_case_result_item {
