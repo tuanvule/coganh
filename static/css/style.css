@@ -100,6 +100,7 @@ nav {
     justify-content: space-between;
     border-bottom: 1px solid #ccc;
     user-select: none;
+    z-index: 10000;
 }
 
 .left_block {

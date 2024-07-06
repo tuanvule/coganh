@@ -41,6 +41,9 @@
                     <div class="bot_display_nav-block--item submissions">
                         SUBMISSIONS
                     </div>
+                    <div class="bot_display_nav-block--item help">
+                        HELP
+                    </div>
                     <div class="animation">
                         <div class="children"></div>
                     </div>
@@ -55,26 +58,9 @@
                     <!-- <li class="bot_display-task--class_item">beginner</li>
                     <li class="bot_display-task--class_item">100</li> -->
                 </ul>
-
-                <!-- <video class="bot_display-video-item bot_display-video--result" controls>
-                    <source src="{{ url_for('static', filename='upload_video/demo.mp4') }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                    </video> -->
-                <!-- <pre class="bot_display-task--rule"> -->
-<!-- <div class="bot_display-task--board">
-    <img class="bot_display-task--image" src="../static/img/chessboard.png" alt="">
-</div>
-[ĐỀ BÀI J ĐÓ Ở ĐÂY]
-
-input: []
-
-output: []
-
-[ĐỀ BÀI J ĐÓ Ở ĐÂY] -->
-                    <code>
-                        {{task.content | safe}}
-                    </code>
-                <!-- </pre> -->
+                <code>
+                    {{task.content | safe}}
+                </code>
 
                 <div class="bot_display-task--status">
                     <div class="bot_display-task--status_item tallent">accepted <div class="num">{{task.accepted_count}}</div></div>
@@ -84,43 +70,6 @@ output: []
             </div>
 
             <div style="display: none;" class="bot_display-item bot_display-result">
-                <!-- <div class="rate">
-                    <div class="type">excellent</div>
-                    <div class="moves">
-                        <div class="moves_max-move">moves: 20</div>
-                        <div class="move moves_excellent-move">
-                            <div class="percent_bar"></div> 
-                            <div class="count">1</div>
-                        </div>
-                        <div class="move moves_good-move">
-                            <div class="percent_bar"></div> 
-                            <div class="count">16</div>
-                        </div>
-                        <div class="move moves_bad-move">
-                            <div class="percent_bar"></div> 
-                            <div class="count">3</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="display_result">
-                    <div class="image_block">
-                        <i class="fa-solid fa-angle-left arrow_left"></i>
-                        <ul class="img_list">
-                            <li class="img_item"><img src="../static/img/chessboard.png" alt=""></li>
-                        </ul>
-                        <div class="counter">1</div>
-                        <i class="fa-solid fa-angle-right arrow_right"></i>
-                    </div>
-                    <div class="evaluation">
-                        <div class="evaluation_pos">
-                            <div class="evaluation_selected-pos">Selected pos (0,0)</div>
-                            <div class="evaluation_new-pos">New pos (1,2)</div>
-                        </div>
-                        <div class="evaluation_rate">
-                            excellent
-                        </div>
-                    </div>
-                </div> -->
                 <div class="type accepted">
                     <div class="user">
                         <div class="user_avatar">{{user.username[0].upper()}}</div>
@@ -151,16 +100,6 @@ output: []
                                         <div class="user_oup_title">your output =</div>
                                         <div class="user_oup">[1,2,3,4]</div>
                                     </div>
-                                </li>
-                                <li tabindex="0" class="test_case_result_item err">
-                                    Test 5
-                                    <div class="text_case_InOu accepted">
-                                        <div class="text_case_oup_title">output =</div>
-                                        <div class="test_case_oup">[[1,2],[3,1],[5,1],[3,5],[1,2],[3,1],[5,1],[3,5],[1,2],[3,1],[5,1],[3,5]]</div>
-                                        <hr style="width: 100%; border: 1px solid #007BFF; margin-top: 14px">
-                                        <div class="user_oup_title">your output =</div>
-                                        <div class="user_oup">[1,2,3,4]</div>
-                                    </div>
                                 </li> -->
                             </ul>
                         </div>
@@ -183,18 +122,25 @@ output: []
                     <div style="flex: 2;"></div>
                 </div>
                 <ul class="submissions_list">
-                    <!-- <li class="submissions_item">
-                        <div class="submissions_status accpeted">Accepted</div>
-                        <div class="submissions_time">6/12/2024</div>
-                        <div class="submissions_test_finished">10/10</div>
-                        <div class="view_code_btn">view code</div>
-                    </li>
-                    <li class="submissions_item">
-                        <div class="submissions_status err">Wrong answer</div>
-                        <div class="submissions_time">6/12/2024</div>
-                        <div class="submissions_test_finished">10/10</div>
-                        <div class="view_code_btn">view code</div>
-                    </li> -->
+                </ul>
+            </div>
+
+            <div style="display: none;" class="bot_display-item bot_display-help">
+                <div class="help_title">Kiến thức cần thiết</div>
+                <ul class="help_list help_type">
+                    {% for skre in task.tag.skill_require %}
+                        <li class="help_item help_type"><a href="{{skre.link}}">{{skre.name}}</a></li>
+                    {% endfor %}
+                </ul>
+                <div class="help_title">Các bài blog</div>
+                <ul class="help_list">
+                    <li class="help_item help_blog"><a href="{{url_for('post', post_id='1719022233537')}}">Kiểm tra nước đi hợp lệ</a></li>
+                    <li class="help_item help_blog"><a href="{{url_for('post', post_id='1719228535494')}}">Kiểm tra gánh chẹt</a></li>
+                    <li class="help_item help_blog"><a href="{{url_for('post', post_id='1720181857262')}}">Kiểm tra vây</a></li>
+                </ul>
+                <div class="help_title">Mô phỏng thuật toán</div>
+                <ul class="help_list">
+                    <li class="help_item help_blog"><a href="{{url_for('visualize', id='OYRJNv4Jqez9dKZjLW27')}}">Kiểm tra nước đi</a></li>
                 </ul>
             </div>
         </div>
@@ -204,20 +150,6 @@ output: []
                 <div class="coding_module-nav--runBtn btn">Run</div>
                 <div class="coding_module-nav--submitBtn loader" style="display: none; animation: none;"><div class="coding_module-nav--loading"></div></div>
                 <div class="coding_module-nav--submitBtn btn">Submit</div>
-                <!-- <div class="coding_module-nav--setting">
-                    <label for="check"><i class="fa-solid fa-gear setting_icon"></i></label>
-                    <input type="checkbox" name="check" id="check" hidden>
-                    <ul class="setting_list">
-                        <label for="debug" class="setting_item">
-                            Enable debug
-                            <input type="checkbox" name="debug" id="debug" checked>
-                        </label>
-                        <label for="video" class="setting_item">
-                            Enable video
-                            <input type="checkbox" name="video" id="video" checked>
-                        </label>
-                    </ul>
-                </div> -->
             </div>
             <div class="a" style="height: 100%; position: relative; display: flex; flex-direction: column;">
                 <div id="coding_module-coding_block"></div>

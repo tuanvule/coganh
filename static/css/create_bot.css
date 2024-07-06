@@ -104,9 +104,12 @@ body {
 }
 
 .bot_display-video--background {
+    margin-top: 1%;
     width: 96%;
-    height: 45%;
+    height: 44%;
     background-color: black;
+    border-radius: 5px;
+    overflow: hidden;
     /* margin: calc(20px + 5%) 2% 0; */
     text-align: center;
     position: relative;
@@ -265,6 +268,52 @@ body {
     background-color: rgba(255, 255, 255, .3);
 }
 
+.bot_display-video--help {
+    width: 100%;
+    height: 100%;
+    /* background-color: #444; */
+    padding: 20px;
+    text-align: left;
+}
+
+.help_title {
+    font-size: 24px;
+    margin: 0 0 10px;
+}
+
+.help_list {
+    margin-bottom: 10px;
+}
+
+.help_list.help_type {
+    display: flex;
+}
+
+.help_item {
+    cursor: pointer;
+}
+
+.help_item.help_type {
+    padding: 4px 12px;
+    border-radius: 99px;
+    background-color: #444;
+    margin-right: 10px;
+}
+
+.help_item.help_type a {
+    display: block;
+    text-decoration: none;
+    color: #fff;
+}
+
+.help_item.help_blog a {
+    display: block;
+    /* text-decoration: none; */
+    font-size: 18px;
+    color: #007BFF;
+}
+
+
 .bot_display_nav {
     width: 100%;
     height: 30px;
@@ -337,6 +386,10 @@ body {
 
 .bot_display_nav-block--item.debug {
     margin: 5px 0 5px 20px;
+}
+
+.bot_display_nav-block--item.help {
+    margin: 5px 0 5px 25px;
 }
 
 .bot_display_nav-block .animation {

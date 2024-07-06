@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="../static/css/task_list.css">
 </head>
 <body>
-    
     <nav>
         <div class="left_block">
             <div class="logo">Co ganh</div>
@@ -24,10 +23,11 @@
 
     <div class="container">
         <div class="task_title">
-            <div class="tsk_status">Trạng thái</div>
-            <div class="tsk_name">Tên</div>
-            <div class="tsk_acceptance">Số lượng accept</div>
-            <div class="tsk_difficult">Độ khó</div>
+            <div class="tsk_status">Status</div>
+            <div class="tsk_name">Problem</div>
+            <div class="tsk_acceptance">Acceptances</div>
+            <div class="tsk_difficult">Difficulty</div>
+            <div class="tsk_author">Author</div>
         </div>
         <hr style="margin: 10px 0; border: 1px solid #ccc; width: 100%;">
         <ul class="task_list">
@@ -59,6 +59,7 @@
                     <a href="{{url_for('challenge_mode', id=task.id)}}" class="task_name">{{task.task_name}}</a>
                     <div class="task_acceptance">{{task.accepted_count}}</div>
                     <div class="task_difficult {{task.tag.difficult}}">{{task.tag.difficult}}</div>
+                    <div class="task_author">{{task.author}}</div>
                 </li>
             {%endfor%}
         </ul>

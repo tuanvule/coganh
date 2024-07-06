@@ -1,11 +1,12 @@
 import requests
 from copy import deepcopy
-from importlib import reload
 import traceback
 from fdb.firestore_config import fdb
 import sys
 import trainAI.MasterUser
 from io import StringIO
+import builtins
+from tool import valid_move, distance
 # from fdb.uti.upload import upload_video_to_storage
 
 class Player:
@@ -41,7 +42,7 @@ def declare():
 def Raise_exception(move, current_side, board):
     if not (move.__class__ == dict and tuple(move.keys()) == ('selected_pos', 'new_pos') and move['selected_pos'].__class__ == tuple and move['new_pos'].__class__ == tuple):
         raise Exception(r"The return value must be in the form: {'selected_pos': (x, y), 'new_pos': (x, y)} " + f"(not {move})")
-
+    
     current_x, current_y = move["selected_pos"]
     new_x, new_y = move["new_pos"]
 
@@ -74,8 +75,8 @@ def ganh_chet(move, opp_pos, side, opp_side):
         opp_pos.remove((x, y))
 
     return valid_remove
-def vay(opp_pos):
 
+def vay(opp_pos):
     board = game_state["board"]
     for pos in opp_pos:
         if (pos[0]+pos[1])%2==0:
@@ -94,15 +95,23 @@ def vay(opp_pos):
     return valid_remove
 
 # System
-def activation(option, session_name, debugNum):
+def activation(code1, code2, name, debugNum):
     f = StringIO()
     org_stdout = sys.stdout
     sys.stdout = f
 
+    globals_exec = {"valid_move": valid_move,
+                    "distance": distance,
+                    '__builtins__': {k:v for k, v in builtins.__dict__.items() if k not in ['eval', 'exec', 'input', '__import__', 'open']}}
+
     try:
-        UserBot = reload(__import__("static.botfiles.botfile_"+session_name, fromlist=[None]))
-        Bot2 = reload(__import__(option, fromlist=[None]))
-        game_res = run_game(UserBot, Bot2, session_name, debugNum)
+        local1 = {}
+        local2 = {}
+        if code1 in ("level1", "level2","level3", "level4", "Master"):
+            local1["main"] = __import__(f"trainAI.{code1}", fromlist=[None]).main
+        else: exec(code1, globals_exec, local1)
+        exec(code2, globals_exec, local2)
+        game_res = run_game(local1["main"], local2["main"], name, debugNum)
 
         sys.stdout = org_stdout
         return False, game_res, f.getvalue()
@@ -136,9 +145,9 @@ def run_game(UserBot, Bot2, session_name, debugNum): # Main
             cur_move['board'] = eval(str(game_state['board']).replace('-1', '`').replace('1', '-1').replace('`', '1'))
 
         if player1.your_side == current_turn:
-            move = UserBot.main(deepcopy(player1))
+            move = UserBot(deepcopy(player1))
         else:
-            move = Bot2.main(deepcopy(player2))
+            move = Bot2(deepcopy(player2))
         Raise_exception(move, current_turn, game_state["board"])
         if debugNum: inp_oup.append(move)
 

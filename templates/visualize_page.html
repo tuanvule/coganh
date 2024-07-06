@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/visualize_page.css">
+</head>
+<body>
+    <nav>
+        <div class="left_block">
+            <div class="logo">Co ganh</div>
+            <a href="{{ url_for('menu') }}" class="back_btn">quay lại</a>
+        </div>
+
+        <div class="right_block">
+            <div class="user_avatar">{{user.username[0].upper()}}</div>
+            <!-- <div class="login_btn">Đăng nhập</div> -->
+        </div>
+    </nav>
+    <div class="container">
+        <div class="title">Mô phỏng thuật toán</div>
+        <div class="visualize_type">Thuật toán bàn cờ</div>
+        <ul class="visualize_list">
+            <li class="visualize_item">
+                <a href="{{url_for('visualize', id='OYRJNv4Jqez9dKZjLW27')}}">
+                    <img src="../static/img/valid_move_visualize.png" alt="" class="visualize_image">
+                    <div class="name">
+                        NƯỚC ĐI HỢP LỆ
+                    </div>
+                </a>
+            </li>
+            <li class="visualize_item">
+                <a href="">
+                    <img src="../static/img/ganh_chet_visualize.png" alt="" class="visualize_image">
+                    <div class="name">
+                        GÁNH CHẸT
+                    </div>
+                </a>
+            </li>
+            <li class="visualize_item">
+                <a href="">
+                    <img src="../static/img/vay_visualize.png" alt="" class="visualize_image">
+                    <div class="name">
+                        VÂY
+                    </div>
+                </a>
+            </li>
+        </ul>
+        <div class="visualize_type">Thuật toán nâng cao</div>
+        <ul class="visualize_list">
+            <li class="visualize_item">
+                <a href="{{url_for('visualize', id='SctXzAxW6TtcMSPwPm1N')}}">
+                    <img src="../static/img/visualize.png" alt="" class="visualize_image">
+                    <div class="name">
+                        MINIMAX
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- <script src="../static/script/.js"></script> -->
+    </body>
+</html>

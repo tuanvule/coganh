@@ -126,7 +126,7 @@
             border-color: #007BFF;
         }
 
-        .tag_list {
+        .type_list {
             border: 1px solid #ccc;
             width: 18%;
             padding: 0 10px;
@@ -134,11 +134,11 @@
             cursor: pointer;
         }
 
-        .tag_list:hover {
+        .type_list:hover {
             border-color: #007BFF;
         }
 
-        .tag_item {
+        .type_item {
             padding: 10px;
         }
 
@@ -453,7 +453,44 @@
             background-color: #007BFF;
         }
 
+        .tag_block {
+            width: 1000px;
+            margin-bottom: 20px;
+        }
 
+        .tag_list {
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            list-style: none;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+
+        .tag_list:hover {
+            border-color: #007BFF;
+        }
+
+        .tag_item {
+            min-width: fit-content;
+            height: fit-content;
+            padding: 4px 14px;
+            background-color: #eee;
+            border-radius: 99px;
+            margin: 10px 10px 5px 0;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .tag_item.selected {
+            background-color: #007BFF;
+            color: #fff;
+        }
+
+        .tag_item:hover {
+            filter: brightness(90%);
+        }
     </style>
 </head>
 <body>
@@ -493,13 +530,29 @@
             <option value="medium" class="difficult_item">Vừa</option>
             <option value="hard" class="difficult_item">Khó</option>
         </select>
-        <select name="" id="" class="tag_list">
-            <option value="post" class="tag_item">post</option>
-            <option value="task" class="tag_item">task</option>
+        <select name="" id="" class="type_list">
+            <option value="post" class="type_item">post</option>
+            <option value="task" class="type_item">task</option>
         </select>
     </div>
 
     <textarea placeholder="nhập mô tả" class="description_input"></textarea>
+    
+    <div style="display: none;" class="tag_block">
+        <ul class="tag_list">
+            <li data-link="https://www.w3schools.com/python/python_datatypes.asp" class="tag_item">data types</li>
+            <li data-link="https://www.w3schools.com/python/python_operators.asp" class="tag_item">operators</li>
+            <li data-link="https://www.w3schools.com/python/python_lists.asp" class="tag_item">list</li>
+            <li data-link="https://www.w3schools.com/python/python_tuples.asp" class="tag_item">tuples</li>
+            <li data-link="https://www.w3schools.com/python/python_dictionaries.asp" class="tag_item">dictionary</li>
+            <li data-link="https://www.w3schools.com/python/python_conditions.asp" class="tag_item">if else</li>
+            <li data-link="https://www.w3schools.com/python/python_while_loops.asp" class="tag_item">while loop</li>
+            <li data-link="https://www.w3schools.com/python/python_for_loops.asp" class="tag_item">for loop</li>
+            <li data-link="https://www.w3schools.com/python/python_functions.asp" class="tag_item">funcion</li>
+            <li data-link="https://www.w3schools.com/python/python_classes.asp" class="tag_item">classes/object</li>
+            <li data-link="https://www.w3schools.com/python/python_math.asp" class="tag_item">math</li>
+        </ul>
+    </div>
 
     <div id="container">
         <!-- <code id="editor">

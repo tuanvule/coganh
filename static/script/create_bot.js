@@ -12,6 +12,8 @@ const uniBlock = $$(".utility_block-element")
 const loader = $(".coding_module-nav--runBtn.loader")
 const video = $(".bot_display-video--result")
 const debug = $(".bot_display-video--debug")
+const help = $(".bot_display-video--help")
+
 
 const uniNavItem = $$(".utility_nav-block--item")
 const ruleBtn = $(".utility_nav-block--item.rule")
@@ -19,6 +21,7 @@ const terminalBtn = $(".utility_nav-block--item.terminal")
 const resultBtn = $(".utility_nav-block--item.result")
 const videoBtn = $(".bot_display_nav-block--item.video")
 const debugtBtn = $(".bot_display_nav-block--item.debug")
+const helpBtn = $(".bot_display_nav-block--item.help")
 const animation = $(".utility_nav-block .animation")
 const animationChild = $(".utility_nav-block .animation .children")
 const bDAnimation = $(".bot_display_nav-block .animation")
@@ -592,8 +595,12 @@ function toggleMode(mode) {
         case "debug":
             currentDisplayMode = mode
             botDisplayBlock.forEach(ele => ele.style.display = "none")
-            video.style.display = "none"
             debug.style.display = "flex"
+            break;
+        case "help":
+            currentDisplayMode = mode
+            botDisplayBlock.forEach(ele => ele.style.display = "none")
+            help.style.display = "block"
             break;
         default:
             break;
@@ -626,14 +633,15 @@ resultBtn.onclick = (e) => {
 }
 
 videoBtn.onclick = (e) => {
-    // console.log("Asdadss")
     changeAnimation(videoBtn, `${100 - (e.target.clientWidth / bDAnimation.clientWidth * 100)}%`, e.target.clientWidth + "px", "video", bDAnimationChild)
 }
 
 debugtBtn.onclick = (e) => {
-    console.log("Asda")
-    // if(gameResult) 
-    changeAnimation(debugtBtn, "0", e.target.clientWidth + "px", "debug", bDAnimationChild)
+    changeAnimation(debugtBtn, animation.clientWidth - (videoBtn.clientWidth *3) - 3 + "px", e.target.clientWidth + "px", "debug", bDAnimationChild)
+}
+
+helpBtn.onclick = (e) => {
+    changeAnimation(helpBtn, "0", e.target.clientWidth + "px", "help", bDAnimationChild)
 }
 
 debugArrowRight.onclick = (e) => {  

@@ -18,9 +18,11 @@ const uniNavItem = $$(".utility_nav-block--item")
 const taskBtn = $(".bot_display_nav-block--item.task")
 const resulttBtn = $(".bot_display_nav-block--item.result")
 const submissionsBtn = $(".bot_display_nav-block--item.submissions")
+const helpBtn = $(".bot_display_nav-block--item.help")
 const task_block = $(".bot_display-task")
 const result_block = $(".bot_display-result")
 const submissions_block = $(".bot_display-submissions")
+const help_block = $(".bot_display-help")
 const all_block = $$(".bot_display-item")
 
 // result block
@@ -55,7 +57,7 @@ const inp = $$(".inp")
 // --------------
 
 
-const animation = $(".utility_nav-block .animation")
+const animation = $(".bot_display_nav-block .animation")
 const animationChild = $(".utility_nav-block .animation .children")
 const bDAnimation = $(".bot_display_nav-block .animation")
 const bDAnimationChild = $(".bot_display_nav-block .animation .children")
@@ -238,7 +240,7 @@ function render_result(data, status) {
         })
         reset_result_item()
     }
-    changeAnimation(resulttBtn, taskBtn.clientWidth + 5 + "%", resulttBtn.clientWidth + "px", "result", bDAnimationChild)
+    changeAnimation(resulttBtn,  animation.clientWidth - (taskBtn.clientWidth * 3) - 3 + "px", resulttBtn.clientWidth + "px", "result", bDAnimationChild)
     
 }
 
@@ -294,7 +296,6 @@ async function render_summissions(isfirstRender = false) {
             session.setValue(task_data.challenger[username].current_submit.code)
         }
     }
-    
 }
 // console.log(demo_code)
 
@@ -313,6 +314,9 @@ function toggleMode(mode) {
             break
         case "submissions":
             submissions_block.style.display = "block"
+            break
+        case "help":
+            help_block.style.display = "block"
             break
         default:
             break
@@ -342,11 +346,15 @@ taskBtn.onclick = (e) => {
 }
 
 resulttBtn.onclick = (e) => {
-    changeAnimation(resulttBtn, taskBtn.clientWidth + 5 + "%", e.target.clientWidth + "px", "result", bDAnimationChild)
+    changeAnimation(resulttBtn, animation.clientWidth - (taskBtn.clientWidth * 3) - 3 + "px", e.target.clientWidth + "px", "result", bDAnimationChild)
 }
 
 submissionsBtn.onclick = (e) => {
-    changeAnimation(submissionsBtn, "0", e.target.clientWidth + "px", "submissions", bDAnimationChild)
+    changeAnimation(submissionsBtn, animation.clientWidth - (resulttBtn.clientWidth * 4.4) + 5 + "px", e.target.clientWidth + "px", "submissions", bDAnimationChild)
+}
+
+helpBtn.onclick = (e) => {
+    changeAnimation(helpBtn, "0", e.target.clientWidth + "px", "help", bDAnimationChild)
 }
 
 inp.forEach(item => {

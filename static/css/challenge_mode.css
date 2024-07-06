@@ -734,6 +734,43 @@ body {
     color: #fff;
 }
 
+.bot_display-help {
+    padding: 20px;
+}
+
+.help_title {
+    font-size: 24px;
+    margin: 10px 0 10px;
+}
+
+.help_list.help_type {
+    display: flex;
+}
+
+.help_item {
+    cursor: pointer;
+}
+
+.help_item.help_type {
+    padding: 4px 12px;
+    border-radius: 99px;
+    background-color: #444;
+    margin-right: 10px;
+}
+
+.help_item.help_type a {
+    display: block;
+    text-decoration: none;
+    color: #fff;
+}
+
+.help_item.help_blog a {
+    display: block;
+    /* text-decoration: none; */
+    font-size: 18px;
+    color: #007BFF;
+}
+
 /* -------------- */
 
 .loading_video, .loading_image {
@@ -763,6 +800,7 @@ body {
     width: 100%;
     height: 30px;
     padding: 0 2% 0;
+    user-select: none;
 }
 
 .bot_display_nav-block {
@@ -824,6 +862,10 @@ body {
 }
 
 .bot_display_nav-block--item.submissions {
+    margin: 5px 0 5px 25px;
+}
+
+.bot_display_nav-block--item.help {
     margin: 5px 0 5px 25px;
 }
 

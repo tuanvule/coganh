@@ -33,15 +33,14 @@ doc_ref_task = fdb.collection("task")
 doc_ref_simulation = fdb.collection("simulation")
 doc_ref_code = fdb.collection("code")
 
-# doc = doc_ref.get()
-
-# if doc.exists:
-#     print(f"Document data: {doc.to_dict()}")
-
 class Player:
     def __init__(self, dict: dict):
         for key, value in dict.items():
             setattr(self, key, value)
+
+globals_exec = {"valid_move": valid_move,
+                "distance": distance,
+                '__builtins__': {k:v for k, v in builtins.__dict__.items() if k not in ['eval', 'exec', 'input', '__import__', 'open']}}
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -85,12 +84,10 @@ class User(db.Model, UserMixin):
     elo = db.Column(db.Integer)
     fightable = db.Column(db.Boolean)
 
-
 class LoginForm(FlaskForm):
     username = StringField("Tên đăng nhập", validators=[DataRequired(), Length(min=4, max=20)])
     password =  PasswordField("Mật khẩu", validators=[DataRequired(), Length(min=4, max=20)])
     submit = SubmitField("Đăng Nhập")
-
 
 class RegisterForm(FlaskForm):
     username = StringField('Tên đăng nhập', validators=[DataRequired(), Length(min=4, max=20)])
@@ -168,9 +165,15 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         code = '''
-from tool import valid_move, distance
-# valid_move(x, y, board)
-# distance(x1, y1, x2, y2)
+# NOTE: tool
+# valid_move(x, y, board): trả về các nước đi hợp lệ của một quân cờ - ((x, y), ...)
+# distance(x1, y1, x2, y2): trả về số nước đi ít nhất từ (x1, y1) đến (x2, y2) - n
+
+# NOTE: player
+# player.your_pos: vị trí tất cả quân cờ của bản thân - [(x, y), ...]
+# player.opp_pos: vị trí tất cả quân cờ của đối thủ - [(x, y), ...]
+# player.your_side: màu quân cờ của bản thân - 1:🔵
+# player.board: bàn cờ - -1:🔴 / 1:🔵 / 0:∅
 
 # Remember that player.board[y][x] is the tile at (x, y) when printing
 def main(player):
@@ -214,7 +217,7 @@ def upload_code():
     user = User.query.filter_by(username=current_user.username).first()
     with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
         f.write(data["code"])
-    err, game_res, output = activation(f"trainAI.{bot}", name, 0) # người thắng / số lượng lượt chơi
+    err, game_res, output = activation(bot, data["code"], name, 0) # người thắng / số lượng lượt chơi
     user.fightable = not err
     db.session.commit()
     if err:
@@ -241,9 +244,9 @@ def debug_code():
     data = res["request_data"]
     bot = data["bot"]
     user = User.query.filter_by(username=name).first()
-    with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
-        f.write(data["code"])
-    err, game_res, output = activation(f"trainAI.{bot}", name, res['debugNum']) # người thắng / số lượng lượt chơi
+    # with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
+    #     f.write(data["code"])
+    err, game_res, output = activation(bot, data["code"], name, res['debugNum']) # người thắng / số lượng lượt chơi
     user.fightable = not err
     db.session.commit()
     if err:
@@ -362,13 +365,26 @@ def task_list():
 
     return render_template('task_list.html', user = current_user, tasks = tasks)
     
-@app.route('/simulation/<id>')
+@app.route('/visualize_page')
 @login_required
 @session_required
-def simulation(id):
-    simulation = doc_ref_simulation.document(id).get().to_dict()
+def visualize_page():
+    visualize = []
+    docs = doc_ref_simulation.stream()
+    for doc in docs:
+        viz = doc.to_dict()
+        viz["id"] = doc.id
+        visualize.append(viz)
 
-    return render_template('simulation.html', user = current_user, simulation = simulation)
+    return render_template('visualize_page.html', user = current_user, visualize = visualize)
+
+@app.route('/visualize/<id>')
+@login_required
+@session_required
+def visualize(id):
+    visualize = doc_ref_simulation.document(id).get().to_dict()
+
+    return render_template('visualize.html', user = current_user, simulation = visualize)
 
 @app.route('/run_task', methods=["POST"])
 # @login_required
@@ -384,9 +400,9 @@ def run_task():
         f = StringIO()
         sys.stdout = f
         try:
-            start = time.time()
-            Uoutput = safe_exec(code, i["input"])
-            end = time.time()
+            locals = {}
+            exec(code, globals_exec, locals)
+            Uoutput = locals["main"](*i["input"])
             Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
             if type(Uoutput) is list:
                 comparision = sorted(i["output"]) == sorted(Uoutput)
@@ -397,7 +413,6 @@ def run_task():
                     "log": f.getvalue(),
                     "output_status" : "AC",
                     "output" : Uoutput,
-                    "runtime" : (end-start) * 10**3
                 })
             else:
                 user_output.append({
@@ -458,7 +473,9 @@ def submit():
         f = StringIO()
         sys.stdout = f
         try:
-            Uoutput = safe_exec(code, i["input"])
+            locals = {}
+            exec(code, globals_exec, locals)
+            Uoutput = locals["main"](*i["input"])
             Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
             if type(Uoutput) is list:
                 comparision = sorted(i["output"]) == sorted(Uoutput)
@@ -689,7 +706,7 @@ def out_room():
 # def get_move(data, room, environ):
 #     sio.emit(f'get_move_{room}', environ)
 
-# if __name__ == '__main__':
-#     open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
-#     Timer(1, open_browser).start()
-#     app.run(port=5000, debug=True, use_reloader=False)
+if __name__ == '__main__':
+    open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
+    Timer(1, open_browser).start()
+    app.run(port=5000, debug=True, use_reloader=False)

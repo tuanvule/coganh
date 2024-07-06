@@ -24,20 +24,20 @@
       <img src="{{url_for('static', filename = '/img/chessboard1.png')}}" alt="" class="main_img">
       <div class="main_nav_module">
         <div class="code_require">
-          <h2>Lập trình</h2>
-          <a class="btn create_bot">Tạo bot</a>
+          <h2>Programing</h2>
+          <a class="btn create_bot">Create bot</a>
           <!-- <a class="btn bot_bot">Đấu bot</a> -->
-          <a href="{{ url_for('task_list') }}" class="btn challenge_mode">luyện tập</a>
+          <a href="{{ url_for('task_list') }}" class="btn challenge_mode">Training</a>
         </div>
         <div class="non_code">
-          <h2>Chơi game</h2>
-          <a class="btn" href="{{ url_for('human_bot') }}">Đấu với bot</a>
+          <h2>Play chess</h2>
+          <a class="btn" href="{{ url_for('human_bot') }}">Human vs Bot</a>
           <!-- <a class="btn" href="{{ url_for('room_manager') }}">Đấu với người</a> -->
         </div>
       </div>
     </div>
     <div class="detail_module">
-      <div class="detail_module_title">Các chức năng khác</div>
+      <div class="detail_module_title">Orthers</div>
       <div class="detail_list">
         <div class="detail_item">
           <div class="detail_image">
@@ -47,7 +47,7 @@
             <div class="icon">
               <i class="fa-solid fa-robot"></i>
             </div>
-            <a class="btn2 bot_bot">Đấu bot</a>
+            <a class="btn2 bot_bot">Bot vs Bot</a>
           </div>
         </div>
         <div class="detail_item">
@@ -55,10 +55,21 @@
             <div class="icon">
               <i class="fa-solid fa-book-open"></i>
             </div>
-            <a href="{{ url_for('post_page') }}" class="btn2 pp">xem bài viết</a>
+            <a href="{{ url_for('post_page') }}" class="btn2 pp">Blog</a>
           </div>
           <div class="detail_image">
             <img src="../static/img/post_page.png" alt="">
+          </div>
+        </div>
+        <div class="detail_item">
+          <div class="detail_image">
+            <img src="../static/img/visualize.png" alt="">
+          </div>
+          <div class="detail_nav">
+            <div class="icon">
+              <i class="fa-brands fa-staylinked"></i>
+            </div>
+            <a href="{{ url_for('visualize_page') }}" class="btn2 bot_bot">Visualize</a>
           </div>
         </div>
       </div>

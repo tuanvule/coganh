@@ -5,6 +5,8 @@ import { uploadImage } from "../fdb_fontend/upload.js"
 const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
 
+const header = $("header")
+
 const username = $(".username").innerHTML
 const post_btn = $(".post_btn")
 const title_input = $(".title_input")
@@ -13,10 +15,13 @@ const test_case_list = $(".test_case_list")
 const add_test_case_btn = $('.add_test_case_btn')
 const remove_test_case_btn = $('.remove_test_case_btn')
 const difficult_list = $(".difficult_list")
-const tag_list = $(".tag_list")
+const type_list = $(".type_list")
 const test_case_control = $(".test_case_control")
 const demo_code_block = $(".demo_code_block")
 const test_case_block = $(".test_case_block")
+
+const tag_block = $(".tag_block")
+const tag_item = $$(".tag_item")
 
 // test case config
 
@@ -117,17 +122,23 @@ function toggle_mode(mode) {
             difficult_list.style.display = "block"
             demo_code_block.style.display = "block"
             description_input.style.display = "none"
+            tag_block.style.display = "block"
+            header.innerHTML = "tạo task"
             break
         case "post":
             test_case_control.style.display = "none"
             difficult_list.style.display = "none"
             demo_code_block.style.display = "none"
             description_input.style.display = "block"
+            tag_block.style.display = "none"
+            header.innerHTML = "tạo post"
         default:
             test_case_control.style.display = "none"
             difficult_list.style.display = "none"
             demo_code_block.style.display = "none"
             description_input.style.display = "block"
+            tag_block.style.display = "none"
+            header.innerHTML = "tạo post"
             break
     }
 }
@@ -173,7 +184,7 @@ post_btn.onclick = () => {
                 url.push(editor_url[0].replace("src=\"","").replace("\"","").replaceAll("amp;", ""))
                 console.log(editor_url[0].replace("src=\"","").replace("\"","").replaceAll("amp;", ""))
                 console.log(text)
-                if(tag_list.value === "post") {
+                if(type_list.value === "post") {
                     const docRef = addDoc(collection(firestore, "post"), {
                         author: username,
                         content: text,
@@ -183,9 +194,10 @@ post_btn.onclick = () => {
                         post_id: `${new Date().getTime()}`,
                         upload_time: `${new Date().getTime()}`
                     })
-                } else if(tag_list.value === "task") {
+                } else if(type_list.value === "task") {
                     console.log(getInOupValue())
                     const docRef = addDoc(collection(firestore, "task"), {
+                        author: username,
                         task_name: title_input.value,
                         accepted_count: 0,
                         challenger: [],
@@ -194,6 +206,7 @@ post_btn.onclick = () => {
                         inp_oup: getInOupValue(),
                         tag: {
                             difficult: difficult_list.value,
+                            skill_require: $$(".tag_item.selected").map(item => ({name: item.innerHTML, link: item.dataset.link}))
                         },
                         demo_code: JSON.stringify(demo_code),
                         input_title: input_title,
@@ -204,7 +217,7 @@ post_btn.onclick = () => {
                     uploadImage(dataURLtoBlob(item)).then(new_url => {
                         text = text.replace(item, new_url)
                         if(i === editor_url.length - 1) {
-                            if(tag_list.value === "post") {
+                            if(type_list.value === "post") {
                                 const docRef = addDoc(collection(firestore, "post"), {
                                     author: username,
                                     content: text,
@@ -214,9 +227,10 @@ post_btn.onclick = () => {
                                     post_id: `${new Date().getTime()}`,
                                     upload_time: `${new Date().getTime()}`
                                 })
-                            } else if(tag_list.value === "task") {
+                            } else if(type_list.value === "task") {
                                 console.log(getInOupValue())
                                 const docRef = addDoc(collection(firestore, "task"), {
+                                    author: username,
                                     task_name: title_input.value,
                                     accepted_count: 0,
                                     challenger: [],
@@ -225,6 +239,7 @@ post_btn.onclick = () => {
                                     inp_oup: getInOupValue(),
                                     tag: {
                                         difficult: difficult_list.value,
+                                        skill_require: $$(".tag_item.selected").map(item => ({name: item.innerHTML, link: item.dataset.link}))
                                     },
                                     demo_code: JSON.stringify(demo_code),
                                     input_title: input_title,
@@ -232,12 +247,10 @@ post_btn.onclick = () => {
                             }
                         }
                     })
-                    console.log(text)
-
                 })
             }
         } else {
-            if(tag_list.value === "post") {
+            if(type_list.value === "post") {
                 const docRef = addDoc(collection(firestore, "post"), {
                     author: username,
                     content: text,
@@ -247,9 +260,10 @@ post_btn.onclick = () => {
                     post_id: `${new Date().getTime()}`,
                     upload_time: `${new Date().getTime()}`
                 })
-            } else if(tag_list.value === "task") {
+            } else if(type_list.value === "task") {
                 console.log(getInOupValue())
                 const docRef = addDoc(collection(firestore, "task"), {
+                    author: username,
                     task_name: title_input.value,
                     accepted_count: 0,
                     challenger: [],
@@ -258,6 +272,7 @@ post_btn.onclick = () => {
                     inp_oup: getInOupValue(),
                     tag: {
                         difficult: difficult_list.value,
+                        skill_require: $$(".tag_item.selected").map(item => ({name: item.innerHTML, link: item.dataset.link}))
                     },
                     demo_code: JSON.stringify(demo_code),
                     input_title: input_title,
@@ -355,11 +370,10 @@ remove_test_case_btn.onclick = () => {
     test_case_item.forEach((item, i) => {
         item.querySelector(".check_box").dataset.index = i
     })
-
     dem -= checked_box.length
 }
 
-tag_list.onchange = (e) => {
+type_list.onchange = (e) => {
     toggle_mode(e.target.value)
     // console.log(e.target.value)
 }
@@ -375,3 +389,13 @@ input_num_config.oninput = (e) => {
 
     title_input_config_list.innerHTML = (item.map(a => a)).join("")
 }
+
+tag_item.forEach(item => {
+    item.onclick = () => {
+        if(item.classList.contains("selected")) {
+            item.classList.remove("selected")
+            return
+        }
+        item.classList.add("selected")
+    }
+})

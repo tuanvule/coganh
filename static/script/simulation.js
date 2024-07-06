@@ -1,229 +1,186 @@
-import { createSimulation } from "./simulation_model.js";
+import { createBoardSimulation } from "./board_simulation_model.js";
+import { createTreeSimulation } from "./tree_simulation_model.js";
 
 const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
 
-const random_board_btn = $(".random_board_btn")
-const random_your_pos_btn = $(".random_your_pos_btn")
-const board = $(".board")
-const your_pos_list = $(".your_pos_list")
 const run_btn = $(".run_btn")
-const return_value_ouput = document.querySelector(".return_value_ouput")
-let your_pos_items = $$(".your_pos_item")
-const action = $(".action").innerHTML
-console.log(JSON.stringify(
-`def main(board, your_pos, opp_pos):
-    nuoc_di_hop_le = []
-    pos = quan_co_ban_chon #(x,y)
-        if quan_co_di_duoc_8_huong:
-            huong_di = ((-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1))
-        else:
-            huong_di = ((0,-1), (-1,0), (0,1), (1,0))
-        for move in huong_di:
-            vi_tri_moi = pos + move #(x,y)
-            if vi_tri_moi in board or vi_tri_moi not in your_pos:
-                nuoc_di_hop_le.append(vi_tri_moi)
-    return nuoc_di_hop_le`.replaceAll("\n","<br>")))
+let action = $(".action").innerHTML
+const simulation_type = $(".simulation_type").innerHTML
 
-const code_row = $$(".code_row")
-let new_board = [
-    [-1,-1,-1,-1,-1],
-    [-1, 0, 0, 0,-1],
-    [ 1, 0, 0, 0,-1],
-    [ 1, 0, 0, 0, 1],
-    [ 1, 1, 1, 1, 1]
-]
-let opp_pos = []
-let your_pos = [[0,2],[0,3],[0,4],[1,4],[2,4],[3,4],[4,4],[4,3]]
-let isErr = false
-let selected_chess = [0,2]
+const O_C_btn = $(".O_C_btn i")
+const open_code_btn = $(".open_code_btn i")
 
-random_your_pos_btn.onclick = () => {
-    let ran = Math.round(Math.random() * (your_pos.length-1))
-    console.log(ran)
-    your_pos_items = $$(".your_pos_item")
-    your_pos_items.forEach(i => i.classList.remove("selected"))
-    selected_chess = [Number(your_pos_items[ran].dataset.x),Number(your_pos_items[ran].dataset.y)]
-    your_pos_items[ran].classList.add("selected")
-    choose_chess(selected_chess)
+const setting_bar = $(".setting_bar")
+const action_block = $(".action_block")
+const play_animation_controller = $(".play_animation_controller")
+const duration_bar = $(".duration_bar")
+duration_bar.value = 0
+const visualize_speed = $(".visualize_speed")
+const pre_action = $(".pre_action")
+const play_btn = $(".play_btn")
+const pause_btn = $(".pause_btn")
+const next_action = $(".next_action")
+let isDragging = false;
+
+
+duration_bar.onchange = (e) => {
+  if(simulation_type === "tree") {
+    simulation.animation_index = Math.round((simulation.action.length-1) * (e.target.value / 100))
+  } else if(simulation_type === "board") {
+    simulation.animation_index = Math.round((simulation.run_task.length-1) * (e.target.value / 100))
+  }
+  simulation.Pause()
+  simulation.play_one_frame(simulation.animation_index)
+  // simulation.play_animation()
+  // duration_bar.value = (simulation.animation_index / (simulation.action.length - 1)) * 100
+  // console.log(simulation.is_animation_end)
+  // console.log(simulation.is_hightlight_result)
+  // console.log()
 }
 
-random_board_btn.onclick = () => {
-    board.innerHTML = ""
-    random_board().forEach(row => {
-        let str = `[${row}]\n`.replaceAll("1", " 1").replaceAll("0", " 0").replaceAll("- 1", "-1")
-        board.innerHTML += str
-    })
-    try {
-        new_board = JSON.parse(`[${board.innerHTML.replaceAll("\n",",")}]`.replaceAll("],]","]]"))
-        board.style.border = "1px solid #007BFF"
-        your_pos_list.innerHTML = ""
-        for(let i = 0; i <= 4; i++) {
-            for(let j = 0; j <= 4; j++) {
-                if(new_board[i][j] === 1) {
-                    your_pos_list.innerHTML += `
-                        <div data-x="${j}" data-y="${i}" class="your_pos_item">(${[j,i]})</div>
-                    `
-                }
-            }
-        }
-        isErr = false
-        const fist = $(".your_pos_item")
-        fist.classList.add("selected")
-        selected_chess = [Number(fist.dataset.x),Number(fist.dataset.y)]
-        console.log(selected_chess = [Number(fist.dataset.x),Number(fist.dataset.y)])
-        reset_event()
-    } catch (error) {
-        console.log(error)
-        isErr = true
-        board.style.border = "1px solid red"
-    }
+visualize_speed.onchange = () => {
+  simulation.speed = Number(visualize_speed.value)
 }
 
-board.oninput = () => {
-    try {
-        new_board = JSON.parse(`[${board.innerHTML.replaceAll("\n",",")}]`)
-        board.style.border = "1px solid #007BFF"
-        your_pos_list.innerHTML = ""
-        for(let i = 0; i <= 4; i++) {
-            for(let j = 0; j <= 4; j++) {
-                if(new_board[i][j] === 1) {
-                    your_pos_list.innerHTML += `
-                        <div data-x="${j}" data-y="${i}" class="your_pos_item">(${[j,i]})</div>
-                    `
-                }
-            }
-        }
-        isErr = false
-        const fist = $(".your_pos_item")
-        fist.classList.add("selected")
-        selected_chess = [Number(fist.dataset.x),Number(fist.dataset.y)]
-        console.log(selected_chess = [Number(fist.dataset.x),Number(fist.dataset.y)])
-        reset_event()
-        simulation.start(new_board)
-    } catch (error) {
-        console.log(error)
-
-        board.style.border = "1px solid red"
-        isErr = true
-    }
+pre_action.onclick = async () => {
+  simulation.Pause()
+  if(simulation.animation_index > 0) {
+    simulation.animation_index -= 1
+    await simulation.play_one_frame(simulation.animation_index)
+    duration_bar.value = (simulation.animation_index / (simulation[(simulation_type === "tree" ? "action" : "run_task")].length - 1)) * 100
+  }
 }
 
-function random_board() {
-    const d = [-1,0,1]
-    const c = [0,0,0]
-    your_pos = []
-    for(let i = 0; i <= 4; i++) {
-        for(let j = 0; j <= 4; j++) {
-            let ran = Math.round(Math.random() * 2)
-            if(c[ran] >= 8) {
-                new_board[i][j] = 0
-                continue
-            }
-            new_board[i][j] = d[ran]
-            c[ran]++
-            if(d[ran] === 1) {
-                your_pos.push([j,i])
-            } else if(d[ran] === -1) {
-                opp_pos.push([j,i])
-            }
-        }
-    }
-    simulation.start(new_board)
-    return new_board
+next_action.onclick = async () => {
+  console.log(simulation.animation_index)
+  simulation.Pause()
+  if(simulation.animation_index < simulation[(simulation_type === "tree" ? "action" : "run_task")].length - 1) {
+    if(simulation_type === "tree" || simulation.moves.length !== 0) simulation.animation_index += 1
+    await simulation.play_one_frame(simulation.animation_index)
+    duration_bar.value = (simulation.animation_index / (simulation[(simulation_type === "tree" ? "action" : "run_task")].length - 1)) * 100
+  }
 }
 
-function reset_event() {
-    const your_pos_item = $$(".your_pos_item")
-    your_pos_item.forEach(item => {
-        item.onclick = () => {
-            your_pos_item.forEach(i => i.classList.remove("selected"))
-            selected_chess = [Number(item.dataset.x),Number(item.dataset.y)]
-            item.classList.add("selected")
-            console.log(selected_chess)
-            choose_chess(selected_chess)
-        }
-    })
+play_btn.onclick = () => {
+  // simulation.Play()
+  simulation.isPaused = false
+  simulation.play_animation(simulation.animation_index)
 }
 
-reset_event()
-
-
-function choose_chess([x,y]) {
-    simulation.render()
-    simulation.chosing_chess(0,[x,y])
+pause_btn.onclick = () => {
+  simulation.isPaused = true
+  // simulation.play_animation(simulation.animation_index)
 }
-
-const simulation = createSimulation("canvas")
-simulation.start(new_board)
-choose_chess(selected_chess)
 
 // let [x,y] = your_pos[Math.round(Math.random() * (your_pos.length - 1))]
 
-run_btn.onclick = () => {
-    if(isErr) {
-        board.style.animation = "none"
-        setTimeout(() => {
-            board.style.animation = "horizontal-shaking .1s linear"
-        }, 10);
-        return
-    }
-    if(simulation.is_finished) {
-        return_value_ouput.style.display = "none"
-        let [x,y] = selected_chess
-        simulation.start(new_board)
-        simulation.chosed_chess = selected_chess
-        simulation.action().check_valid_move([
-            ["GM", "", 1000],
-            ["hightlight", {
-                row: [2],
-                type: "run"
-            }, 0],
-            ["RMH", "", 1000],
-            ["RM", ["", "moves"], 1000],
-            ["hightlight", {
-                row: [3,4,5,6],
-                type: "run"
-            }, 0],
-            ["hightlight", {
-                row: [(x+y)%2==0 ? 4 : 6],
-                type: "true"
-            }, 0],
-            ["RMH", "", 1000],
-            ["hightlight", {
-                row: [9],
-                type: "run"
-            }, 1000],
-            ["hightlight", {
-                row: [9],
-                type: "false"
-            }, 1000],
-            ["RM", ["invalid", "invalid_move"], 0],
-            ["RMH", "", 1000],
-            ["render", "", 0],
-            ["CC", "", 0],
-            ["RM", ["", "valid_move"], 0],
-            ["hightlight", {
-                row: [9],
-                type: "run"
-            }, 1000],
-            ["hightlight", {
-                row: [9],
-                type: "true"
-            }, 1000],
-            ["RM", ["valid", "valid_move"], 0],
-            ["RMH", "", 1000],
-            ["hightlight", {
-                row: [10],
-                type: "true"
-            }, 0],
-            ["RMH", "", 1000],
-            ["hightlight", {
-                row: [11],
-                type: "true"
-            }, 0],
-            ["return", "valid_move", 1000],
-        ])
-    }
+window.addEventListener('beforeunload', function () {
+  window.scrollTo(1500 - innerWidth/2,1500 - innerHeight/2 + 60)
+});
+
+// Also set scroll position to top on page load
+window.addEventListener('load', function () {
+    window.scrollTo(1500 - innerWidth/2,1500 - innerHeight/2 + 60)
+
+});
+
+
+// let simulation = createsimulationSimulation()
+// simulation.start()
+
+let simulation 
+if(simulation_type === "board") {
+  simulation = createBoardSimulation("canvas")
+  simulation.choose_chess([simulation.chosed_chess])
+  simulation.run_task = JSON.parse(action.replaceAll("9999", (simulation.chosed_chess[0] + simulation.chosed_chess[1]) % 2 === 0 ? "4" : "6"))
+  simulation.start()
+  // simulation.run_task = JSON.parse(action.replaceAll("9999", (simulation.chosed_chess[0] + simulation.chosed_chess[1]) % 2 === 0 ? "4" : "6"))
+
+} else if(simulation_type === "tree") {
+  simulation = createTreeSimulation()
+  simulation.start()
 }
 
+run_btn.onclick = () => {
+  if(simulation_type === "board") {
+    if(simulation.isErr) {
+      simulation.setting_board.style.animation = "none"
+      setTimeout(() => {
+          simulation.setting_board.style.animation = "horizontal-shaking .1s linear"
+      }, 10);
+      return
+  }
+      // simulation.return_value_ouput.style.display = "none"
+    simulation.start()
+    simulation.chosed_chess = simulation.chosed_chess
+    simulation.play_animation()
+    simulation.Play()
+  } else if(simulation_type === "tree") {
+    simulation.run_algorithm("minimax")
+    simulation.isPaused = false
+    simulation.play_visualize()
+  }
+}
+
+let startX, startY;
+let scrollLeft, scrollTop;
+
+const content = document.querySelector('body');
+
+window.addEventListener('load', (event) => {
+    window.scrollTo(0, 0);
+});
+
+content.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  startX = e.clientX;
+  startY = e.clientY;
+  scrollLeft = window.scrollX;
+  scrollTop = window.scrollY;
+  content.style.cursor = 'grabbing'; // Thay đổi con trỏ chuột
+//   e.preventDefault(); // Ngăn chặn sự kiện mặc định
+});
+
+content.addEventListener('mouseup', () => {
+  isDragging = false;
+  content.style.cursor = 'default'; // Khôi phục con trỏ chuột
+});
+
+content.addEventListener('mouseleave', () => {
+  isDragging = false;
+  content.style.cursor = 'default'; // Khôi phục con trỏ chuột
+});
+
+content.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  const x = e.clientX;
+  const y = e.clientY;
+  const walkX = (x - startX);
+  const walkY = (y - startY);
+  window.scrollTo(scrollLeft - walkX, scrollTop - walkY);
+});
+
+O_C_btn.onclick = () => {
+  setting_bar.classList.toggle("appear")
+}
+
+open_code_btn.onclick = () => {
+  action_block.classList.toggle("appear")
+}
+
+action_block.onmousemove = () => {
+  isDragging = false
+}
+
+play_animation_controller.onmousemove = () => {
+  isDragging = false
+}
+
+setting_bar.onmousemove = () => {
+  isDragging = false
+}
+
+// window.onclick = () => {
+  
+// }

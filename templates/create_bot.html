@@ -43,13 +43,16 @@
                             <i class="fa-solid fa-circle-xmark fail_icon"></i>
                         </div>
                     </div>
+                    <div class="bot_display_nav-block--item help">
+                        HELP
+                    </div>
                     <div class="animation">
                         <div class="children"></div>
                     </div>
                 </div>
             </div>
             <div class="bot_display-video--background">
-                <video class="bot_display-video-item bot_display-video--result" controls>
+                <video style="display: auto;" class="bot_display-video-item bot_display-video--result" controls>
                     <source src="{{ url_for('static', filename='upload_video/demo.mp4') }}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -80,6 +83,29 @@
                         </div>
                         <div class="debug_info-move_level normal">đánh giá</div>
                     </div>
+                </div>
+                <div style="display: none;" class="bot_display-video-item bot_display-video--help">
+                    <div class="help_title">Kiến thức cần thiết</div>
+                    <ul class="help_list help_type">
+                        <li class="help_item help_type"><a href="https://www.w3schools.com/python/python_lists.asp">if else</a></li>
+                        <li class="help_item help_type"><a href="https://www.w3schools.com/python/python_lists.asp">dictionary</a></li>
+                        <li class="help_item help_type"><a href="https://www.w3schools.com/python/python_lists.asp">function</a></li>
+                        <li class="help_item help_type"><a href="https://www.w3schools.com/python/python_lists.asp">object</a></li>
+                        <li class="help_item help_type"><a href="https://www.w3schools.com/python/python_ml_getting_started.asp">Loop</a></li>
+                        <li class="help_item help_type"><a href="https://www.24h.com.vn/bong-da/nhan-dinh-bong-da-argentina-ecuador-niem-cam-hung-messi-tiep-da-thang-hoa-copa-america-c48a1582788.html">List</a></li>
+                    </ul>
+                    <div class="help_title">Các bài blog</div>
+                    <ul class="help_list">
+                        <li class="help_item help_blog"><a href="{{url_for('post', post_id='1719022233537')}}">Kiểm tra nước đi hợp lệ</a></li>
+                        <li class="help_item help_blog"><a href="{{url_for('post', post_id='1719228535494')}}">Kiểm tra gánh chẹt</a></li>
+                        <li class="help_item help_blog"><a href="{{url_for('post', post_id='1720181857262')}}">Kiểm tra vây</a></li>
+                    </ul>
+                    <div class="help_title">Mô phỏng thuật toán</div>
+                    <ul class="help_list">
+                        <li class="help_item help_blog"><a href="{{url_for('visualize', id='SctXzAxW6TtcMSPwPm1N')}}">minimax</a></li>
+                    </ul>
+                    <ul class="help_list">
+                    </ul>
                 </div>
             </div>
             <div class="utility">
@@ -267,6 +293,22 @@
                                 <img class="" src="../static/img/Master.png" alt="">
                                 <div class="bot_item_title Master">
                                     MASTER
+                                </div>
+                                <div class="fight_result">
+                                    <div class="fight_result_item fight_result_draw"><i class="fa-solid fa-handshake-simple"></i></div>
+                                    <div class="fight_result_item fight_result_loader"><div class="fight_result_loading"></div></div>
+                                    <div class="fight_result_item fight_result_win"></div>
+                                    <div class="fight_result_item fight_result_lost"><i class="fa-solid fa-skull"></i></div>
+                                </div>
+                                <div class="bot_item_info" style="right: -60%;">
+                                    <div class="introduce">Robot của người này là bất bại.</div>
+                                    <div class="hint"><p style="color: red;"><i class="fa-solid fa-angles-down"></i>lời khuyên<i class="fa-solid fa-angles-down"></i></p>Cố lên 😏.</div>
+                                </div>
+                            </div>
+                            <div data-level="{{user.username}}" class="bot_item {{user.username}}">
+                                <img class="" src="../static/img/your_bot.png" alt="">
+                                <div class="bot_item_title Master">
+                                    {{user.username}}
                                 </div>
                                 <div class="fight_result">
                                     <div class="fight_result_item fight_result_draw"><i class="fa-solid fa-handshake-simple"></i></div>
