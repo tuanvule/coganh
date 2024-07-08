@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="../static/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
     <link rel="stylesheet" href="../static/css/animation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" -->
@@ -25,7 +25,9 @@
             <!-- <div class="login_btn">Đăng nhập</div> -->
         </div>
     </nav>
-    <img class="board_img" src="../static/img/chessboard_simulation.png" alt="" hidden>
+    <img style="position: fixed;" class="board_img" src="../static/img/chessboard_simulation.png" alt="" hidden>
+    <img style="position: fixed;" class="fire_img" src="../static/img/fire.webp" alt="" hidden>
+    <audio class="fire_sound" src="../static/fireSound.mp3"></audio>
 
     <!-- <div class="warpper"> -->
         <!-- <input type="checkbox" name="" id="checkbox" style="position: fixed;" hidden> -->
@@ -33,45 +35,76 @@
         <i style="font-size: 34px;" class="fa-solid fa-gear"></i>
         <div class="setting_bar">
             <div class="setting_block">
-                {% if simulation.type == "board" %}
-                <div class="board_title">board</div>
-                <pre class="board" contenteditable="">
+                <div style="display: none;" class="setting_item sboard">
+                    <div class="board_title">board</div>
+                    <pre class="board" contenteditable="">
 [-1,-1,-1,-1,-1]
 [-1, 0, 0, 0,-1]
 [ 1, 0, 0, 0,-1]
 [ 1, 0, 0, 0, 1]
 [ 1, 1, 1, 1, 1]</pre>
-                <div class="random_board_btn">
-                    <i class="fa-solid fa-dice"></i>
-                </div>
-                <div class="choose_your_pos_title">Chọn quân</div>
-                <div class="your_pos_list">
-                    <div class="your_pos_item selected" data-x="0" data-y="2">(0,2)</div>
-                    <div class="your_pos_item" data-x="0" data-y="3">(0,3)</div>
-                    <div class="your_pos_item" data-x="0" data-y="4">(0,4)</div>
-                    <div class="your_pos_item" data-x="1" data-y="4">(1,4)</div>
-                    <div class="your_pos_item" data-x="2" data-y="4">(2,4)</div>
-                    <div class="your_pos_item" data-x="3" data-y="4">(3,4)</div>
-                    <div class="your_pos_item" data-x="4" data-y="4">(4,4)</div>
-                    <div class="your_pos_item" data-x="4" data-y="3">(4,3)</div>
-                </div>
-                <div class="random_your_pos_btn">
-                    <i class="fa-solid fa-dice"></i>
-                </div>
-                {% elif  simulation.type == "tree" %}
-                    <div class="setting_item">
-                        <div class="item_title">Node</div>
-                        <div class="node_setting">
-                            <input type="text" class="node_name" placeholder="Name">
-                            <input type="number" class="node_value" placeholder="Value">
-                        </div>
+                    <div class="random_board_btn">
+                        <i class="fa-solid fa-dice"></i>
                     </div>
-                    <div class="setting_item">
-                        <div class="item_title">Thứ tự minimax</div>
-                        <ul class="minimax_list">
-                        </ul>
+                </div>
+
+                <div style="display: none;" class="setting_item choose_chess" style="display: none;">
+                    <div class="choose_your_pos_title">Chọn quân</div>
+                    <div class="your_pos_list">
+                        <div class="your_pos_item selected" data-x="0" data-y="2">(0,2)</div>
+                        <div class="your_pos_item" data-x="0" data-y="3">(0,3)</div>
+                        <div class="your_pos_item" data-x="0" data-y="4">(0,4)</div>
+                        <div class="your_pos_item" data-x="1" data-y="4">(1,4)</div>
+                        <div class="your_pos_item" data-x="2" data-y="4">(2,4)</div>
+                        <div class="your_pos_item" data-x="3" data-y="4">(3,4)</div>
+                        <div class="your_pos_item" data-x="4" data-y="4">(4,4)</div>
+                        <div class="your_pos_item" data-x="4" data-y="3">(4,3)</div>
                     </div>
-                {% endif %}
+                    <div class="random_your_pos_btn">
+                        <i class="fa-solid fa-dice"></i>
+                    </div>
+                </div>
+
+                <div style="display: none;" class="setting_item choose_chess_move" style="display: none;">
+                    <div class="item_title">Chọn quân</div>
+                    <div class="your_chess_list">
+                        <div class="your_chess_item selected" data-x="0" data-y="2">(0,2)</div>
+                        <div class="your_chess_item" data-x="0" data-y="3">(0,3)</div>
+                        <div class="your_chess_item" data-x="0" data-y="4">(0,4)</div>
+                        <div class="your_chess_item" data-x="1" data-y="4">(1,4)</div>
+                        <div class="your_chess_item" data-x="2" data-y="4">(2,4)</div>
+                        <div class="your_chess_item" data-x="3" data-y="4">(3,4)</div>
+                        <div class="your_chess_item" data-x="4" data-y="4">(4,4)</div>
+                        <div class="your_chess_item" data-x="4" data-y="3">(4,3)</div>
+                    </div>
+                    <div class="item_title">Chọn vị trí di chuyển</div>
+                    <div class="your_move_list">
+                        <div class="your_move_item" data-x="1" data-y="1">(1,1)</div>
+                        <div class="your_move_item" data-x="1" data-y="2">(1,2)</div>
+                        <div class="your_move_item" data-x="1" data-y="3">(1,3)</div>
+                    </div>
+                </div>
+
+                <div style="display: none;" class="setting_item vay_check">
+                    <div class="item_title">Quân được kiểm tra vây</div>
+                    <select class="side_select" name="" id="">
+                        <option value="your_pos">Quân xanh</option>
+                        <option value="opp_pos">Quân đỏ</option>
+                    </select>
+                </div>
+
+                <div style="display: none;" class="setting_item node">
+                    <div class="item_title">Node</div>
+                    <div class="node_setting">
+                        <input type="text" class="node_name" placeholder="Name">
+                        <input type="number" class="node_value" placeholder="Value">
+                    </div>
+                </div>
+                <div style="display: none;" class="setting_item minimax_turn">
+                    <div class="item_title">Thứ tự minimax</div>
+                    <ul class="minimax_list">
+                    </ul>
+                </div>
                 <div class="run_btn">Khởi tạo</div>
             </div>
         </div>
@@ -82,12 +115,36 @@
         <i class="fa-solid fa-code"></i>
         <div class="action_block">
             <div class="code_list">
-                
-<pre>
-    <code>
-{{simulation.codes | safe}}
-    </code>
-</pre>
+<!-- {{simulation.codes | safe}} -->
+<pre><code class="language-python">{{simulation.codes | safe}}
+</code></pre>
+<!-- def ganh_chet(move, opp_pos):
+    quan_co_bi_an = []
+    board = game_state["board"]
+    vi_tri_moi_co_di_duoc_8_huong_khong = (move[0]+move[1])%2==0
+
+    for pos in opp_pos:
+        khoang_cach = pos - move #(x,y)
+        if -1<=khoang_cach<=1 and (0 in khoang_cach or vi_tri_moi_co_di_duoc_8_huong_khong):
+            if ((quan_doi_dien_quan_do in board and board[quan_doi_dien_quan_do] == -1) or
+                (quan_doi_dien_quan_xanh in board and board[quan_doi_dien_quan_xanh] == 1)):
+                quan_co_bi_an.append(pos)
+
+    return quan_co_bi_an -->
+<!-- def vay(quan_bi_kiem_tra):
+    board = game_state["board"]
+    for pos in quan_bi_kiem_tra:
+        if quan_co_di_duoc_8_huong == True:
+                huong_di = ((-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1))
+        else:
+            huong_di = ((0,-1), (-1,0), (0,1), (1,0))
+        for move in huong_di:
+            nuoc_di = pos + move #(x,y)
+            if nuoc_di in board and board[nuoc_di]==0:
+                return []
+
+    valid_remove = quan_bi_kiem_tra.copy()
+    return valid_remove -->
 <!-- def minimax(node, depth=0, isMaximizingPlayer=True):
     if depth == Stopdepth:
         return node.value
@@ -290,10 +347,11 @@
     <div style="position: fixed;" class="code" hidden>{{simulation.codes | safe}}</div>
     <div style="position: fixed;" class="action" hidden>{{simulation.action}}</div>
     <div style="position: fixed;" class="simulation_type" hidden>{{simulation.type}}</div>
-
+    <div style="position: fixed;" class="simulation_name" hidden>{{simulation.name}}</div>
+    <!-- <div style="position: fixed;" class="simulation_name" hidden>ganh_chet</div> -->
+    <!-- {{simulation.name}} -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script> 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/languages/python.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
     <script type="module" src="../static/script/board_simulation_model.js"></script>
     <script type="module" src="../static/script/tree_simulation_model.js"></script>
     <script type="module" src="../static/script/simulation.js"></script>

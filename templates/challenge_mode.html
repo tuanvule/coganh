@@ -183,7 +183,7 @@
                     </ul>
                     <ul class="test_case_list">
                         <!-- {{task}} -->
-                        {% set inp_oup = task.inp_oup | parse_json %}
+                        {% set inp_oup = task.inp_oup | eval_string %}
                         {% for i in range(0, 2) %}
                             <li class="test_case_item {{'appear' if i == 0 else ''}}">
                                 {% for j in range(inp_oup[i].input | length) %}

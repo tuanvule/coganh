@@ -96,7 +96,7 @@ runBtn.onclick = () => {
         },
         body: JSON.stringify({
             code: code,
-            inp_oup: JSON.parse(task_inp_oup).slice(0, 2),
+            inp_oup: task_inp_oup,
             time: formatter.format(new Date()),
         }),
     })
@@ -146,7 +146,7 @@ function submitCode(code) {
         },
         body: JSON.stringify({
             code: code,
-            inp_oup: JSON.parse(task_inp_oup),
+            inp_oup: task_inp_oup,
             id: task_id,
             time: formatter.format(new Date()),
         }),

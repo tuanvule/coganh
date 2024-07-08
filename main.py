@@ -26,6 +26,7 @@ import time
 import threading
 from timeout_decorator import timeout
 import builtins
+from copy import deepcopy
 
 doc_ref_room = fdb.collection("room")
 doc_ref_post = fdb.collection("post")
@@ -126,6 +127,10 @@ def session_required(f):
 @app.template_filter('parse_json')
 def parse_json(json_string):
     return json.loads(json_string)
+
+@app.template_filter('eval_string')
+def eval_string(string):
+    return eval(string)
 
 @app.route('/')
 def home_page():
@@ -390,24 +395,26 @@ def visualize(id):
 # @login_required
 def run_task():
     res = request.get_json()
-    inp_oup = res["inp_oup"]
+    inp_oup = eval(res["inp_oup"])
     code = res["code"]
     org_stdout = sys.stdout
     err = ""
 
     user_output = []
-    for i in inp_oup:
+    for i in inp_oup[:2]:
         f = StringIO()
         sys.stdout = f
         try:
             locals = {}
             exec(code, globals_exec, locals)
             Uoutput = locals["main"](*i["input"])
-            Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
-            if type(Uoutput) is list:
-                comparision = sorted(i["output"]) == sorted(Uoutput)
-            else:
-                comparision = i["output"] == Uoutput
+            print(Uoutput)
+            print(i["output"])
+            # Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
+            # if type(Uoutput) is list:
+            #     comparision = sorted(i["output"]) == sorted(Uoutput)
+            # else:
+            comparision = i["output"] == Uoutput
             if comparision:
                 user_output.append({
                     "log": f.getvalue(),
@@ -454,7 +461,8 @@ def submit():
     res = request.get_json()
     task = doc_ref_task.document(res["id"])
     code = res["code"]
-    inp_oup = res["inp_oup"]
+    inp_oup = eval(res["inp_oup"])
+    print(inp_oup)
     org_stdout = sys.stdout
     soAc = 0
     err = ""
@@ -475,12 +483,13 @@ def submit():
         try:
             locals = {}
             exec(code, globals_exec, locals)
-            Uoutput = locals["main"](*i["input"])
-            Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
-            if type(Uoutput) is list:
-                comparision = sorted(i["output"]) == sorted(Uoutput)
-            else:
-                comparision = i["output"] == Uoutput
+            Uoutput = locals["main"](*deepcopy(i["input"]))
+            # Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
+            # if type(Uoutput) is list:
+            #     comparision = sorted(i["output"]) == sorted(Uoutput)
+            # else:
+            comparision = i["output"] == Uoutput
+            print(comparision)
 
             if comparision:
                 user_output.append({
