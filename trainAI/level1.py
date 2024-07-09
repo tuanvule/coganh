@@ -13,7 +13,7 @@ def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlaye
     if your_board == 0 or opp_board == 0:
         return (-8, depth, 0) if isMaximizingPlayer else (8, -depth, 0)
     if depth == 2:
-        return (len(your_pos) - len(opp_pos)), float("-inf"), check_pos_point(your_board, opp_board)
+        return (len(your_pos) - len(opp_pos)), float("-inf"), check_pos_point(your_pos, opp_pos)
 
     bestVal = (float("inf"),)
 

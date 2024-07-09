@@ -42,15 +42,17 @@
                                 <div class="author">
                                     <div class="author_avatar">{{post["author"][0].upper()}}</div>
                                     <div class="author_name">{{post["author"]}}</div>
+                                    <div class="upload_time">{{post["upload_time"]}}</div>
                                 </div>
                                 <a href="{{url_for('post', post_id = post['post_id'])}}" class="review_title">{{post["title"]}}</a>
                                 <div class="review_decription">
                                     {{post["description"]}}
                                 </div>
                             </div>
-                            <div class="review_img">
+                            <a href="{{url_for('post', post_id = post['post_id'])}}" class="review_img">
                                 <img src="{{post['image_url'][0]}}" alt="">
-                            </div>
+                                <div class="back_drop"></div>
+                            </a>
                         </div>
                     {% endif %}
                 {%endfor%}
@@ -145,15 +147,16 @@
                                 <div class="author">
                                     <div class="author_avatar">{{post["author"][0].upper()}}</div>
                                     <div class="author_name">{{post["author"]}}</div>
+                                    <div class="upload_time">{{post["upload_time"]}}</div>
                                 </div>
                                 <a href="{{url_for('post', post_id = post['post_id'])}}" class="review_title">{{post["title"]}}</a>
                                 <div class="review_decription">
                                     {{post["description"]}}
                                 </div>
                             </div>
-                            <div class="review_img">
+                            <a href="{{url_for('post', post_id = post['post_id'])}}" class="review_img">
                                 <img src="{{post['image_url'][0]}}" alt="">
-                            </div>
+                            </a>
                         </div>
                     {% endif %}
                 {%endfor%}

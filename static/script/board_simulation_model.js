@@ -34,7 +34,7 @@ export function createBoardSimulation(root) {
     const random_your_pos_btn = $(".random_your_pos_btn")
     const random_board_btn = $(".random_board_btn")
     const run_btn = $(".run_btn")
-    const your_pos_items = $$(".your_pos_items")
+    let your_pos_items = $$(".your_pos_items")
     const play_pause_btn = $("#play_pause_btn")
     const duration_bar = $(".duration_bar")
     const show_data_change = $(".show_data_change")
@@ -811,7 +811,8 @@ export function createBoardSimulation(root) {
         
         async handle_event() {
             random_your_pos_btn.onclick = () => {
-                let ran = Math.round(Math.random() * (your_pos.length-1))
+                console.log("hello")
+                let ran = Math.round(Math.random() * (this.your_pos.length-1))
                 your_pos_items = $$(".your_pos_item")
                 your_pos_items.forEach(i => i.classList.remove("selected"))
                 this.chosed_chess = [[Number(your_pos_items[ran].dataset.x),Number(your_pos_items[ran].dataset.y)]]

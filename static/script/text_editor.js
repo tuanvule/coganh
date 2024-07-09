@@ -45,6 +45,18 @@ let input_title = []
 let text
 let dem = 0
 
+let options = {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+}
+
+let formatter = new Intl.DateTimeFormat([], options);
+
 function dataURLtoBlob(dataurl) {
     let arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
         bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
@@ -65,15 +77,15 @@ function getInOupValue() {
     inp_list.forEach((item) => {
         input_value = []
         item.querySelectorAll(".inp").forEach((i) => {
-            console.log(i.value.replaceAll("(","[").replaceAll(")","]"))
-            input_value.push(JSON.parse(i.value.replaceAll("(","[").replaceAll(")","]")))
+            // console.log(i.value.replaceAll("(","[").replaceAll(")","]"))
+            input_value.push(i.value)
         })
         input_list.push(input_value)
     })
 
     oup.forEach((item) => {
-        console.log(JSON.parse(item.value.replaceAll("(","[").replaceAll(")","]").replaceAll("True", "true").replaceAll("False","false")))
-        output_value.push(JSON.parse(item.value.replaceAll("(","[").replaceAll(")","]").replaceAll("True", "true").replaceAll("False","false")))
+        // console.log(JSON.parse(item.value.replaceAll("(","[").replaceAll(")","]").replaceAll("True", "true").replaceAll("False","false")))
+        output_value.push(item.value)
     })
 
     for(let i = 0; i < output_value.length; i++) {
@@ -85,7 +97,7 @@ function getInOupValue() {
 
     console.log(inp_oup)
 
-    return JSON.stringify(inp_oup)
+    return inp_oup
 }
 
 // function reset_oninput() {
@@ -171,11 +183,8 @@ post_btn.onclick = () => {
     try {
         if(editor_url) {
             editor_url.forEach((url) => {
-                // console.log(url)
-                // console.log(url.indexOf("http") === -1)
                 if(url.indexOf("http") === -1) {
                     default_url.push(url.replace("src=\"","").replace("\"","").replaceAll("amp;", ""))
-                    // default_url.push(dataURLtoBlob(url.replace("src=\"","").replace("\"","").replaceAll("amp;", "")))
                     isTDU = true
                 }
             })
@@ -192,25 +201,54 @@ post_btn.onclick = () => {
                         title: title_input.value,
                         description: description_input.value,
                         post_id: `${new Date().getTime()}`,
-                        upload_time: `${new Date().getTime()}`
+                        upload_time: formatter.format(new Date()),
                     })
                 } else if(type_list.value === "task") {
                     console.log(getInOupValue())
-                    const docRef = addDoc(collection(firestore, "task"), {
-                        author: username,
-                        task_name: title_input.value,
-                        accepted_count: 0,
-                        challenger: [],
-                        content: text,
-                        submission_count: 0,
-                        inp_oup: getInOupValue(),
-                        tag: {
-                            difficult: difficult_list.value,
-                            skill_require: $$(".tag_item.selected").map(item => ({name: item.innerHTML, link: item.dataset.link}))
+                    fetch("/upload_task", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
                         },
-                        demo_code: JSON.stringify(demo_code),
-                        input_title: input_title,
+                        body: JSON.stringify({
+                            author: username,
+                            task_name: title_input.value,
+                            accepted_count: 0,
+                            challenger: [],
+                            content: text,
+                            submission_count: 0,
+                            inp_oup: getInOupValue(),
+                            tag: {
+                                difficult: difficult_list.value,
+                                skill_require: $$(".tag_item.selected").map(item => ({name: item.innerHTML, link: item.dataset.link}))
+                            },
+                            demo_code: JSON.stringify(demo_code),
+                            input_title: input_title,
+                        }),
                     })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data === "err") {
+                            throw data
+                        } 
+                        console.log(data)
+                    })
+                    .catch(err => {throw err})
+                    // const docRef = addDoc(collection(firestore, "task"), {
+                    //     author: username,
+                    //     task_name: title_input.value,
+                    //     accepted_count: 0,
+                    //     challenger: [],
+                    //     content: text,
+                    //     submission_count: 0,
+                    //     inp_oup: getInOupValue(),
+                    //     tag: {
+                    //         difficult: difficult_list.value,
+                    //         skill_require: $$(".tag_item.selected").map(item => ({name: item.innerHTML, link: item.dataset.link}))
+                    //     },
+                    //     demo_code: JSON.stringify(demo_code),
+                    //     input_title: input_title,
+                    // })
                 }
             } else {
                 default_url.forEach((item, i) => {
@@ -225,25 +263,54 @@ post_btn.onclick = () => {
                                     title: title_input.value,
                                     description: description_input.value,
                                     post_id: `${new Date().getTime()}`,
-                                    upload_time: `${new Date().getTime()}`
+                                    upload_time: formatter.format(new Date()),
                                 })
                             } else if(type_list.value === "task") {
-                                console.log(getInOupValue())
-                                const docRef = addDoc(collection(firestore, "task"), {
-                                    author: username,
-                                    task_name: title_input.value,
-                                    accepted_count: 0,
-                                    challenger: [],
-                                    content: text,
-                                    submission_count: 0,
-                                    inp_oup: getInOupValue(),
-                                    tag: {
-                                        difficult: difficult_list.value,
-                                        skill_require: $$(".tag_item.selected").map(item => ({name: item.innerHTML, link: item.dataset.link}))
+                                fetch("/upload_task", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
                                     },
-                                    demo_code: JSON.stringify(demo_code),
-                                    input_title: input_title,
+                                    body: JSON.stringify({
+                                        author: username,
+                                        task_name: title_input.value,
+                                        accepted_count: 0,
+                                        challenger: [],
+                                        content: text,
+                                        submission_count: 0,
+                                        inp_oup: getInOupValue(),
+                                        tag: {
+                                            difficult: difficult_list.value,
+                                            skill_require: $$(".tag_item.selected").map(item => ({name: item.innerHTML, link: item.dataset.link}))
+                                        },
+                                        demo_code: JSON.stringify(demo_code),
+                                        input_title: input_title,
+                                    }),
                                 })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if(data === "err") {
+                                        throw data
+                                    } 
+                                    console.log(data)
+                                })
+                                .catch(err => {throw err})
+                                // console.log(getInOupValue())
+                                // const docRef = addDoc(collection(firestore, "task"), {
+                                //     author: username,
+                                //     task_name: title_input.value,
+                                //     accepted_count: 0,
+                                //     challenger: [],
+                                //     content: text,
+                                //     submission_count: 0,
+                                //     inp_oup: getInOupValue(),
+                                //     tag: {
+                                //         difficult: difficult_list.value,
+                                //         skill_require: $$(".tag_item.selected").map(item => ({name: item.innerHTML, link: item.dataset.link}))
+                                //     },
+                                //     demo_code: JSON.stringify(demo_code),
+                                //     input_title: input_title,
+                                // })
                             }
                         }
                     })
@@ -258,25 +325,39 @@ post_btn.onclick = () => {
                     title: title_input.value,
                     description: description_input.value,
                     post_id: `${new Date().getTime()}`,
-                    upload_time: `${new Date().getTime()}`
+                    upload_time: formatter.format(new Date()),
                 })
             } else if(type_list.value === "task") {
-                console.log(getInOupValue())
-                const docRef = addDoc(collection(firestore, "task"), {
-                    author: username,
-                    task_name: title_input.value,
-                    accepted_count: 0,
-                    challenger: [],
-                    content: text,
-                    submission_count: 0,
-                    inp_oup: getInOupValue(),
-                    tag: {
-                        difficult: difficult_list.value,
-                        skill_require: $$(".tag_item.selected").map(item => ({name: item.innerHTML, link: item.dataset.link}))
+                let tags = Array.from($$(".tag_item.selected")).map(item => ({name: item.innerHTML, link: item.dataset.link}))
+                fetch("/upload_task", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
                     },
-                    demo_code: JSON.stringify(demo_code),
-                    input_title: input_title,
+                    body: JSON.stringify({
+                        author: username,
+                        task_name: title_input.value,
+                        accepted_count: 0,
+                        challenger: [],
+                        content: text,
+                        submission_count: 0,
+                        inp_oup: getInOupValue(),
+                        tag: {
+                            difficult: difficult_list.value,
+                            skill_require: tags
+                        },
+                        demo_code: JSON.stringify(demo_code),
+                        input_title: input_title,
+                    }),
                 })
+                .then(res => res.json())
+                .then(data => {
+                    if(data === "err") {
+                        throw data
+                    } 
+                    console.log(data)
+                })
+                .catch(err => {throw err})
             }
         }
 
@@ -289,7 +370,6 @@ post_btn.onclick = () => {
         noti_content.style.display = "block"
         noti_content.innerHTML = err.message
         noti_content.classList.add("err")
-        console.log(err.message)
     }
 }
 
@@ -379,6 +459,9 @@ type_list.onchange = (e) => {
 }
 
 input_num_config.oninput = (e) => {
+    if(input_num_config.value > 5) {
+        input_num_config.value = 5
+    }
     let item = []
     console.log(e.target.value)
     for(let  i = 0; i < e.target.value; i++) {

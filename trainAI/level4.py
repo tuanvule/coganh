@@ -27,7 +27,7 @@ def minimax(your_pos, opp_pos, your_board, opp_board):
                 if len(your_new_pos) > len(opp_new_pos) or len(your_new_pos) == len(opp_new_pos) == 3:
                     opp_new_board, opp_new_pos = vay(opp_new_pos, your_new_board, opp_new_board)
 
-                value = (len(your_new_pos) - len(opp_new_pos)), check_pos_point(your_new_board, opp_new_board)
+                value = (len(your_new_pos) - len(opp_new_pos)), check_pos_point(your_new_pos, opp_new_pos)
 
                 if value > bestVal:
                     move["selected_pos"] = pos

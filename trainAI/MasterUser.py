@@ -1,52 +1,79 @@
 import os
 from trainAI.Master import ganh_chet, vay, check_pos_point
 
-def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, isMaximizingPlayer=True, alpha=(float("-inf"),), beta=(float("inf"),)):
+def minimax(your_pos, opp_pos, your_board, opp_board, depth=0, alpha=(float("-inf"),), beta=(float("inf"),)):
 
-    if isMaximizingPlayer:
+    if depth%2==0:
         if (state := f"{your_board} {opp_board}") in cache and depth:
             temp = cache[state].split(' ')
             return float(temp[1]), float(temp[2]) + (depth if float(temp[2])>0 else -depth), float(temp[3])
+
+        if your_board == 0 or opp_board == 0:
+            return (-8, depth, 0)
+
+        bestVal = (float("-inf"),)
+
+        for pos in your_pos:
+            for movement in ((0,-1), (0,1), (1,0), (-1,0), (-1,1), (1,-1), (1,1), (-1,-1)):
+                invalid_move = (pos[0] + movement[0], pos[1] + movement[1])
+                if 0 <= invalid_move[0] <= 4 and 0 <= invalid_move[1] <= 4 and (your_board|opp_board)&(1<<24-5*invalid_move[1]-invalid_move[0]) == 0 and ((True, sum(pos)%2==0)[movement[0]*movement[1]]):
+
+                    # Update move to board
+                    your_new_board = your_board^(1<<24-5*pos[1]-pos[0])|(1<<24-5*invalid_move[1]-invalid_move[0])
+                    # Update move to positions
+                    your_new_pos = your_pos.copy()
+                    your_new_pos[your_pos.index(pos)] = invalid_move
+
+                    opp_new_board, opp_new_pos = ganh_chet(invalid_move, opp_pos.copy(), your_new_board, opp_board)
+                    if len(your_new_pos) > len(opp_new_pos) or len(your_new_pos) == len(opp_new_pos) == 3:
+                        opp_new_board, opp_new_pos = vay(opp_new_pos, your_new_board, opp_new_board)
+
+                    value = minimax(opp_new_pos, your_new_pos, opp_new_board, your_new_board, depth+1, alpha, beta)
+
+                    alpha = max(alpha, value)
+                    bestVal = max(bestVal, value)
+
+                    if alpha >= beta:
+                        return bestVal
+
+        return bestVal
+
     else:
         if (state := f"{your_board} {opp_board}") in cacheUser:
             temp = cacheUser[state].split(' ')
-            return float(temp[0]), float(temp[1]) + (depth if float(temp[2])>0 else -depth), float(temp[2])
+            return float(temp[0]), float(temp[1]) + (depth if float(temp[1])>0 else -depth), float(temp[2])
 
-    if your_board == 0 or opp_board == 0:
-        return (-8, depth, 0) if isMaximizingPlayer else (8, -depth, 0)
-    if depth == Stopdepth:
-        return (len(opp_pos) - len(your_pos)), float("-inf"), check_pos_point(opp_board, your_board)
+        if your_board == 0 or opp_board == 0:
+            return (8, -depth, 0)
+        if depth == Stopdepth:
+            return (len(opp_pos) - len(your_pos)), float("-inf"), check_pos_point(your_pos, opp_pos)
 
-    bestVal = (float("-inf"),) if isMaximizingPlayer else (float("inf"),)
+        bestVal = (float("inf"),)
 
-    for pos in your_pos:
-        for movement in ((0,-1), (0,1), (1,0), (-1,0), (-1,1), (1,-1), (1,1), (-1,-1)):
-            invalid_move = (pos[0] + movement[0], pos[1] + movement[1])
-            if 0 <= invalid_move[0] <= 4 and 0 <= invalid_move[1] <= 4 and (your_board|opp_board)&(1<<24-5*invalid_move[1]-invalid_move[0]) == 0 and ((True, sum(pos)%2==0)[movement[0]*movement[1]]):
+        for pos in your_pos:
+            for movement in ((0,-1), (0,1), (1,0), (-1,0), (-1,1), (1,-1), (1,1), (-1,-1)):
+                invalid_move = (pos[0] + movement[0], pos[1] + movement[1])
+                if 0 <= invalid_move[0] <= 4 and 0 <= invalid_move[1] <= 4 and (your_board|opp_board)&(1<<24-5*invalid_move[1]-invalid_move[0]) == 0 and ((True, sum(pos)%2==0)[movement[0]*movement[1]]):
 
-                # Update move to board
-                your_new_board = your_board^(1<<24-5*pos[1]-pos[0])|(1<<24-5*invalid_move[1]-invalid_move[0])
-                # Update move to positions
-                your_new_pos = your_pos.copy()
-                your_new_pos[your_pos.index(pos)] = invalid_move
+                    # Update move to board
+                    your_new_board = your_board^(1<<24-5*pos[1]-pos[0])|(1<<24-5*invalid_move[1]-invalid_move[0])
+                    # Update move to positions
+                    your_new_pos = your_pos.copy()
+                    your_new_pos[your_pos.index(pos)] = invalid_move
 
-                opp_new_board, opp_new_pos = ganh_chet(invalid_move, opp_pos.copy(), your_new_board, opp_board)
-                if len(your_new_pos) > len(opp_new_pos) or len(your_new_pos) == len(opp_new_pos) == 3:
-                    opp_new_board, opp_new_pos = vay(opp_new_pos, your_new_board, opp_new_board)
+                    opp_new_board, opp_new_pos = ganh_chet(invalid_move, opp_pos.copy(), your_new_board, opp_board)
+                    if len(your_new_pos) > len(opp_new_pos) or len(your_new_pos) == len(opp_new_pos) == 3:
+                        opp_new_board, opp_new_pos = vay(opp_new_pos, your_new_board, opp_new_board)
 
-                value = minimax(opp_new_pos, your_new_pos, opp_new_board, your_new_board, depth+1, not isMaximizingPlayer, alpha, beta)
+                    value = minimax(opp_new_pos, your_new_pos, opp_new_board, your_new_board, depth+1, alpha, beta)
 
-                if isMaximizingPlayer:
-                    alpha = max(alpha, value)
-                    bestVal = max(bestVal, value)
-                else:
                     beta = min(beta, value)
                     bestVal = min(bestVal, value)
 
-                if alpha >= beta:
-                    return bestVal
+                    if alpha >= beta:
+                        return bestVal
 
-    return bestVal
+        return bestVal
 
 def main(move_listi):
     global cache, cacheUser, Stopdepth

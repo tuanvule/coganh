@@ -7,6 +7,7 @@ from wtforms import SubmitField, PasswordField, StringField
 from wtforms.validators import Length, ValidationError, EqualTo, DataRequired
 from flask_bcrypt import Bcrypt
 from game_manager import activation
+from game_manager_debug import activation_debug
 import trainAI.Master
 import webbrowser
 from threading import Timer
@@ -222,7 +223,7 @@ def upload_code():
     user = User.query.filter_by(username=current_user.username).first()
     with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
         f.write(data["code"])
-    err, game_res, output = activation(bot, data["code"], name, 0) # người thắng / số lượng lượt chơi
+    err, game_res, output = activation(bot, data["code"], name) # người thắng / số lượng lượt chơi
     user.fightable = not err
     db.session.commit()
     if err:
@@ -249,9 +250,9 @@ def debug_code():
     data = res["request_data"]
     bot = data["bot"]
     user = User.query.filter_by(username=name).first()
-    # with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
-    #     f.write(data["code"])
-    err, game_res, output = activation(bot, data["code"], name, res['debugNum']) # người thắng / số lượng lượt chơi
+    with open(f"static/botfiles/botfile_{name}.py", mode="w", encoding="utf-8") as f:
+        f.write(data["code"])
+    err, game_res, output = activation_debug(bot, data["code"], name, res['debugNum']) # người thắng / số lượng lượt chơi
     user.fightable = not err
     db.session.commit()
     if err:
@@ -283,7 +284,6 @@ def save_code():
 @session_required
 def create_bot():
     return render_template('create_bot.html', user = current_user)
-    # return ""
     
 @app.route('/challenge_mode/<id>')
 @login_required
@@ -408,8 +408,6 @@ def run_task():
             locals = {}
             exec(code, globals_exec, locals)
             Uoutput = locals["main"](*i["input"])
-            print(Uoutput)
-            print(i["output"])
             # Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
             # if type(Uoutput) is list:
             #     comparision = sorted(i["output"]) == sorted(Uoutput)
@@ -419,13 +417,13 @@ def run_task():
                 user_output.append({
                     "log": f.getvalue(),
                     "output_status" : "AC",
-                    "output" : Uoutput,
+                    "output" : str(Uoutput),
                 })
             else:
                 user_output.append({
                     "log": f.getvalue(),
                     "output_status" : "WA",
-                    "output" : Uoutput
+                    "output" : str(Uoutput)
                 })
         except:
             err = traceback.format_exc()
@@ -447,7 +445,7 @@ def run_task():
     else:
         return_data = {
             "status": status,
-            "output": [i["output"] for i in inp_oup],
+            "output": [str(i["output"]) for i in inp_oup],
             "user_output": user_output,
         }
 
@@ -462,7 +460,6 @@ def submit():
     task = doc_ref_task.document(res["id"])
     code = res["code"]
     inp_oup = eval(res["inp_oup"])
-    print(inp_oup)
     org_stdout = sys.stdout
     soAc = 0
     err = ""
@@ -483,11 +480,7 @@ def submit():
         try:
             locals = {}
             exec(code, globals_exec, locals)
-            Uoutput = locals["main"](*deepcopy(i["input"]))
-            # Uoutput = json.loads(json.dumps(Uoutput).replace("(","[").replace(")","]"))
-            # if type(Uoutput) is list:
-            #     comparision = sorted(i["output"]) == sorted(Uoutput)
-            # else:
+            Uoutput = locals["main"](*i["input"])
             comparision = i["output"] == Uoutput
             print(comparision)
 
@@ -495,14 +488,14 @@ def submit():
                 user_output.append({
                     "log": f.getvalue(),
                     "output_status" : "AC",
-                    "output" : Uoutput,
+                    "output" : str(Uoutput),
                 })
                 soAc+=1
             else:
                 user_output.append({
                     "log": f.getvalue(),
                     "output_status" : "WA",
-                    "output" : Uoutput
+                    "output" : str(Uoutput)
                 })
         except:
             err = traceback.format_exc()
@@ -511,10 +504,11 @@ def submit():
     end = time.time()
     sys.stdout = org_stdout
 
-    if any(i["output_status"]=="WA" for i in user_output):
-        status = "WA"
-    else:
-        status = "AC"
+    if not err:
+        if any(i["output_status"]=="WA" for i in user_output):
+            status = "WA"
+        else:
+            status = "AC"
 
     compile_data["update_data"] = {
         "code": code,
@@ -527,13 +521,13 @@ def submit():
     if err:
         compile_data["return_data"] = {
             "status": "SE",
-            "output": [i["output"] for i in inp_oup],
+            "output": [str(i["output"]) for i in inp_oup],
             "err": err,
         }
     else:
         compile_data["return_data"] = {
             "status": status,
-            "output": [i["output"] for i in inp_oup],
+            "output": [str(i["output"]) for i in inp_oup],
             "user_output": user_output,
             "test_finished": f"{soAc}/{len(user_output)}",
             "run_time": (end-start) * 10**3,
@@ -567,6 +561,21 @@ def post_page():
         posts.append(doc.to_dict())
     return render_template('post_page.html', user = current_user, posts = posts)
 
+@app.route('/upload_task', methods=['POST'])
+# @login_required
+def upload_task():
+    task = request.get_json()
+    try:
+        inp_oup = task["inp_oup"]
+        for i in range(len(inp_oup)):
+            for j in range(len(inp_oup[i]["input"])):
+                task["inp_oup"][i]["input"][j] = eval(inp_oup[i]["input"][j])
+            task["inp_oup"][i]["output"] = eval(inp_oup[i]["output"])
+        doc_ref_task.document().set(task)
+        return 'success'
+    except Exception as e:
+        return 'err'
+        
 @app.route('/get_pos_of_playing_chess', methods=['POST'])
 @login_required
 def get_pos_of_playing_chess():
@@ -603,20 +612,40 @@ def get_rate():
 
     return json.dumps({"rate": rate, "img_url": img_url})
 
+
 @app.route('/fighting', methods=['POST'])
 @login_required
 def fighting():
-    name = current_user.username
-    player = request.get_json()
-    winner, max_move_win, new_url = activation("static.botfiles.botfile_"+player['name'], name, 0)[1]
-    
-    data = {
-        "status": winner,
-        "max_move_win": max_move_win,
-        "new_url": new_url
-    }
+    try:
+        name = current_user.username
+        player = request.get_json()
+        with open(f"static/botfiles/botfile_{player['name']}.py", encoding="utf-8") as f:
+            bot_code1 = f.read()
+        with open(f"static/botfiles/botfile_{name}.py", encoding="utf-8") as f:
+            bot_code2 = f.read()
+        err, game_res, output = activation(bot_code1, bot_code2, name)
+        
+        if err:
+            data = {
+                "code": 400,
+                "output": output
+            }
+        else:
+            data = {
+                "code": 200,
+                "status": game_res[0],
+                "max_move_win": game_res[1],
+                "new_url": game_res[2],
+                "output": output
+            }
+    except Exception as err:
+        if err:
+            data = {
+                "code": 400,
+                "output": err
+            }
 
-    return data
+    return json.dumps(data)
 
 @app.route('/update_rank_board', methods=['POST'])
 @login_required

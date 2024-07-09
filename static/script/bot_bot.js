@@ -113,6 +113,7 @@ resetEvent(true)
 const video = $(".fight_screen-video")
 const loading = $(".fight_screen-loading")
 const standBy = $(".fight_screen-standby")
+const err_screen = $(".fight_screen-err")
 const info = $(".info")
 const info_status = $(".info_status")
 const info_elo_fluc_new = $(".info_elo-fluc--new")
@@ -175,6 +176,7 @@ fightBtn.onclick = () => {
     info.style.display = "none"
     video.style.display = "none";
     standBy.style.display = "none";
+    err_screen.style.display = "none"
     loading.style.display = "block";
     $(".info_elo-fluc--pre").innerHTML = userElo.innerHTML
     newPoint.innerHTML = ""
@@ -193,61 +195,75 @@ fightBtn.onclick = () => {
     })
     .then(res => res.json())
     .then(data => {
-        stt = {
-            status: data.status,
-            max_move_win: data.max_move_win,
-            new_url: data.new_url
-        }
-        info_status.innerHTML = "You " + stt.status
-        if(stt.status === "win") {
-            info_status.style.backgroundColor = "#007BFF"
-            user.style.backgroundColor = "#007BFF"
-            enemy.style.backgroundColor = "red"
-            info_elo_fluc_new.style.color = "#007BFF"
-            if(userElo.innerHTML < enemyElo.innerHTML) {
-                let pre = userElo.innerHTML
-                userElo.innerHTML = parseInt(enemyElo.innerHTML) + 10
-                enemyElo.innerHTML = pre
-            } else {
-                userElo.innerHTML = parseInt(userElo.innerHTML) + 10
+        console.log(data)
+        if(data.code === 400) {
+            err_screen.style.display = "flex"
+            loading.style.display = "none"
+            fightBtn.innerHTML = "chọn đối thủ để đấu"
+            fightBtnStatus.onLoading = false
+            selectedPlayer = null
+        } else if(data.code === 200) {
+
+            stt = {
+                status: data.status,
+                max_move_win: data.max_move_win,
+                new_url: data.new_url
             }
-        } else if(stt.status === "lost") {
-            info_status.style.backgroundColor = "red"
-            user.style.backgroundColor = "red"
-            enemy.style.backgroundColor = "#007BFF"
-            info_elo_fluc_new.style.color = "red"
-            if(userElo.innerHTML > enemyElo.innerHTML) {
-                let pre = enemyElo.innerHTML
-                enemyElo.innerHTML = parseInt(userElo.innerHTML) + 10
-                userElo.innerHTML = pre
+            info_status.innerHTML = "You " + stt.status
+            if(stt.status === "win") {
+                info_status.style.backgroundColor = "#007BFF"
+                user.style.backgroundColor = "#007BFF"
+                enemy.style.backgroundColor = "red"
+                info_elo_fluc_new.style.color = "#007BFF"
+                if(userElo.innerHTML < enemyElo.innerHTML) {
+                    let pre = userElo.innerHTML
+                    userElo.innerHTML = parseInt(enemyElo.innerHTML) + 10
+                    enemyElo.innerHTML = pre
+                } else {
+                    userElo.innerHTML = parseInt(userElo.innerHTML) + 10
+                }
+            } else if(stt.status === "lost") {
+                info_status.style.backgroundColor = "red"
+                user.style.backgroundColor = "red"
+                enemy.style.backgroundColor = "#007BFF"
+                info_elo_fluc_new.style.color = "red"
+                if(userElo.innerHTML > enemyElo.innerHTML) {
+                    let pre = enemyElo.innerHTML
+                    enemyElo.innerHTML = parseInt(userElo.innerHTML) + 10
+                    userElo.innerHTML = pre
+                } else {
+                    userElo.innerHTML = parseInt(userElo.innerHTML) - 10 
+                }
             } else {
-                userElo.innerHTML = parseInt(userElo.innerHTML) - 10 
+                info_status.style.backgroundColor = "#333"
+                user.style.backgroundColor = "#333"
+                enemy.style.backgroundColor = "#333"
+                info_elo_fluc_new.style.color = "#fff"
             }
-        } else {
-            info_status.style.backgroundColor = "#333"
-            user.style.backgroundColor = "#333"
-            enemy.style.backgroundColor = "#333"
-            info_elo_fluc_new.style.color = "#fff"
+            if(userElo.innerHTML <= 0) {
+                userElo.innerHTML = 0
+            } else if(enemyElo.innerHTML <= 0) {
+                enemyElo.innerHTML = 0
+            }
+            newValue = parseInt(userElo.innerHTML)
+            updateRankBoard(newValue)   
+            const source = $("source")
+            loading.style.display = "none"
+            source.src = stt.new_url
+            video.style.display = "block"
+            video.load()
+            fightBtn.innerHTML = "chọn đối thủ để đấu"
+            fightBtnStatus.onLoading = false
+            selectedPlayer = null
+            setTimeout(() => info.style.display = "block", 1000)
         }
-        if(userElo.innerHTML <= 0) {
-            userElo.innerHTML = 0
-        } else if(enemyElo.innerHTML <= 0) {
-            enemyElo.innerHTML = 0
-        }
-        newValue = parseInt(userElo.innerHTML)
-        updateRankBoard(newValue)
     })
-    .catch(err => console.log(err))
-    .finally(() => {
-        const source = $("source")
+    .catch(err => {
+        err_screen.style.display = "flex"
         loading.style.display = "none"
-        source.src = stt.new_url
-        video.style.display = "block"
-        video.load()
         fightBtn.innerHTML = "chọn đối thủ để đấu"
         fightBtnStatus.onLoading = false
         selectedPlayer = null
-        setTimeout(() => info.style.display = "block", 1000)
     })
 }
 
