@@ -107,6 +107,21 @@ a {
     height: 35rem;
 }
 
+.main_image {
+    position: relative;
+    height: 100%;
+    width: fit-content;
+}
+
+.main_image_link {
+    position: absolute;
+    bottom: 4%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    font-size: 20px;
+    font-weight: bold;
+}
+
 .main_img {
     height: 100%;
     filter: brightness(95%);
@@ -310,5 +325,7 @@ margin: 16px;
         margin: 10px 0 10px;
     }
 
-
+    .main_image_link {
+        font-size: 14px;
+    }
 }

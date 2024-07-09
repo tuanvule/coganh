@@ -21,13 +21,16 @@
 
   <div class="content">
     <div class="main">
-      <img src="{{url_for('static', filename = '/img/chessboard1.png')}}" alt="" class="main_img">
+      <div class="main_image">
+        <img src="{{url_for('static', filename = '/img/chessboard1.png')}}" alt="" class="main_img">
+        <a class="main_image_link" href="https://www.youtube.com/watch?v=FU3auCFYGJc">Hướng dẫn chơi cờ gánh</a>
+      </div>
       <div class="main_nav_module">
         <div class="code_require">
           <h2>Programing</h2>
           <a class="btn create_bot">Create bot</a>
           <!-- <a class="btn bot_bot">Đấu bot</a> -->
-          <a href="{{ url_for('task_list') }}" class="btn challenge_mode">Training</a>
+          <a class="btn challenge_mode">Training</a>
         </div>
         <div class="non_code">
           <h2>Play chess</h2>
@@ -69,7 +72,7 @@
             <div class="icon">
               <i class="fa-brands fa-staylinked"></i>
             </div>
-            <a href="{{ url_for('visualize_page') }}" class="btn2 bot_bot">Visualize</a>
+            <a class="btn2 visualize">Visualize</a>
           </div>
         </div>
       </div>
@@ -92,6 +95,8 @@
   const sign_btn = document.querySelector(".sign_btn")
   const create_bot_btn = document.querySelector(".create_bot")
   const fightBotBtn = document.querySelector(".bot_bot")
+  const visualizeBtn = document.querySelector(".visualize")
+  const challenge_mode_btn = document.querySelector(".challenge_mode")
   let fightable = '{{current_user.fightable}}'
 
   const isMobile = ( window.innerWidth <= 500)
@@ -116,6 +121,20 @@
       sign.style.display = "flex"
     } else {
       window.location.href = "{{ url_for('create_bot') }}"
+    }
+  }
+  visualizeBtn.onclick = () => {
+    if(isMobile) {
+      sign.style.display = "flex"
+    } else {
+      window.location.href = "{{ url_for('visualize_page') }}"
+    }
+  }
+  challenge_mode_btn.onclick = () => {
+    if(isMobile) {
+      sign.style.display = "flex"
+    } else {
+      window.location.href = "{{ url_for('task_list') }}"
     }
   }
   sign_btn.onclick = () => sign.style.display = "none"

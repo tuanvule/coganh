@@ -61,7 +61,7 @@ nav {
 
 .title {
     margin: 0 0 20px;
-    font-size: 40px;
+    font-size: 2.2rem;
     font-weight: bold;
 }
 
@@ -177,7 +177,7 @@ h2 {
 }
 
 h3 {
-        display: block;
+    display: block;
     font-size: 1.17em;
     margin-block-start: 1em;
     margin-block-end: 1em;
@@ -190,4 +190,22 @@ h3 {
 img {
     height: 100%;
     width: 100%;
+}
+
+@media (max-width: 500px) {
+    .container {    
+        width: 90%;
+    }
+
+    ul, ol {
+        display: block;
+        list-style-type: disc;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        padding-inline-start: 10px;
+        unicode-bidi: isolate;
+    }
+
 }

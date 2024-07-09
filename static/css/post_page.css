@@ -184,7 +184,7 @@ nav {
 
 .review_title {
     display: block;
-    font-size: 24px;
+    font-size: 1.3rem;
     font-weight: bold;
     margin: 10px 0;
     cursor: pointer;
@@ -205,7 +205,6 @@ nav {
     position: relative;
     display: block;
     text-decoration: none;
-    
     width: 200px;
     height: 120px;
     border-radius: 15px;
@@ -245,4 +244,19 @@ nav {
 .copy_link i:hover {
     cursor: pointer;
     color: #bbb;
+}
+
+
+@media (max-width: 500px) {
+    /* * {
+        font-size: .7rem !important;
+    } */
+
+    .container {    
+        width: 90%;
+    }
+
+    .upload_time {
+        display: none;
+    }
 }
