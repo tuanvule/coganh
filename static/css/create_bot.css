@@ -269,6 +269,7 @@ body {
 }
 
 .bot_display-video--help {
+    overflow: scroll;
     width: 100%;
     height: 100%;
     /* background-color: #444; */
@@ -311,6 +312,7 @@ body {
     /* text-decoration: none; */
     font-size: 18px;
     color: #007BFF;
+    margin: 5px 0;
 }
 
 

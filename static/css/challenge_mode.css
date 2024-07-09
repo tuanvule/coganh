@@ -676,7 +676,7 @@ body {
 }
 
 .sbum_submit_time {
-    flex: 1;
+    flex: 2;
 }
 
 .sbum_test_finished {
@@ -715,7 +715,7 @@ body {
 
 
 .submissions_time {
-    flex: 1;
+    flex: 2;
 }
 
 .submissions_test_finished {
@@ -769,6 +769,7 @@ body {
     /* text-decoration: none; */
     font-size: 18px;
     color: #007BFF;
+    margin: 5px 0;
 }
 
 /* -------------- */

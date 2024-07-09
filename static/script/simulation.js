@@ -203,7 +203,7 @@ if(simulation_type === "board") {
       let run_task = []
       run_task.push(...[
         ["render", JSON.parse(`[${setting_board.innerHTML.replaceAll("\n",",")}]`.replaceAll("],]","]]")), 0],
-        ["hightlight", {row: [6], type: "true"}, 0],
+        ["hightlight", {row: [5,6], type: "true"}, 0],
         ["MC", [simulation.selected_pos,simulation.new_pos], 1000],
         ...simulation.opp_pos.map((pos) => ["CSC", pos, 500]),
         ["RMH", "", 0]
@@ -211,8 +211,10 @@ if(simulation_type === "board") {
       if(valid_remove.length > 0) {
         run_task.push(...[
           ["FT", valid_remove, 1000],
-          ["SDC", ["ganh_chet", [true, valid_remove]], 0],
           ["hightlight", {row: [7,8,9,10], type: "true"}, 0],
+          ["RMH", "", 1000],
+          ["hightlight", {row: [12], type: "true"}, 1000],
+          ["SDC", ["ganh_chet", [true, valid_remove]], 0],
         ])
       } else {
         run_task.push(...[

@@ -605,7 +605,7 @@ export function createBoardSimulation(root) {
 
         async render(n_board = new_board) {
             board = n_board
-            console.log(n_board)
+            console.log(JSON.stringify(n_board))
             cv2.clearRect(0,0,this.board_width,this.board_height)
             cv2.drawImage(board_img, 0, 0, this.board_width, this.board_height)
             this.your_pos = []
@@ -706,12 +706,14 @@ export function createBoardSimulation(root) {
                 let pre_selected_pos = JSON.stringify(this.selected_pos)
                 your_chess_item.forEach(item => {
                     item.onclick = () => {
+                        new_board = JSON.parse(`[${this.setting_board.innerHTML.replaceAll("\n",",")}]`.replaceAll("],]","]]"))
+                        console.log(JSON.parse(`[${this.setting_board.innerHTML.replaceAll("\n",",")}]`.replaceAll("],]","]]")))
                         this.new_pos = []
                         your_chess_item.forEach(i => i.classList.remove("selected"))
                         item.classList.add("selected")
                         this.selected_pos = [Number(item.dataset.x),Number(item.dataset.y)]
                         this.Pause()
-                        this.start(new_board)
+                        this.start(JSON.parse(`[${this.setting_board.innerHTML.replaceAll("\n",",")}]`.replaceAll("],]","]]")))
                         this.choose_chess([this.selected_pos])
                         const your_move_list = $(".your_move_list")
     
@@ -736,7 +738,7 @@ export function createBoardSimulation(root) {
                             const first_move = your_move_item[0]
                             first_move.classList.add("selected")
                             this.new_pos = [Number(first_move.dataset.x),Number(first_move.dataset.y)]
-                            this.start(board)
+                            this.start(JSON.parse(`[${this.setting_board.innerHTML.replaceAll("\n",",")}]`.replaceAll("],]","]]")))
                             this.choose_chess([this.selected_pos])
                             this.show_pre_move([this.new_pos], "your_side", 0)
                             pre_selected_pos = JSON.stringify(this.selected_pos)
@@ -744,11 +746,12 @@ export function createBoardSimulation(root) {
                         
                         your_move_item.forEach(item => {
                             item.onclick = () => {
+                                new_board = JSON.parse(`[${this.setting_board.innerHTML.replaceAll("\n",",")}]`.replaceAll("],]","]]"))
                                 your_move_item.forEach(i => i.classList.remove("selected"))
                                 item.classList.add("selected")
                                 this.new_pos = [Number(item.dataset.x),Number(item.dataset.y)]
                                 this.Pause()
-                                this.start(board)
+                                this.start(JSON.parse(`[${this.setting_board.innerHTML.replaceAll("\n",",")}]`.replaceAll("],]","]]")))
                                 this.choose_chess([this.selected_pos])
                                 this.show_pre_move([this.new_pos], "your_side", 0)
                             }
@@ -758,6 +761,7 @@ export function createBoardSimulation(root) {
     
                 const your_move_item = $$(".your_move_item")
                 if(this.new_pos.length === 0 && your_move_item.length !== 0 && JSON.stringify(this.selected_pos) === JSON.stringify(this.your_pos[0])) {
+                    new_board = JSON.parse(`[${this.setting_board.innerHTML.replaceAll("\n",",")}]`.replaceAll("],]","]]"))
                     const first_move = your_move_item[0]
                     first_move.classList.add("selected")
                     this.new_pos = [Number(first_move.dataset.x),Number(first_move.dataset.y)]
@@ -767,11 +771,12 @@ export function createBoardSimulation(root) {
                 
                 your_move_item.forEach(item => {
                     item.onclick = () => {
+                        new_board = JSON.parse(`[${this.setting_board.innerHTML.replaceAll("\n",",")}]`.replaceAll("],]","]]"))
                         your_move_item.forEach(i => i.classList.remove("selected"))
                         item.classList.add("selected")
                         this.new_pos = [Number(item.dataset.x),Number(item.dataset.y)]
                         this.Pause()
-                        this.start(board)
+                        this.start(JSON.parse(`[${this.setting_board.innerHTML.replaceAll("\n",",")}]`.replaceAll("],]","]]")))
                         this.choose_chess([this.selected_pos])
                         this.show_pre_move([this.new_pos], "your_side", 0)
                     }
@@ -908,6 +913,8 @@ export function createBoardSimulation(root) {
             this.animation_index = 0
             board = boardMatrix
 
+            console.log(JSON.stringify(board))
+
             this.clear_hightlight(0)
 
             if(this.is_single_chess) {
@@ -917,7 +924,7 @@ export function createBoardSimulation(root) {
                 this.generate_all_move(0)
             }
 
-            await this.render(boardMatrix)
+            await this.render(board)
             this.handle_event()
 
         }
