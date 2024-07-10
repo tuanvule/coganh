@@ -25,10 +25,8 @@ import traceback
 import sys
 import time
 import threading
-from timeout_decorator import timeout
 import builtins
 from copy import deepcopy
-
 doc_ref_room = fdb.collection("room")
 doc_ref_post = fdb.collection("post")
 doc_ref_task = fdb.collection("task")
