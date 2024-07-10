@@ -11,5 +11,6 @@
 def main(player):
     for x, y in player.your_pos:
         moves = valid_move(x, y, player.board)
+        print(1)
         if moves != ():
             return {"selected_pos": (x,y), "new_pos": moves[0]}

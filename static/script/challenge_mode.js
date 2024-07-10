@@ -40,22 +40,11 @@ const test_case_AC = $(".test_case_AC")
 const runtime = $(".runtime")
 const AC = $(".AC")
 
-// --------------
-
-// submissions block
-
 const submissions_list = $(".submissions_list")
-
-// --------------
-
-// test case nav list
 
 const test_case_nav_item = $$(".test_case_nav_item")
 const test_case_item = $$(".test_case_item")
 const inp = $$(".inp")
-
-// --------------
-
 
 const animation = $(".bot_display_nav-block .animation")
 const animationChild = $(".utility_nav-block .animation .children")
@@ -164,23 +153,8 @@ function submitCode(code) {
 const session = editor.getSession();
 session.setMode('ace/mode/python');
 
-editor.getSession().on('change', function() {
-    // if(submitBtn.dataset.saved = "true") {
-    //     submitBtn.style.backgroundColor = "#1E1E1E"
-    //     submitBtn.style.color = "#fff"
-    // }
-});
-
-
 
 session.setValue(JSON.parse(demo_code))
-
-// fetch("/get_code")
-// .then(res => res.json())
-// .then(data => {
-//         session.setValue(data)
-// })
-// .catch(err => console.error(err))
 
 function capitalize(s)
 {
@@ -188,10 +162,6 @@ function capitalize(s)
 }
 
 function render_result(data, status) {
-    // const result_type = $(".type")
-    // const status = $(".status")
-    // const display_result = $(".display_result")
-    // const test_case_result_list = $(".test_case_result_list")
     result_status.className = data.status === "AC" ? "status accepted": "status err"
     result_type.className = data.status === "AC" ? "type accepted": "type err"
     display_result.className = data.status === "AC" ? "display_result accepted": "display_result err"
@@ -304,13 +274,11 @@ async function render_summissions(isfirstRender = false) {
         }
     }
 }
-// console.log(demo_code)
 
 render_summissions(true)
 
 function toggleMode(mode) {
     all_block.forEach(item => item.style.display = "none")
-    // console.log(mode)
     switch (mode) {
         case "task":
             task_block.style.display = "block"

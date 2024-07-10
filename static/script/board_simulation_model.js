@@ -1,4 +1,4 @@
-export function createBoardSimulation(root) {
+export function createBoardSimulation(root) { 
     const $ = document.querySelector.bind(document)
     const $$ = document.querySelectorAll.bind(document)
 
@@ -28,7 +28,7 @@ export function createBoardSimulation(root) {
     let d1 = [[-1,-1], [0,-1], [1,-1], [-1,0], [1,0], [-1,1], [0,1], [1,1]]
     let d2 = [[0,-1], [-1,0], [0,1], [1,0]]
     let your_pos_list = $(".your_pos_list")
-    // let your_pos_list = [[0,2],[0,3],[0,4],[1,4],[2,4],[3,4],[4,4],[4,3]]
+
     const code_rows = $$(".code_row")
     const return_value_ouput = $(".return_value_ouput")
     const random_your_pos_btn = $(".random_your_pos_btn")
@@ -43,7 +43,6 @@ export function createBoardSimulation(root) {
 
     const simulation_name = $(".simulation_name").innerHTML
 
-    // let this.chosed_chess = [0,2]
     let action = $(".action ").innerHTML
 
     return ({
@@ -129,28 +128,24 @@ export function createBoardSimulation(root) {
         async pause() {
             while (this.isPaused && !this.isFlaskBack) {
                 await this.sleep(100);
-                // console.log(this.isPaused)
             }
         },
 
         async play_one_frame(frame) {
             this.speed = 4
             let [type, vr, time] = this.run_task[frame]
-            // this.isPaused = false
             await this.render()
             let dem = this.animation_index + 1
             this.isFlaskBack = true
             while(dem-- && simulation_name !== "valid_move") {
                 let [type, vr, time] = this.run_task[dem]
                 if(this.run_task[dem][0] !== "hightlight" && this.run_task[dem][0] !== "RMH" && this.run_task[dem][0] !== "MC" && this.run_task[dem][0] !== "render") {
-                    // console.log(hello)
                     await this.handle_animation(type, vr, 0)
                 }
             }
             this.isFlaskBack = false
             duration_bar.value = (frame / (this.run_task.length - 1)) * 100
             await this.handle_animation(type, vr, time)
-            // this.isPaused = true
             if(this.animation_index === this.run_task.length - 1) {
                 this.is_finished = true
             }
@@ -158,7 +153,6 @@ export function createBoardSimulation(root) {
         },
 
         async play_animation() {
-            // this.Play()
             this.isPaused = false
 
             if(!this.is_finished) return
@@ -167,7 +161,6 @@ export function createBoardSimulation(root) {
             let cur_index
             while(this.animation_index < this.run_task.length) {
                 let [type, vr, time] = this.run_task[this.animation_index]
-                console.log([type, vr, time])
                 cur_index = this.animation_index
                 await this.pause()
                 if(cur_index !== this.animation_index) continue
@@ -182,22 +175,12 @@ export function createBoardSimulation(root) {
                     await this.render()
                     while(dem--) {
                         let [type, vr, time] = this.run_task[dem]
-                        // if(this.run_task[dem][0] !== "hightlight" && this.run_task[dem][0] !== "RMH") {
                         if(this.run_task[dem][0] !== "hightlight" && this.run_task[dem][0] !== "RMH" && this.run_task[dem][0] !== "MC" && this.run_task[dem][0] !== "render") {
                             await this.handle_animation(type, vr, 0)
                         }
-                        // }
                     }
                 }
                 this.isFlaskBack = false
-                // let dem2 = this.animation_index
-                // while(dem2 < this.run_task.length) {
-                //     let [type, vr, time] = this.run_task[dem2]
-                //     // if(this.run_task[dem][0] !== "hightlight" && this.run_task[dem][0] !== "RMH") {
-                //     await this.handle_animation(type, vr, 0)
-                //     dem2++
-                //     // }
-                // }
                 
                 await this.handle_animation(type, vr, time)
 
@@ -206,11 +189,6 @@ export function createBoardSimulation(root) {
                 }
                 this.animation_index += 1
             }
-            
-            // for (const [type, vr, time] of run_task) {
-            //     switch (type) {
-            //     }
-            // }
         },
 
         async handle_animation(type, vr, time) {
@@ -926,7 +904,6 @@ export function createBoardSimulation(root) {
 
             await this.render(board)
             this.handle_event()
-
         }
     })
 }

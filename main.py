@@ -571,6 +571,7 @@ def upload_task():
             for j in range(len(inp_oup[i]["input"])):
                 task["inp_oup"][i]["input"][j] = eval(inp_oup[i]["input"][j])
             task["inp_oup"][i]["output"] = eval(inp_oup[i]["output"])
+        task["inp_oup"] = str(task["inp_oup"])
         doc_ref_task.document().set(task)
         return 'success'
     except Exception as e:
@@ -596,6 +597,8 @@ def get_rate():
     data = request.get_json()
     move_list = data["move_list"]
     img_data = data["img_data"]
+    img_data["img"] = img_data["img"][:4]
+    move_list = move_list[:4]
     for i in move_list:
         if i['side'] == -1:
             i['your_pos'], i['opp_pos'] = [tuple(i) for i in i['opp_pos']], [tuple(i) for i in i['your_pos']]

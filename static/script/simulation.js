@@ -196,10 +196,7 @@ if(simulation_type === "board") {
   if(simulation_name === "ganh_chet") {
     simulation.config_run_task = () => {
       const setting_board = $(".board")
-      console.log([simulation.selected_pos,simulation.new_pos], simulation.opp_pos)
       let valid_remove = simulation.ganh_chet(simulation.new_pos, simulation.opp_pos, 1, -1)
-      console.log(valid_remove)
-      console.log([simulation.selected_pos,simulation.new_pos])
       let run_task = []
       run_task.push(...[
         ["render", JSON.parse(`[${setting_board.innerHTML.replaceAll("\n",",")}]`.replaceAll("],]","]]")), 0],
