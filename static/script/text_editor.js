@@ -205,6 +205,7 @@ post_btn.onclick = () => {
                     })
                 } else if(type_list.value === "task") {
                     console.log(getInOupValue())
+                    let tags = Array.from($$(".tag_item.selected")).map(item => ({name: item.innerHTML, link: item.dataset.link}))
                     fetch("/upload_task", {
                         method: "POST",
                         headers: {
@@ -220,7 +221,7 @@ post_btn.onclick = () => {
                             inp_oup: getInOupValue(),
                             tag: {
                                 difficult: difficult_list.value,
-                                skill_require: $$(".tag_item.selected").map(item => ({name: item.innerHTML, link: item.dataset.link}))
+                                skill_require: tags
                             },
                             demo_code: JSON.stringify(demo_code),
                             input_title: input_title,
@@ -266,6 +267,7 @@ post_btn.onclick = () => {
                                     upload_time: formatter.format(new Date()),
                                 })
                             } else if(type_list.value === "task") {
+                                let tags = Array.from($$(".tag_item.selected")).map(item => ({name: item.innerHTML, link: item.dataset.link}))
                                 fetch("/upload_task", {
                                     method: "POST",
                                     headers: {
@@ -281,7 +283,7 @@ post_btn.onclick = () => {
                                         inp_oup: getInOupValue(),
                                         tag: {
                                             difficult: difficult_list.value,
-                                            skill_require: $$(".tag_item.selected").map(item => ({name: item.innerHTML, link: item.dataset.link}))
+                                            skill_require: tags
                                         },
                                         demo_code: JSON.stringify(demo_code),
                                         input_title: input_title,
