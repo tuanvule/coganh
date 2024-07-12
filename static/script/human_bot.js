@@ -21,10 +21,7 @@ let rs = 1
 
 let username = $(".username").innerHTML
 
-let chessPosition = [
-    [[0, 0],[1, 0],[2, 0],[3, 0],[4, 0],[0, 1],[4, 1],[4, 2]], 
-    [[0, 2],[0, 3],[2, 4],[4, 3],[0, 4],[1, 4],[3, 4],[4, 4]]
-]
+
 
 let selectedChess
 const gameResult = $(".game_result")
@@ -83,6 +80,32 @@ let curBoard = [
     [1, 0, 0, 0, 1],
     [1, 1, 1, 1, 1]
 ]
+
+let chessPosition = [
+    [[0, 0],[1, 0],[2, 0],[3, 0],[4, 0],[0, 1],[4, 1],[4, 2]], 
+    [[0, 2],[0, 3],[2, 4],[4, 3],[0, 4],[1, 4],[3, 4],[4, 4]]
+]
+
+// let grid = [
+//     [0, 0, 0, 0, 0],
+//     [-1, 0, 0, 0,-1],
+//     [0, 0, 0, 0, -1],
+//     [0, -1, -1, -1, -1],
+//     [-1, -1, 1, 0, 1]
+// ]
+
+// let curBoard = [
+//     [0, 0, 0, 0, 0],
+//     [-1, 0, 0, 0,-1],
+//     [0, 0, 0, 0, -1],
+//     [0, -1, -1, -1, -1],
+//     [-1, -1, 1, 0, 1]
+// ]
+
+// let chessPosition = [
+//     [[0, 1],[4, 1],[4, 2],[2,3],[3,3],[4,3],[0,4],[1,4],[1,3]], 
+//     [[2, 4],[4, 4]]
+// ]
 
 const type = [
     [1,0,1,0,1],
@@ -373,8 +396,6 @@ function changePos(x, y, newX, newY) {
 }
 
 function swap(chess, box, newPos, selected_pos) {
-    // newPos = newPos
-    // selected_pos = selected_pos
     let valid_remove
     cv2.clearRect(0, 0, canvas.width, canvas.height);
     moveSound.play()
@@ -422,7 +443,10 @@ function swap(chess, box, newPos, selected_pos) {
         cv2.stroke();
         
         let opp_pos = chessPosition[1]
-        valid_remove = [...ganh_chet([newPos[1], newPos[0]], opp_pos, -1, 1), ...vay(opp_pos)]
+        console.log({selected_pos,newPos})
+        changePos(selected_pos[0], selected_pos[1], newPos[0], newPos[1])
+        valid_remove = [...ganh_chet([newPos[0], newPos[1]], opp_pos, -1, 1), ...vay(opp_pos)]
+        console.log({selected_pos,newPos})
 
         move_list.push({
             your_pos: [...chessPosition[1]],
@@ -431,19 +455,16 @@ function swap(chess, box, newPos, selected_pos) {
             side: -1,
             remove: valid_remove,
             move: {
-                selected_pos: selected_pos.reverse(),
+                selected_pos: selected_pos,
                 new_pos: newPos,
             }
         })
 
-        chessPosition[0][chessPosition[0].findIndex(findI, [selected_pos[0], selected_pos[1]])] = [newPos[1], newPos[0]]
-        chess.style.left = newPos[1] * chessGrapX - 30 * rs + "px"
-        chess.style.top = newPos[0] * chessGrapX - 30 * rs + "px"
-        changePos(selected_pos[0], selected_pos[1], newPos[1], newPos[0])
-        chess.dataset.posx  = `${newPos[1]}`
-        chess.dataset.posy = `${newPos[0]}`
-        console.log(chess)
-        newPos = newPos.reverse()
+        chessPosition[0][chessPosition[0].findIndex(findI, [selected_pos[0], selected_pos[1]])] = [newPos[0], newPos[1]]
+        chess.style.left = newPos[0] * chessGrapX - 30 * rs + "px"
+        chess.style.top = newPos[1] * chessGrapX - 30 * rs + "px"
+        chess.dataset.posx  = `${newPos[0]}`
+        chess.dataset.posy = `${newPos[1]}`
         isReady(true)
     }
     changeBoard(grid, valid_remove, selected_pos, newPos)
@@ -466,12 +487,16 @@ function getBotmove() {
             board : grid,
         }
 
+        console.log(JSON.parse(JSON.stringify(data)))
+
         grid.forEach((row,i) => {
             row.forEach((__,j) => {
                 if(grid[i][j] === 1) data.your_pos.push([j,i])
                 if(grid[i][j] === -1) data.opp_pos.push([j,i])
             })
         })
+
+        console.log(JSON.parse(JSON.stringify(data)))
 
         fetch("/get_pos_of_playing_chess", {
             method: "POST",
@@ -487,12 +512,13 @@ function getBotmove() {
         .then(resData => {
             const {selected_pos, new_pos} = resData
             // console.log(selected_pos)
+            // selected_pos.reverse()
+            // new_pos.reverse()
             console.log("selected_pos:  ",{selected_pos, new_pos})
             const selectedChess = Array.from(chessEnemy).find(e => {
-                return Number(e.dataset.posx) === selected_pos[1] && Number(e.dataset.posy) === selected_pos[0]
+                return Number(e.dataset.posx) === selected_pos[0] && Number(e.dataset.posy) === selected_pos[1]
             })
             console.log("resData: ", resData)
-            console.log(selectedChess)
             swap(selectedChess, null, new_pos, selected_pos)
         })
     }, 1000)

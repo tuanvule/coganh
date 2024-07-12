@@ -27,11 +27,14 @@ import time
 import threading
 import builtins
 from copy import deepcopy
+
 doc_ref_room = fdb.collection("room")
 doc_ref_post = fdb.collection("post")
 doc_ref_task = fdb.collection("task")
 doc_ref_simulation = fdb.collection("simulation")
 doc_ref_code = fdb.collection("code")
+doc_ref_user = fdb.collection("user")
+doc_ref_bot = fdb.collection("bot")
 
 class Player:
     def __init__(self, dict: dict):
@@ -83,6 +86,14 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(80), nullable=False)
     elo = db.Column(db.Integer)
     fightable = db.Column(db.Boolean)
+
+    def to_dict(self):
+        return {
+            "username": self.username,
+            "password": self.password,
+            "elo": self.elo,
+            "fightable": self.fightable
+        }
 
 class LoginForm(FlaskForm):
     username = StringField("Tên đăng nhập", validators=[DataRequired(), Length(min=4, max=20)])
@@ -146,13 +157,13 @@ def home_page():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        # user = (doc_ref_user.where("username", "==", form.username.data).get()[0]).to_dict()
         user = User.query.filter_by(username=form.username.data).first()
         if user:
             if bcrypt.check_password_hash(user.password, form.password.data):
                 secret_key = generate_secret_key(form.username.data)
                 session['secret_key'] = secret_key
                 session['username'] = form.username.data
-                # print(session['secret_key'])
                 login_user(user)
                 flash("Đăng nhập thành công", category='success')
                 return redirect(url_for('menu'))
@@ -166,6 +177,7 @@ def register():
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
         new_user = User(username=form.username.data, password=hashed_password, elo=0, fightable=False)
+        # update_time, user_ref = doc_ref_user.add(new_user.to_dict())
         db.session.add(new_user)
         db.session.commit()
         code = '''
@@ -187,6 +199,10 @@ def main(player):
             if 0 <= x+mx <= 4 and 0 <= y+my <= 4 and player.board[y+my][x+mx] == 0:
                 return {"selected_pos": (x,y), "new_pos": (x+mx, y+my)}
 '''
+        # doc_ref_bot.add({
+        #     "owner": form.username.data,
+        #     "code": code
+        # })
         with open(f"static/botfiles/botfile_{form.username.data}.py", mode="w", encoding="utf-8") as f:
             f.write(code)
         return redirect(url_for('login'))
@@ -585,8 +601,8 @@ def get_pos_of_playing_chess():
     player.opp_pos = [tuple(i) for i in player.opp_pos]
     player.your_pos, player.opp_pos = player.opp_pos, player.your_pos
     move = __import__(f"trainAI.{choosen_bot}", fromlist=[None]).main(player)
-    move['selected_pos'] = tuple(reversed(list(move['selected_pos'])))
-    move['new_pos'] = tuple(reversed(list(move['new_pos'])))
+    # move['selected_pos'] = tuple(list(move['selected_pos']))
+    # move['new_pos'] = tuple(list(move['new_pos']))
     return move
 
 @app.route('/get_rate', methods=['POST'])
@@ -595,12 +611,13 @@ def get_rate():
     data = request.get_json()
     move_list = data["move_list"]
     img_data = data["img_data"]
-    img_data["img"] = img_data["img"][:4]
-    move_list = move_list[:4]
+    img_data["img"] = img_data["img"]
+    move_list = move_list
     for i in move_list:
         if i['side'] == -1:
             i['your_pos'], i['opp_pos'] = [tuple(i) for i in i['opp_pos']], [tuple(i) for i in i['your_pos']]
-            i['board'] = eval(str(i['board']).replace('-1', '`').replace('1', '-1').replace('`', '1'))
+            # i['board'] = eval(str(i['board']).replace('-1', '`').replace('1', '-1').replace('`', '1'))
+            i['board'] = [[-k for k in j] for j in i['board']]
         else:
             i['your_pos'], i['opp_pos'] = [tuple(i) for i in i['your_pos']], [tuple(i) for i in i['opp_pos']]
             
