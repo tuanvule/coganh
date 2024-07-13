@@ -1,6 +1,7 @@
 from flask import Flask, flash, request, redirect, url_for, render_template, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_cors import CORS
 from functools import wraps
 from flask_wtf import FlaskForm 
 from wtforms import SubmitField, PasswordField, StringField
@@ -49,17 +50,31 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = secrets.token_hex(16)
 app.config['WTF_CSRF_ENABLED'] = False
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.app_context().push()
 
-#Flask Alchemy initialization
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 
 app.config['MAX_CONTENT_LENGTH'] = 16_000_00  #Max file size
 app.config['UPLOAD_FOLDER'] = "static/botfiles"
 
-sio = socketio.Server(cors_allowed_origins='*')
-app.wsgi_app = socketio.WSGIApp(sio, app.wsgi_app)
+# CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+
+# @app.before_request
+# def before_request():
+#     print(request.method)
+#     if request.method == 'OPTIONS':
+#         response = app.make_response('')
+#         response.headers['Access-Control-Allow-Origin'] = '*'
+#         response.headers['Access-Control-Allow-Methods'] = '*'
+#         response.headers['Access-Control-Allow-Headers'] = '*'
+#         return response
+
+#Flask Alchemy initialization
+
+# sio = socketio.Server(cors_allowed_origins='*')
+# app.wsgi_app = socketio.WSGIApp(sio, app.wsgi_app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -767,6 +782,24 @@ def out_room():
 # @sio.event
 # def get_move(data, room, environ):
 #     sio.emit(f'get_move_{room}', environ)
+
+@app.route('/handle_login', methods=['POST'])
+def handle_login():
+    data = request.get_json()
+    username, password = data["username"], data["password"]
+    user = doc_ref_user.where("username", "==", username).where("password", "==", password).stream()
+
+    print(user)
+
+    if user:
+        return {
+            "status": 200,
+            "userData": user
+        }
+    else:
+        return {
+            "status": 404,
+        }
 
 if __name__ == '__main__':
     open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
