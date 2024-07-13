@@ -155,6 +155,13 @@ function toggle_mode(mode) {
     }
 }
 
+function showErr(err) {
+    loadder.style.display = "none"
+    noti_content.style.display = "block"
+    noti_content.innerHTML = err
+    noti_content.classList.add("err")
+}
+
 post_btn.onclick = () => {
     // console.log({
     //     task_name: title_input.value,
@@ -179,6 +186,8 @@ post_btn.onclick = () => {
 
     overflow.style.display = "grid"
     loadder.style.display = "block"
+
+    let status = 200
 
     try {
         if(editor_url) {
@@ -229,12 +238,17 @@ post_btn.onclick = () => {
                     })
                     .then(res => res.json())
                     .then(data => {
-                        if(data === "err") {
-                            throw data
+                        if(data.code === 400) {
+                            status = data.code
+                            showErr(data.err)
+                            return
                         } 
                         console.log(data)
                     })
-                    .catch(err => {throw err})
+                    .catch(err => {
+                        showErr(err)
+                        return
+                    })
                     // const docRef = addDoc(collection(firestore, "task"), {
                     //     author: username,
                     //     task_name: title_input.value,
@@ -291,12 +305,17 @@ post_btn.onclick = () => {
                                 })
                                 .then(res => res.json())
                                 .then(data => {
-                                    if(data === "err") {
-                                        throw data
+                                    if(data.code === 400) {
+                                        status = data.code
+                                        showErr(data.err)
+                                        return
                                     } 
                                     console.log(data)
                                 })
-                                .catch(err => {throw err})
+                                .catch(err => {
+                                    showErr(err)
+                                    return
+                                })
                                 // console.log(getInOupValue())
                                 // const docRef = addDoc(collection(firestore, "task"), {
                                 //     author: username,
@@ -354,24 +373,27 @@ post_btn.onclick = () => {
                 })
                 .then(res => res.json())
                 .then(data => {
-                    if(data === "err") {
-                        throw data
+                    if(data.code === 400) {
+                        status = data.code
+                        showErr(data.err)
+                        return
                     } 
                     console.log(data)
                 })
-                .catch(err => {throw err})
+                .catch(err => {
+                    showErr(err)
+                    return
+                })
             }
         }
 
+        if(status === 400) return
         loadder.style.display = "none"
         noti_content.style.display = "block"
         noti_content.innerHTML = "Thành công"
         noti_content.classList.add("success")
     } catch(err) {
-        loadder.style.display = "none"
-        noti_content.style.display = "block"
-        noti_content.innerHTML = err.message
-        noti_content.classList.add("err")
+        showErr()
     }
 }
 

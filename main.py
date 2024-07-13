@@ -587,9 +587,15 @@ def upload_task():
             task["inp_oup"][i]["output"] = eval(inp_oup[i]["output"])
         task["inp_oup"] = str(task["inp_oup"])
         doc_ref_task.document().set(task)
-        return 'success'
+        return json.dumps({
+            "code": 200
+        })
     except Exception as e:
-        return 'err'
+        return json.dumps({
+            "code": 400,
+            "err": str(e)
+        })
+
         
 @app.route('/get_pos_of_playing_chess', methods=['POST'])
 @login_required
