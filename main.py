@@ -28,6 +28,7 @@ import time
 import threading
 import builtins
 from copy import deepcopy
+import os
 
 doc_ref_room = fdb.collection("room")
 doc_ref_post = fdb.collection("post")
@@ -58,6 +59,8 @@ db = SQLAlchemy(app)
 
 app.config['MAX_CONTENT_LENGTH'] = 16_000_00  #Max file size
 app.config['UPLOAD_FOLDER'] = "static/botfiles"
+
+CORS(app)
 
 # CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
@@ -788,20 +791,49 @@ def handle_login():
     data = request.get_json()
     username, password = data["username"], data["password"]
     user = doc_ref_user.where("username", "==", username).where("password", "==", password).stream()
-
+    user = [u.to_dict() for u in user]
     print(user)
 
     if user:
-        return {
+        return json.dumps({
             "status": 200,
             "userData": user
-        }
+        })
     else:
-        return {
+        return json.dumps({
             "status": 404,
-        }
+        })
+    
+@app.route('/get_all_user', methods=['GET'])
+def get_all_user():
+    users = doc_ref_user.stream()
+    res = []
+    for doc in users:
+        user = doc.to_dict()
+        res.append(user["username"])
+
+    return res
+
+@app.route('/get_all_task')
+def get_all_task():
+    res = doc_ref_task.stream()
+    
+    tasks = []
+
+    for doc in res:
+        task = doc.to_dict()
+        task["id"] = doc.id
+        tasks.append(task)
+
+    return tasks
+
 
 if __name__ == '__main__':
-    open_browser = lambda: webbrowser.open_new("http://127.0.0.1:5000")
-    Timer(1, open_browser).start()
-    app.run(port=5000, debug=True, use_reloader=False)
+    port = 5000
+    app.run(host='0.0.0.0', port=port)
+
+# if __name__ == '__main__':
+#     open_browser = lambda: webbrowser.open_new("http://192.168.1.249:5000")
+#     Timer(1, open_browser).start()
+#     app.run(port=5000, debug=True, use_reloader=False)
+
