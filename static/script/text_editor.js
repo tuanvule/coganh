@@ -246,6 +246,7 @@ post_btn.onclick = () => {
                         console.log(data)
                     })
                     .catch(err => {
+                        status = data.code
                         showErr(err)
                         return
                     })
@@ -313,6 +314,7 @@ post_btn.onclick = () => {
                                     console.log(data)
                                 })
                                 .catch(err => {
+                                    status = data.code
                                     showErr(err)
                                     return
                                 })
@@ -381,6 +383,7 @@ post_btn.onclick = () => {
                     console.log(data)
                 })
                 .catch(err => {
+                    status = data.code
                     showErr(err)
                     return
                 })
@@ -393,7 +396,7 @@ post_btn.onclick = () => {
         noti_content.innerHTML = "Thành công"
         noti_content.classList.add("success")
     } catch(err) {
-        showErr()
+        showErr(err)
     }
 }
 

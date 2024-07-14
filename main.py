@@ -606,7 +606,8 @@ def upload_task():
         task["inp_oup"] = str(task["inp_oup"])
         doc_ref_task.document().set(task)
         return json.dumps({
-            "code": 200
+            "code": 200,
+            "tast": task
         })
     except Exception as e:
         return json.dumps({
