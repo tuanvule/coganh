@@ -202,7 +202,7 @@ rate_btn.onclick = () => {
         console.log(data)
         const img_list = JSON.parse(data.img_url)
         let rating = []
-        img_list.forEach((url, i) => {
+        img_list.splice(1, img_list.length).forEach((url, i) => {
             rating.push({
                 type: data.rate[i],
                 move: {
@@ -268,11 +268,11 @@ function findI(e) {
     return e[0] === this[0]  && e[1] === this[1]
 }
 
-function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
+function changeBoard(newBoard, removeDict, selected_pos, new_pos) {
     const chesses = $$(".chess")
     for(let i = 0; i < 5; i++) {
         for(let j = 0; j < 5; j++) {
-            if(curBoard[i][j] !== newBoard[i][j] && valid_remove.length !== 0) {
+            if(curBoard[i][j] !== newBoard[i][j] && Object.keys(removeDict).length !== 0) {
                 if(curBoard[i][j] !== 0 && newBoard[i][j] === 0) {
                     const changedChess = Array.from(chesses).find(e => {
                         return Number(e.dataset.posx) === j && Number(e.dataset.posy) === i
@@ -302,7 +302,7 @@ function changeBoard(newBoard, valid_remove, selected_pos, new_pos) {
         }
     }
     
-    img_data.img.push([[[], [...chessPosition[1]], [...chessPosition[0]]], {selected_pos,new_pos}, valid_remove])
+    img_data.img.push([selected_pos[0],selected_pos[1],new_pos[0],new_pos[1], removeDict])
 
     if(chessPosition[0].length === 0) {
         gameStatus.innerHTML = "You Win"
@@ -401,6 +401,7 @@ function swap(chess, box, newPos, selected_pos) {
     moveSound.play()
     let r = [2,1.5,2,2.5,2]
     let preBoard = curBoard.map(row => row.map(item => item))
+    let removeDict = {};
     if(box) {
         cv2.beginPath();
         cv2.arc(chess.dataset.posx * (boardValue.width / 4) + radius + 2.5 * r[chess.dataset.posx], chess.dataset.posy * (boardValue.height / 4) + radius + 2.5 * r[chess.dataset.posx], radius, 0, 2 * Math.PI);
@@ -429,6 +430,9 @@ function swap(chess, box, newPos, selected_pos) {
                 new_pos: newPos,
             }
         })
+        valid_remove.forEach(i => {
+            removeDict[i.join(',')] = "remove_red";
+        });
         
         chessPosition[1][chessPosition[1].findIndex(findI, [Number(chess.dataset.posx), Number(chess.dataset.posy)])] = [Number(box.dataset.posx), Number(box.dataset.posy)]
         chess.dataset.posx = box.dataset.posx
@@ -459,6 +463,9 @@ function swap(chess, box, newPos, selected_pos) {
                 new_pos: newPos,
             }
         })
+        valid_remove.forEach(i => {
+            removeDict[i.join(',')] = "remove_blue";
+        });
 
         chessPosition[0][chessPosition[0].findIndex(findI, [selected_pos[0], selected_pos[1]])] = [newPos[0], newPos[1]]
         chess.style.left = newPos[0] * chessGrapX - 30 * rs + "px"
@@ -467,7 +474,7 @@ function swap(chess, box, newPos, selected_pos) {
         chess.dataset.posy = `${newPos[1]}`
         isReady(true)
     }
-    changeBoard(grid, valid_remove, selected_pos, newPos)
+    changeBoard(grid, removeDict, selected_pos, newPos)
 }
 
 function clearBox() {

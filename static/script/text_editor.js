@@ -246,7 +246,7 @@ post_btn.onclick = () => {
                         console.log(data)
                     })
                     .catch(err => {
-                        status = data.code
+                        status = 400
                         showErr(err)
                         return
                     })
@@ -314,7 +314,7 @@ post_btn.onclick = () => {
                                     console.log(data)
                                 })
                                 .catch(err => {
-                                    status = data.code
+                                    status = 400
                                     showErr(err)
                                     return
                                 })
@@ -383,7 +383,7 @@ post_btn.onclick = () => {
                     console.log(data)
                 })
                 .catch(err => {
-                    status = data.code
+                    status = 400
                     showErr(err)
                     return
                 })

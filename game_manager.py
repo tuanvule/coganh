@@ -6,6 +6,8 @@ import sys
 from io import StringIO
 import builtins
 from tool import valid_move, distance
+import random
+import math
 # from fdb.uti.upload import upload_video_to_storage
 
 class Player:
@@ -14,28 +16,6 @@ class Player:
         self.opp_pos = opp_pos
         self.your_side = your_side
         self.board = board
-def declare():
-    global game_state, positions, point, player1, player2
-
-    player1 = Player()
-    player2 = Player()
-    player1.your_side = 1
-    player2.your_side = -1
-
-    game_state = {"current_turn": 1,
-                  "board": [[-1, -1, -1, -1, -1],
-                            [-1,  0,  0,  0, -1],
-                            [ 1,  0,  0,  0, -1],
-                            [ 1,  0,  0,  0,  1],
-                            [ 1,  1,  1,  1,  1]]}
-    player1.board = player2.board = game_state["board"]
-    positions = [None,
-                [(0,2), (0,3), (4,3), (0,4), (1,4), (2,4), (3,4), (4,4)],
-                [(0,0), (1,0), (2,0), (3,0), (4,0), (0,1), (4,1), (4,2)]]
-    player1.your_pos = player2.opp_pos = positions[player1.your_side]
-    player2.your_pos = player1.opp_pos = positions[player2.your_side]
-
-    point = []
 
 # Board manipulation
 def Raise_exception(move, current_side, board):
@@ -101,6 +81,8 @@ def activation(code1, code2, name):
 
     globals_exec = {"valid_move": valid_move,
                     "distance": distance,
+                    "random": random,
+                    "math": math,
                     '__builtins__': {k:v for k, v in builtins.__dict__.items() if k not in ['eval', 'exec', 'input', '__import__', 'open']}}
 
     try:
@@ -121,13 +103,32 @@ def activation(code1, code2, name):
         sys.stdout = org_stdout
         return True, None, f.getvalue()
 def run_game(Bot2, UserBot, session_name): # Main
+    global game_state
 
-    declare()
+    player1 = Player()
+    player2 = Player()
+    player1.your_side = 1
+    player2.your_side = -1
+
+    game_state = {"current_turn": 1,
+                  "board": [[-1, -1, -1, -1, -1],
+                            [-1,  0,  0,  0, -1],
+                            [ 1,  0,  0,  0, -1],
+                            [ 1,  0,  0,  0,  1],
+                            [ 1,  1,  1,  1,  1]]}
+    player1.board = player2.board = game_state["board"]
+    positions = [[],
+                [(0,2), (0,3), (4,3), (0,4), (1,4), (2,4), (3,4), (4,4)],
+                [(0,0), (1,0), (2,0), (3,0), (4,0), (0,1), (4,1), (4,2)]]
+    player1.your_pos = player2.opp_pos = positions[player1.your_side]
+    player2.your_pos = player1.opp_pos = positions[player2.your_side]
+
     winner = False
     move_counter = 1
     body = {
         "username": session_name,
-        "img": [[deepcopy(positions), {"selected_pos": (-1000,-1000), "new_pos": (-1000,-1000)}, []]]
+        "img": [],
+        "setup": {}
     }
 
     while not winner:
@@ -153,11 +154,11 @@ def run_game(Bot2, UserBot, session_name): # Main
         positions[current_turn][index_move] = move_new_pos
 
         opp_pos = positions[-current_turn]
-        remove = ganh_chet(move_new_pos, opp_pos, current_turn, -current_turn)
-        remove += vay(opp_pos)
-        if remove: point[:] += [move_selected_pos]*len(remove)
+        remove = vay(opp_pos)
+        remove.extend( ganh_chet(move_new_pos, opp_pos, current_turn, -current_turn) )
+        remove.extend( vay(opp_pos) )
 
-        body["img"].append([deepcopy(positions), move, remove])
+        body["img"].append([*move_selected_pos, *move_new_pos, {",".join(map(str, i)):"remove_blue" if current_turn==-1 else "remove_red" for i in remove}])
 
         if not positions[1]:
             winner = "lost"
@@ -169,6 +170,6 @@ def run_game(Bot2, UserBot, session_name): # Main
         game_state["current_turn"] *= -1
         move_counter += 1
 
-    new_url = requests.post("http://tlv23.pythonanywhere.com//generate_video", json=body).text
+    new_url = requests.post("http://quan064.pythonanywhere.com//generate_video", json=body).text
 
     return winner, move_counter-1, new_url
