@@ -67,7 +67,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16_000_00  #Max file size
 app.config['UPLOAD_FOLDER'] = "static/botfiles"
 
 # CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
-CORS(app, resources={r"/*": {"origins": "https://coganh-419711.de.r.appspot.com/"}})
+CORS(app, resources={r"/*": {"origins": "https://coganh-419711.de.r.appspot.com"}})
 
 
 
