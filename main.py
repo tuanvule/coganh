@@ -66,27 +66,14 @@ db = SQLAlchemy(app)
 app.config['MAX_CONTENT_LENGTH'] = 16_000_00  #Max file size
 app.config['UPLOAD_FOLDER'] = "static/botfiles"
 
-# CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
-CORS(app, resources={r"/*": {"origins": "https://coganh-419711.de.r.appspot.com"}})
+allowed_origins = [
+    "http://localhost:3000",
+    "https://coganh-419711.de.r.appspot.com",
+    "https://coganh-cloud-tixakavkna-as.a.run.app"
+]
 
-
-
-# CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
-
-# @app.before_request
-# def before_request():
-#     print(request.method)
-#     if request.method == 'OPTIONS':
-#         response = app.make_response('')
-#         response.headers['Access-Control-Allow-Origin'] = '*'
-#         response.headers['Access-Control-Allow-Methods'] = '*'
-#         response.headers['Access-Control-Allow-Headers'] = '*'
-#         return response
-
-#Flask Alchemy initialization
-
-# sio = socketio.Server(cors_allowed_origins='*')
-# app.wsgi_app = socketio.WSGIApp(sio, app.wsgi_app)
+CORS(app, resources={r"/*": {"origins": allowed_origins}})
+# CORS(app, resources={r"/*": {"origins": "https://coganh-419711.de.r.appspot.com"}})
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -95,7 +82,6 @@ login_manager.login_message_category = "info"
 login_manager.login_message = "Xin hãy đăng nhập để truy cập"
 
 def generate_secret_key(user_name):
-    # Tạo secret key dựa trên ID của người dùng và secret key mặc định
     secret_key = f"{app.config['SECRET_KEY']}_{user_name}"
     return secret_key
 
@@ -1340,9 +1326,9 @@ def change_is_public():
     return {"message": "success"}
     
 
-# if __name__ == '__main__':
-#     port = 5000
-#     app.run(host='0.0.0.0', port=port)
+if __name__ == '__main__':
+    port = 5000
+    app.run(host='0.0.0.0', port=port)
 
 # if __name__ == '__main__':
 #     open_browser = lambda: webbrowser.open_new("http://192.168.1.249:5000")
